@@ -76,3 +76,38 @@ export interface ModuleMeta {
   totalSimulacoes: number; // 4
   disponivel: boolean;
 }
+
+export interface Exhibit {
+  id: string;
+  titulo: string;
+  colunas: string[];
+  linhas: (string | number)[][];
+  totalRow?: (string | number)[];
+  nota?: string;
+}
+
+export interface Pergunta {
+  id: string;
+  enunciado: string;
+  resolucao: string;
+}
+
+export interface RubricaItem {
+  criterio: string;
+  pontos: number;
+  descricao: string;
+}
+
+export interface CaseStudy {
+  id: string;
+  codigo: string;
+  modulo: string;
+  titulo: string;
+  situacao: string;
+  chips: string[];
+  exhibits: Exhibit[];
+  perguntas: Pergunta[];
+  entregavel: string;
+  debrief: string;
+  rubrica: RubricaItem[];
+}

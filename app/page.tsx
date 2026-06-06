@@ -12,7 +12,6 @@ export default function HomePage() {
         <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.08] tracking-tight text-ink sm:text-5xl lg:text-6xl">
           Laboratório de Tesouraria de Instituições Financeiras
         </h1>
-        <p className="mt-4 text-[15px] font-semibold text-secondary">Prof. José Américo</p>
         <p className="mt-3 max-w-2xl text-[16px] leading-relaxed text-muted">
           Simulações interativas para a aprendizagem prática das operações de tesouraria em
           instituições financeiras — matemática financeira, estrutura temporal das taxas,
@@ -35,17 +34,19 @@ export default function HomePage() {
           {/* Card especial: Estudos de Caso */}
           <Link
             href="/estudos-de-caso"
-            className="flex flex-col rounded-2xl bg-tertiary-container p-5 text-tertiary-fixed shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg"
+            className="flex flex-col rounded-2xl bg-secondary-container p-5 text-on-secondary-container shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg"
           >
-            <div className="grid h-11 w-11 place-items-center rounded-xl bg-tertiary-fixed/20 text-tertiary-fixed">
+            <div className="grid h-11 w-11 place-items-center rounded-xl bg-white/60 text-secondary">
               <Icon name="menu_book" size={22} />
             </div>
-            <h3 className="mt-4 text-[17px] font-bold text-on-tertiary-fixed">Estudos de Caso</h3>
-            <p className="mt-1.5 text-[13.5px] leading-relaxed text-tertiary-fixed/90">
+            <h3 className="mt-4 text-[17px] font-bold text-on-secondary-container">
+              Estudos de Caso
+            </h3>
+            <p className="mt-1.5 text-[13.5px] leading-relaxed text-on-secondary-container/85">
               Casos abertos que integram os tópicos de cada módulo, com diagnóstico, análise e
               encaminhamento.
             </p>
-            <span className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[13px] font-bold text-tertiary-fixed">
+            <span className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[13px] font-bold text-secondary">
               Acessar casos <Icon name="arrow_forward" size={16} />
             </span>
           </Link>
