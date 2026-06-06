@@ -12,38 +12,76 @@ import { EtapaQuestion } from "./EtapaQuestion";
 import { Encruzilhada } from "./Encruzilhada";
 import { Icon } from "./Icon";
 
-type Step = "contexto" | "etapas" | "encruzilhada" | "reflexao" | "conclusao";
-
 export function ScenarioPlayer({ scenario }: { scenario: Scenario }) {
-  const [step, setStep] = useState<Step>("contexto");
-  const [etapaIdx, setEtapaIdx] = useState(0);
-  const [score, setScore] = useState(0);
+  // Sequência linear de fases (cursor = posição atual)
+  const phases = [
+    "contexto",
+    ...scenario.etapas.map((_, i) => `etapa-${i}`),
+    "encruzilhada",
+    "reflexao",
+    "conclusao",
+  ];
+  const [cursor, setCursor] = useState(0);
+  const [earned, setEarned] = useState<Record<string, number>>({});
   const [branch, setBranch] = useState<string | null>(null);
 
+  const phase = phases[cursor];
+  const score = Object.values(earned).reduce((a, b) => a + b, 0);
+
+  // índice da etapa ativa (para barra de segmentos)
+  const etapaIdx = phase.startsWith("etapa-") ? Number(phase.split("-")[1]) : -1;
   const segCurrent =
-    step === "contexto" ? 0 : step === "etapas" ? etapaIdx : scenario.etapas.length;
+    phase === "contexto" ? 0 : etapaIdx >= 0 ? etapaIdx : scenario.etapas.length;
+
+  function advance() {
+    setCursor((c) => Math.min(phases.length - 1, c + 1));
+  }
+
+  function goBack() {
+    setCursor((c) => {
+      const nc = Math.max(0, c - 1);
+      // ao voltar, zera a pontuação da fase de destino em diante (será refeita)
+      setEarned((prev) => {
+        const copy = { ...prev };
+        phases.slice(nc).forEach((p) => delete copy[p]);
+        return copy;
+      });
+      return nc;
+    });
+  }
 
   function reset() {
-    setStep("contexto");
-    setEtapaIdx(0);
-    setScore(0);
+    setCursor(0);
+    setEarned({});
     setBranch(null);
   }
 
-  function completeEtapa(pontos: number) {
-    setScore((s) => s + pontos);
-    if (etapaIdx < scenario.etapas.length - 1) {
-      setEtapaIdx((i) => i + 1);
-    } else {
-      setStep("encruzilhada");
-    }
+  function completeEtapa(idx: number, pontos: number) {
+    setEarned((prev) => ({ ...prev, [`etapa-${idx}`]: pontos }));
+    advance();
   }
 
   const chosenBranch = scenario.encruzilhada.ramos.find((r) => r.id === branch);
-  const showContext = step !== "conclusao";
+  const showContext = phase !== "conclusao";
 
   return (
     <div>
+      {/* Navegação superior: Início + Etapa anterior */}
+      <div className="mb-5 flex items-center gap-4 text-[13px] font-semibold">
+        <Link href="/" className="inline-flex items-center gap-1 text-muted hover:text-ink">
+          <Icon name="arrow_back" size={16} /> Início
+        </Link>
+        {cursor > 0 && (
+          <button
+            type="button"
+            onClick={goBack}
+            className="inline-flex cursor-pointer items-center gap-1 text-muted hover:text-ink"
+          >
+            <Icon name="arrow_back" size={16} /> Etapa anterior
+          </button>
+        )}
+      </div>
+
       <ScorePill score={score} max={scenario.pontuacaoMax} />
 
       <div className="mt-1 text-[13px] font-semibold text-muted">
@@ -65,10 +103,10 @@ export function ScenarioPlayer({ scenario }: { scenario: Scenario }) {
         </>
       )}
 
-      {step === "contexto" && (
+      {phase === "contexto" && (
         <button
           type="button"
-          onClick={() => setStep("etapas")}
+          onClick={advance}
           className="mt-4 flex w-fit cursor-pointer items-center gap-2 rounded-xl bg-primary px-8 py-3 text-sm font-bold text-on-primary transition-colors hover:bg-primary-container active:scale-95"
         >
           Começar
@@ -76,7 +114,7 @@ export function ScenarioPlayer({ scenario }: { scenario: Scenario }) {
         </button>
       )}
 
-      {step === "etapas" && (
+      {etapaIdx >= 0 && (
         <EtapaQuestion
           key={scenario.etapas[etapaIdx].id}
           kicker={`Etapa ${etapaIdx + 1} —`}
@@ -84,25 +122,28 @@ export function ScenarioPlayer({ scenario }: { scenario: Scenario }) {
           opcoes={scenario.etapas[etapaIdx].opcoes}
           feedback={scenario.etapas[etapaIdx].feedback}
           pontos={scenario.etapas[etapaIdx].pontos}
-          continueLabel={etapaIdx < scenario.etapas.length - 1 ? "Próxima etapa" : "Ir para a decisão"}
-          onComplete={completeEtapa}
+          continueLabel={
+            etapaIdx < scenario.etapas.length - 1 ? "Próxima etapa" : "Ir para a decisão"
+          }
+          onComplete={(pontos) => completeEtapa(etapaIdx, pontos)}
         />
       )}
 
-      {step === "encruzilhada" && (
+      {phase === "encruzilhada" && (
         <Encruzilhada
           titulo={scenario.encruzilhada.titulo}
           subtitulo={scenario.encruzilhada.subtitulo}
           ramos={scenario.encruzilhada.ramos}
           onComplete={(b) => {
             setBranch(b);
-            setStep("reflexao");
+            advance();
           }}
         />
       )}
 
-      {step === "reflexao" && (
+      {phase === "reflexao" && (
         <EtapaQuestion
+          key="reflexao"
           kicker="Reflexão —"
           enunciado={scenario.reflexao.enunciado}
           opcoes={scenario.reflexao.opcoes}
@@ -110,13 +151,13 @@ export function ScenarioPlayer({ scenario }: { scenario: Scenario }) {
           pontos={scenario.reflexao.pontos}
           continueLabel="Ver resultado final"
           onComplete={(pontos) => {
-            setScore((s) => s + pontos);
-            setStep("conclusao");
+            setEarned((prev) => ({ ...prev, reflexao: pontos }));
+            advance();
           }}
         />
       )}
 
-      {step === "conclusao" && (
+      {phase === "conclusao" && (
         <div className="mt-4 rounded-2xl border border-border-soft bg-surface-container-lowest p-8 text-center shadow-sm">
           <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted">
             Cenário concluído
