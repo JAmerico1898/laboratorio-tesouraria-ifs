@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Tema Material 3 — extraído fielmente do app
+   "laboratorio-tesouraria-empresas" (Tailwind v4 + M3).
+   ============================================================ */
+@theme {
+  /* fontes (variáveis injetadas por next/font em layout.tsx) */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), system-ui, sans-serif;
+
+  /* --- Material 3: primary (navy) --- */
+  --color-primary: #00314a;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #134866;
+  --color-on-primary-container: #89b6d9;
+
+  /* --- secondary (teal) --- */
+  --color-secondary: #006b5f;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #8df5e4;
+  --color-on-secondary-container: #007165;
+  --color-secondary-fixed-dim: #70d8c8;
+
+  /* --- tertiary (green) --- */
+  --color-tertiary: #006b5f;
+  --color-tertiary-container: #004f11;
+  --color-on-tertiary-container: #72c26e;
+  --color-tertiary-fixed: #a3f69c;
+  --color-on-tertiary-fixed: #002204;
+
+  /* --- surfaces & neutros --- */
+  --color-surface: #f8f9fa;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f3f4f5;
+  --color-surface-container: #eceeef;
+  --color-surface-container-high: #e7e8e9;
+  --color-surface-container-highest: #e1e3e4;
+  --color-on-surface: #191c1d;
+  --color-on-surface-variant: #3f4945;
+  --color-outline: #6f7976;
+  --color-outline-variant: #bfc9c4;
+
+  /* --- estados --- */
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #410002;
+
+  /* --- aliases semânticos usados no app de referência --- */
+  --color-ink: #191c1d;
+  --color-muted: #3f4945;
+  --color-paper: #f8f9fa;
+  --color-accent: #00314a;
+  --color-accent-soft: #cae6ff;
+  --color-success: #006b5f;
+  --color-danger: #ba1a1a;
+  --color-warning: #b45309;
+  --color-border-soft: #e1e3e4;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Conteúdo rico vindo dos arquivos de dados (.ts) */
+.rich .num,
+.rich b .num {
+  color: var(--color-secondary);
+  font-weight: 700;
+}
+.rich .hl {
+  color: var(--color-ink);
+  font-weight: 700;
+}
+.rich b {
+  color: var(--color-ink);
+  font-weight: 700;
+}
+.rich code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.86em;
+  background: var(--color-surface-container-low);
+  border: 1px solid var(--color-border-soft);
+  padding: 1px 5px;
+  border-radius: 5px;
+  color: var(--color-ink);
+}
+
+/* Material Symbols Outlined — ícones */
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
