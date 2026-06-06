@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MODULES } from "@/lib/modules";
-import { Icon } from "./Icon";
 
 export function AppHeader() {
   const pathname = usePathname();
@@ -17,9 +16,12 @@ export function AppHeader() {
     <header className="fixed inset-x-0 top-0 z-50 h-16 border-b border-border-soft bg-surface/80 backdrop-blur-md shadow-[0_12px_32px_0_rgba(25,28,29,0.06)]">
       <div className="mx-auto flex h-full max-w-6xl items-center gap-3 px-5">
         <Link href="/" className="flex items-center gap-2.5 font-extrabold tracking-tight text-ink">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-primary to-secondary text-on-primary">
-            <Icon name="account_balance" size={18} />
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo/finlab-logo-white.jpg"
+            alt="FinLab"
+            className="h-8 w-auto rounded"
+          />
           <span className="hidden sm:inline">Laboratório de Tesouraria</span>
         </Link>
 
