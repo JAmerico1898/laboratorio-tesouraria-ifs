@@ -34,7 +34,7 @@ export const MODULES: ModuleMeta[] = [
       "Conhecer as taxas spot e calcular taxas forward (FRA) e o cupom cambial.",
     ],
     totalSimulacoes: 4,
-    disponivel: false,
+    disponivel: true,
   },
   {
     id: "modulo-3",
@@ -51,7 +51,7 @@ export const MODULES: ModuleMeta[] = [
       "Calcular títulos privados de empresas e o spread de crédito.",
     ],
     totalSimulacoes: 4,
-    disponivel: false,
+    disponivel: true,
   },
   {
     id: "modulo-4",
@@ -68,7 +68,7 @@ export const MODULES: ModuleMeta[] = [
       "Aplicar duration, convexidade e imunização de carteiras.",
     ],
     totalSimulacoes: 4,
-    disponivel: false,
+    disponivel: true,
   },
 ];
 

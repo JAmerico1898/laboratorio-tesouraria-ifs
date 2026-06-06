@@ -1,0 +1,147 @@
+import type { Scenario } from "@/lib/types";
+
+export const s3_3: Scenario = {
+  id: "s3-3",
+  codigo: "S3.3",
+  empresa: "Tesouraria bancária",
+  titulo: "Marcando uma debênture quando o spread muda",
+  nivel: "adv",
+  duracaoMin: 22,
+  contexto: "No book da tesouraria há uma <b>debênture IPCA + 6,2%</b>, prazo <span class=\"num\">4 anos</span>. Uma <b>notícia piora o setor</b> do emissor e o mercado passa a exigir <span class=\"num\">IPCA + 7,2%</span> para papéis de risco semelhante. Você decide o que fazer com a posição.",
+  chips: [
+    {
+      k: "Papel",
+      v: "Debênture IPCA+6,2%"
+    },
+    {
+      k: "Prazo",
+      v: "4 anos"
+    },
+    {
+      k: "Spread exigido (novo)",
+      v: "IPCA+7,2%"
+    },
+    {
+      k: "Δ spread",
+      v: "+100 bps"
+    },
+    {
+      k: "FGC",
+      v: "Não cobre"
+    },
+    {
+      k: "Hedge possível",
+      v: "NTN-B"
+    }
+  ],
+  etapas: [
+    {
+      id: "etapa-1",
+      titulo: "Etapa 1",
+      enunciado: "Com o spread exigido subindo de 6,2% para 7,2% (cupom real maior), o efeito imediato no PU da debênture é:",
+      opcoes: [
+        {
+          id: "a",
+          text: "O PU cai — perda de marcação, pois a taxa exigida subiu",
+          correct: true
+        },
+        {
+          id: "b",
+          text: "O PU sobe"
+        },
+        {
+          id: "c",
+          text: "O PU não muda, pois é IPCA+"
+        },
+        {
+          id: "d",
+          text: "Depende apenas do IPCA do mês"
+        }
+      ],
+      feedback: "Mais cupom real exigido = maior desconto dos fluxos = <b>PU menor</b>. A correção pelo IPCA protege o poder de compra, mas não o preço de marcação quando o <b>spread</b> abre.",
+      pontos: 20
+    },
+    {
+      id: "etapa-2",
+      titulo: "Etapa 2",
+      enunciado: "Qual risco se materializou nessa perda de marcação?",
+      opcoes: [
+        {
+          id: "a",
+          text: "Risco de crédito: a piora do setor elevou o prêmio de crédito exigido do emissor",
+          correct: true
+        },
+        {
+          id: "b",
+          text: "Risco de inflação"
+        },
+        {
+          id: "c",
+          text: "Risco cambial"
+        },
+        {
+          id: "d",
+          text: "Nenhum risco — é apenas ruído contábil"
+        }
+      ],
+      feedback: "O movimento é de <b>spread de crédito</b>, não de inflação nem de juro real de mercado em geral. A marcação a mercado torna visível um risco que já existia.",
+      pontos: 20
+    },
+    {
+      id: "etapa-3",
+      titulo: "Etapa 3",
+      enunciado: "Como separar o risco de <b>juro real</b> do risco de <b>crédito</b> nesse papel?",
+      opcoes: [
+        {
+          id: "a",
+          text: "Hedgear o juro real vendendo NTN-B equivalente, deixando exposto apenas o risco de crédito (spread)",
+          correct: true
+        },
+        {
+          id: "b",
+          text: "Comprar mais da mesma debênture"
+        },
+        {
+          id: "c",
+          text: "Trocar tudo por LFT"
+        },
+        {
+          id: "d",
+          text: "Não há como separar os riscos"
+        }
+      ],
+      feedback: "Vender NTN-B de prazo semelhante neutraliza o componente de juro real; o que sobra na posição é o <b>risco de crédito</b> do emissor — que você mantém por convicção, conscientemente.",
+      pontos: 20
+    }
+  ],
+  encruzilhada: {
+    titulo: "O que fazer com a debênture?",
+    subtitulo: "Decisão de gestão de risco — não há resposta única.",
+    ramos: []
+  },
+  reflexao: {
+    enunciado: "Qual a boa prática ao gerir um papel de crédito cujo spread se abriu?",
+    opcoes: [
+      {
+        id: "a",
+        text: "Decompor os riscos: separar o risco de mercado (juro real, hedgeável via NTN-B) do risco de crédito (spread do emissor) e decidir conscientemente qual carregar",
+        correct: true
+      },
+      {
+        id: "b",
+        text: "Sempre vender ao primeiro sinal negativo"
+      },
+      {
+        id: "c",
+        text: "Sempre carregar até o vencimento"
+      },
+      {
+        id: "d",
+        text: "Ignorar a marcação, pois é só contábil"
+      }
+    ],
+    feedback: "Nem pânico (vender tudo) nem inércia (carregar no escuro): a decomposição permite cobrir o risco que não se quer e manter, por convicção, apenas o risco de crédito.",
+    pontos: 25
+  },
+  pontuacaoMax: 85
+};
