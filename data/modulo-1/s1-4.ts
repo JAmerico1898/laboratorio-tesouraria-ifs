@@ -14,13 +14,13 @@ export const s1_4: Scenario = {
     { k: "Horizonte", v: "12 meses" },
     { k: "Inflação (Focus)", v: "4,5%" },
     { k: "Pré (trava nominal)", v: "11,0% / 11,29%" },
-    { k: "IPCA+ (real)", v: "+5,5% / +6,0%" },
+    { k: "IPCA+ (real)", v: "+6,5%" },
     { k: "Equação", v: "Fisher" },
   ],
   dadosMercado: {
     titulo: "Dados de mercado",
     corpo:
-      "Equação de Fisher: <code>(1 + i) = (1 + r)(1 + π)</code>. O valor que trava exatamente 6,5% real com inflação de 4,5% é <code>i = 11,29%</code>. A soma simples (6,5% + 4,5% = 11,0%) ignora o termo cruzado <code>r·π</code>.",
+      "Equação de Fisher: <code>(1 + i) = (1 + r)(1 + π)</code>. O valor que trava exatamente 6,5% real com inflação de 4,5% é <code>i = 11,29%</code>. A soma simples (6,5% + 4,5% = 11,0%) ignora o termo cruzado <code>r·π</code>. A NTN-B disponível paga <b>IPCA + 6,5%</b> (cupom real = exatamente o mandato).",
   },
   etapas: [
     {
@@ -44,14 +44,14 @@ export const s1_4: Scenario = {
       enunciado:
         "Por que somar simplesmente juro real + inflação (= 11,00%) subdimensiona a taxa nominal?",
       opcoes: [
+        { id: "a", text: "Porque a inflação realizada tende a vir acima de 4,5%" },
+        { id: "b", text: "Porque o IR incide sobre o rendimento nominal do papel" },
+        { id: "c", text: "Não subdimensiona: a soma simples já é exata" },
         {
-          id: "a",
+          id: "d",
           text: "Ignora o termo cruzado r·π de Fisher (≈ 0,065 × 0,045 ≈ 0,29 p.p.)",
           correct: true,
         },
-        { id: "b", text: "Porque a inflação será maior que 4,5%" },
-        { id: "c", text: "Porque o IR incide sobre o rendimento" },
-        { id: "d", text: "Não subdimensiona: a soma simples está correta" },
       ],
       feedback:
         "<code>(1+r)(1+π) = 1 + r + π + r·π</code>. O termo <code>r·π ≈ 0,29 p.p.</code> é o que falta na soma simples — pequeno, mas é a diferença entre travar e não travar o mandato.",
@@ -63,17 +63,17 @@ export const s1_4: Scenario = {
       enunciado:
         "Havendo <b>incerteza relevante</b> sobre a inflação realizada, qual indexador protege melhor o mandato de juro real?",
       opcoes: [
+        { id: "a", text: "Prefixado, sempre: travar o nominal já garante o real" },
+        { id: "b", text: "LFT / pós-Selic: acompanha a Selic e protege o real" },
         {
-          id: "a",
-          text: "IPCA+ (NTN-B): entrega o cupom real independentemente da inflação realizada",
+          id: "c",
+          text: "IPCA+ (NTN-B) com cupom real de 6,5%: entrega o juro real do mandato qualquer que seja a inflação",
           correct: true,
         },
-        { id: "b", text: "Prefixado, sempre" },
-        { id: "c", text: "LFT / pós-Selic" },
-        { id: "d", text: "Tanto faz sob incerteza" },
+        { id: "d", text: "Tanto faz sob incerteza: todos entregam o mesmo real" },
       ],
       feedback:
-        "O IPCA+ corrige o principal pela inflação e paga um cupom real fixo — protege o real <b>aconteça o que acontecer</b> com a inflação. O pré só trava o real se a inflação vier <i>exatamente</i> como esperado.",
+        "A NTN-B garante o <b>seu próprio cupom real</b>, não um número qualquer: para cumprir o mandato de 6,5%, é preciso um papel com cupom real <b>≥ 6,5%</b>. Um IPCA+ a 6,0% protegeria contra a inflação, mas entregaria só 6,0% real — abaixo do mandato. O pré só trava o real se a inflação vier <i>exatamente</i> em 4,5%; o IPCA+ a 6,5% defende o mandato aconteça o que acontecer com a inflação.",
       pontos: 20,
     },
   ],
@@ -95,24 +95,24 @@ export const s1_4: Scenario = {
             { k: "Risco", v: "Surpresa inflacionária", tone: "neg" },
           ],
           analise:
-            "Cumpre o mandato <b>exatamente</b> no cenário central. O risco é assimétrico: se a inflação surpreender para cima, o real entregue cai abaixo de 6,5%.",
+            "Fisher: <code>(1,065)(1,045) = 1,11293 → i = 11,29%</code>. Se π = 4,5%: <code>real = 1,1129/1,045−1 = 6,5% ✓</code>. Se π surpreender para 5,5%: <code>real = 1,1129/1,055−1 ≈ 5,5%</code> — abaixo do mandato. A trava nominal só cumpre o mandato no cenário central — cada 1 p.p. de inflação acima do previsto corrói ~1 p.p. do real.",
         },
       },
       {
         id: "B",
         rotulo: "Proteção real",
-        titulo: "IPCA+ 6,0%",
-        resumo: "Garante o real qualquer que seja a inflação.",
+        titulo: "IPCA+ 6,5%",
+        resumo: "Cumpre o mandato qualquer que seja a inflação.",
         resultado: {
-          titulo: "IPCA+ 6,0% — proteção plena",
+          titulo: "IPCA+ 6,5% — cumpre o mandato",
           deltas: [
-            { k: "Real garantido", v: "6,0% + IPCA", tone: "pos" },
+            { k: "Real garantido", v: "6,5% + IPCA", tone: "pos" },
+            { k: "Mandato", v: "Cumprido (qualquer π)", tone: "pos" },
             { k: "Dependência da inflação", v: "Nenhuma", tone: "pos" },
-            { k: "Risco residual", v: "Marcação (cupom real)", tone: "neg" },
-            { k: "Sob incerteza", v: "Superior ao pré", tone: "pos" },
+            { k: "Risco residual", v: "Marcação (se vender antes)", tone: "neg" },
           ],
           analise:
-            "Proteção superior ao pré quando a inflação é incerta: o real fica garantido. O risco que sobra não é inflação (coberta), e sim <b>marcação</b> se o cupom real exigido subir antes do vencimento.",
+            "Qualquer π: <code>real entregue = cupom real do papel = 6,5%</code>. Nominal = <code>(1,065)(1+π)−1</code> — cresce com a inflação. Condição necessária: cupom real ≥ 6,5% (um IPCA+ a 6,0% entregaria apenas 6,0% real — abaixo do mandato mesmo protegendo contra inflação). Carregada até 12 meses: sem risco de marcação; domina o pré sob incerteza inflacionária.",
         },
       },
       {
@@ -129,7 +129,7 @@ export const s1_4: Scenario = {
             { k: "Causa", v: "Termo cruzado ignorado", tone: "neg" },
           ],
           analise:
-            "A soma simples entrega só <code>1,11/1,045 − 1 ≈ 6,2%</code> real a 4,5% de inflação — <b>abaixo</b> do mandato de 6,5% — e piora se a inflação subir. Ilustra por que o termo cruzado de Fisher importa na prática.",
+            "Soma simples ignora o termo cruzado r·π. Real efetivo: <code>1,11/1,045−1 ≈ 6,22%</code> — déficit de <code>0,28 p.p. vs mandato</code> (= r·π = 6,5% × 4,5%). Se π sobe para 5,5%: <code>real = 1,11/1,055−1 ≈ 5,21%</code>. O mandato de 6,5% não é cumprido em nenhum cenário inflacionário realista com i = 11,0%.",
           risco: true,
         },
       },
@@ -139,17 +139,17 @@ export const s1_4: Scenario = {
     enunciado:
       "Qual a lição central de Fisher para defender um mandato de juro real sob incerteza inflacionária?",
     opcoes: [
+      { id: "a", text: "Basta somar juro real + inflação esperada para travar o mandato" },
       {
-        id: "a",
-        text: "O termo cruzado importa (não basta somar) e, sob incerteza, o IPCA+ domina o pré, pois garante o real independentemente da inflação realizada",
+        id: "b",
+        text: "O termo cruzado importa (não basta somar) e, sob incerteza, um IPCA+ com cupom real ≥ 6,5% domina o pré: garante o mandato qualquer que seja a inflação",
         correct: true,
       },
-      { id: "b", text: "Basta somar juro real + inflação esperada" },
-      { id: "c", text: "O prefixado é sempre superior" },
-      { id: "d", text: "A inflação não afeta o juro real entregue" },
+      { id: "c", text: "O prefixado é sempre superior, pois trava a taxa nominal" },
+      { id: "d", text: "A inflação realizada não afeta o juro real efetivamente entregue" },
     ],
     feedback:
-      "Dois aprendizados: (1) usar <code>(1+r)(1+π)</code>, não a soma; (2) quando a inflação é incerta, o indexado à inflação protege o mandato de forma robusta, enquanto o pré só acerta no cenário exato.",
+      "Dois aprendizados: (1) usar <code>(1+r)(1+π)</code>, não a soma; (2) sob incerteza, o indexado à inflação protege o mandato de forma robusta — <b>desde que o cupom real do papel cumpra os 6,5%</b>. Um IPCA+ abaixo de 6,5% protege contra a inflação, mas não entrega o mandato; o pré só acerta no cenário exato de 4,5%.",
     pontos: 25,
   },
   pontuacaoMax: 85,

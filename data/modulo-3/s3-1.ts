@@ -46,12 +46,12 @@ export const s3_1: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "R$ 947,03",
-          correct: true
+          text: "R$ 892,86"
         },
         {
           id: "b",
-          text: "R$ 892,86"
+          text: "R$ 947,03",
+          correct: true
         },
         {
           id: "c",
@@ -77,15 +77,15 @@ export const s3_1: Scenario = {
         },
         {
           id: "b",
-          text: "O PU cai"
+          text: "O PU não muda: a taxa está travada na compra"
         },
         {
           id: "c",
-          text: "O PU não muda: a taxa está travada"
+          text: "O PU cai, acompanhando a queda da Selic"
         },
         {
           id: "d",
-          text: "Depende apenas do CDI diário"
+          text: "Depende apenas do CDI diário acumulado"
         }
       ],
       feedback: "Em prefixados, preço e taxa andam em sentidos opostos. Travar 11,50% e a curva cair gera <b>ganho de marcação</b> — exatamente o atrativo do pré numa aposta de corte.",
@@ -98,20 +98,20 @@ export const s3_1: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "Mínimo: a LFT acompanha a Selic (VNA), com marcação quase imune ao nível da curva pré",
-          correct: true
+          text: "Grande perda de marcação, como na LTN"
         },
         {
           id: "b",
-          text: "Grande perda de marcação"
+          text: "Grande ganho de marcação com a alta"
         },
         {
           id: "c",
-          text: "Grande ganho de marcação"
+          text: "Igual ao efeito sofrido pela LTN"
         },
         {
           id: "d",
-          text: "Igual ao da LTN"
+          text: "Mínimo: a LFT acompanha a Selic (VNA), com marcação quase imune ao nível da curva pré",
+          correct: true
         }
       ],
       feedback: "A LFT é pós-Selic: o VNA acompanha a taxa, então sua marcação é muito estável. É o ativo de <b>caixa defensivo</b> quando se teme alta de juros.",
@@ -121,27 +121,76 @@ export const s3_1: Scenario = {
   encruzilhada: {
     titulo: "Como aplicar os R$ 300 mi?",
     subtitulo: "A escolha expressa sua visão de Selic e seu apetite por marcação.",
-    ramos: []
+    ramos: [
+      {
+        id: "A",
+        rotulo: "LTN pré",
+        titulo: "Aplicar em LTN 126 du a 11,50%",
+        resumo: "Aposta em corte; ganho de marcação se a curva recuar.",
+        resultado: {
+          titulo: "Aposta direcional em corte",
+          deltas: [
+            { k: "Indexador", v: "Pré 11,50%", tone: "neu" },
+            { k: "Se Selic cair", v: "Ganho de marcação", tone: "pos" },
+            { k: "Se Selic subir", v: "Perda de marcação", tone: "neg" },
+            { k: "Carrego", v: "Travado em 11,50%", tone: "neu" }
+          ],
+          analise: "PU compra: R$ 947,03. Volume: <code>R$ 300 mi / 947,03 ≈ 316.772 títulos</code>. Se curva pré recuar 50 bps (→ 11,0%): <code>PU_novo = 1000/(1,110)^(126/252) ≈ R$ 950,32 → ganho ≈ R$ 3,29/título × 316.772 ≈ R$ 1,04 mi</code>. Se subir 50 bps (→ 12,0%): <code>PU_novo ≈ R$ 943,79 → perda ≈ R$ 1,03 mi</code>. Aposta simétrica ao redor do carrego de 11,5%."
+        }
+      },
+      {
+        id: "B",
+        rotulo: "LFT pós",
+        titulo: "Aplicar em LFT (pós-Selic)",
+        resumo: "Defensivo; marcação estável, acompanha a Selic.",
+        resultado: {
+          titulo: "Defensivo — marcação estável",
+          deltas: [
+            { k: "Indexador", v: "Pós-Selic", tone: "neu" },
+            { k: "Risco de marcação", v: "Mínimo", tone: "pos" },
+            { k: "Se Selic subir", v: "Acompanha", tone: "pos" },
+            { k: "Upside direcional", v: "Nenhum", tone: "neu" }
+          ],
+          analise: "VNA acompanha a Selic diariamente. Carrego: <code>(1,1040)^(126/252)−1 ≈ 5,07%</code> no período vs <code>5,47%</code> da LTN a 11,5%. Delta = <code>−0,40 p.p.</code> — o prêmio de risco pago pela aposta direcional da LTN. Se a Selic subir, o carrego aumenta automaticamente; marcação quase imune ao nível da curva pré."
+        }
+      },
+      {
+        id: "C",
+        rotulo: "CDB 102%",
+        titulo: "Aplicar em CDB pós a 102% do CDI",
+        resumo: "Acompanha a Selic com spread; assume risco de crédito do emissor.",
+        resultado: {
+          titulo: "Pós com spread, risco de crédito",
+          deltas: [
+            { k: "Indexador", v: "102% CDI", tone: "pos" },
+            { k: "Spread vs Selic", v: "+2% do CDI", tone: "pos" },
+            { k: "Risco de crédito", v: "Do emissor", tone: "neg" },
+            { k: "Liquidez", v: "Menor que título público", tone: "neg" }
+          ],
+          analise: "Carrego ≈ 102% do CDI → <code>(1,1040)^(126/252) × 1,02... ≈ 5,20%</code> no período. Delta vs LFT pura: <code>+0,13 p.p.</code> → sobre R$ 300 mi: <code>R$ 300 mi × 0,0013 ≈ R$ 390 mil adicionais em 126 du</code>. Contrapartida: risco de crédito do emissor do CDB e menor liquidez vs título público — aceitável dentro de limites de concentração por emissor."
+        }
+      }
+    ]
   },
   reflexao: {
     enunciado: "Por que uma LTN longa carrega um payoff direcional assimétrico?",
     opcoes: [
       {
         id: "a",
+        text: "Porque a LTN carrega risco de crédito do Tesouro"
+      },
+      {
+        id: "b",
         text: "É aposta prefixada: acertar o corte gera ganho (limitado), mas errar a direção amplifica a perda pela duration — ganha pouco se a Selic ficar estável e perde muito se subir",
         correct: true
       },
       {
-        id: "b",
-        text: "Porque a LTN tem risco de crédito do Tesouro"
-      },
-      {
         id: "c",
-        text: "Porque a LFT é mais arriscada que a LTN"
+        text: "Porque a LFT é mais arriscada que a LTN longa"
       },
       {
         id: "d",
-        text: "Porque o CDB sempre rende mais"
+        text: "Porque o CDB pós sempre rende mais que a LTN"
       }
     ],
     feedback: "Quanto maior a duration, maior a sensibilidade do PU à taxa. A LTN longa é uma aposta de convexidade desfavorável ao gestor desatento — daí a disciplina de limite de duration.",

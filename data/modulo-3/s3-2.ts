@@ -51,15 +51,15 @@ export const s3_2: Scenario = {
         },
         {
           id: "b",
-          text: "Porque a LCI tem FGC e o CDB não"
+          text: "Porque o CDI usado é diferente para cada instrumento"
         },
         {
           id: "c",
-          text: "Porque o CDI é diferente para cada instrumento"
+          text: "Porque a LCI sempre rende mais em termos brutos"
         },
         {
           id: "d",
-          text: "Porque a LCI sempre rende mais bruto"
+          text: "Porque a LCI tem cobertura do FGC e o CDB não"
         }
       ],
       feedback: "Comparar taxas brutas é enganoso: a LCI é isenta de IR para PF. Trazendo tudo ao líquido (ou “elevando” a LCI ao bruto equivalente), compara-se maçãs com maçãs.",
@@ -72,12 +72,12 @@ export const s3_2: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "≈ 11,5% a.a.",
-          correct: true
+          text: "≈ 11,44% a.a."
         },
         {
           id: "b",
-          text: "≈ 11,44% a.a."
+          text: "≈ 11,5% a.a.",
+          correct: true
         },
         {
           id: "c",
@@ -98,20 +98,20 @@ export const s3_2: Scenario = {
       opcoes: [
         {
           id: "a",
+          text: "O CDB, sempre, por ter o maior percentual de CDI"
+        },
+        {
+          id: "b",
+          text: "Empatam: a isenção compensa exatamente o IR"
+        },
+        {
+          id: "c",
           text: "A LCI: ≈ 10,0% líquido vs. ≈ 9,8% do CDB (11,5% bruto × 0,85)",
           correct: true
         },
         {
-          id: "b",
-          text: "O CDB, sempre"
-        },
-        {
-          id: "c",
-          text: "Empatam"
-        },
-        {
           id: "d",
-          text: "Depende do FGC"
+          text: "Depende apenas da cobertura do FGC"
         }
       ],
       feedback: "LCI 96% isenta ≈ <b>10,0%</b> líquido; CDB 110% bruto 11,5%, menos IR de 15% ≈ <b>9,8%</b>. A isenção faz a LCI vencer mesmo com percentual menor de CDI — é o gross-up na prática.",
@@ -121,27 +121,77 @@ export const s3_2: Scenario = {
   encruzilhada: {
     titulo: "Qual produto ofertar para captar?",
     subtitulo: "A decisão muda com o público e seu IR.",
-    ramos: []
+    ramos: [
+      {
+        id: "A",
+        rotulo: "LCI isenta",
+        titulo: "Ofertar LCI a 96% do CDI (isenta)",
+        resumo: "Vence no líquido para PF com % menor; funding mais barato.",
+        resultado: {
+          titulo: "Funding eficiente para PF",
+          deltas: [
+            { k: "Produto", v: "LCI 96% (isenta)", tone: "pos" },
+            { k: "Líquido ao PF", v: "≈ 10,0%", tone: "pos" },
+            { k: "Custo de funding", v: "Menor (% do CDI)", tone: "pos" },
+            { k: "Restrição", v: "Lastro imobiliário", tone: "neu" }
+          ],
+          analise: "Bruto ao banco: <code>96% CDI → ≈10,0% a.a.</code> Gross-up para o PF (IR 15%): equivale a CDB de <code>10,0%/(1−0,15) ≈ 11,76% bruto</code> — acima do CDB 110% (11,5%). Custo ao banco: 10,0% para entregar 10,0% líquido; CDB 110% custa 11,5% para entregar 9,8% líquido. Funding 1,5 p.p. mais barato por entregar 0,2 p.p. a mais ao investidor."
+        }
+      },
+      {
+        id: "B",
+        rotulo: "CDB tributado",
+        titulo: "Ofertar CDB a 110% do CDI (tributado)",
+        resumo: "Maior % bruto; útil para PJ e quem valoriza FGC/flexibilidade.",
+        resultado: {
+          titulo: "Flexível, sem restrição de lastro",
+          deltas: [
+            { k: "Produto", v: "CDB 110%", tone: "neu" },
+            { k: "Líquido ao PF (15%)", v: "≈ 9,8%", tone: "neu" },
+            { k: "Cobertura FGC", v: "Sim", tone: "pos" },
+            { k: "Restrição de lastro", v: "Nenhuma", tone: "pos" }
+          ],
+          analise: "Bruto: <code>(1+110%×i_d)^252−1 ≈ 11,5% a.a.</code> Líquido PF (IR 15%): <code>11,5% × 0,85 = 9,78%</code> — abaixo dos 10,0% da LCI 96%. Diferença: <code>−0,22 p.p. líquido</code> a um custo de funding 1,5 p.p. maior. Justificado para PJ (sem isenção) e quando FGC ou ausência de lastro imobiliário é determinante."
+        }
+      },
+      {
+        id: "C",
+        rotulo: "Maior % bruto",
+        titulo: "Ofertar o maior % bruto (CDB 115%) sem olhar o IR",
+        resumo: "'Parece' o mais competitivo, mas encarece o funding.",
+        resultado: {
+          titulo: "Competitividade aparente — funding caro",
+          deltas: [
+            { k: "Produto", v: "CDB 115%", tone: "neg" },
+            { k: "Comparação", v: "Só taxa bruta", tone: "neg" },
+            { k: "Custo de funding", v: "Mais alto", tone: "neg" },
+            { k: "Ganho real vs LCI", v: "Nenhum", tone: "neg" }
+          ],
+          analise: "Bruto: <code>≈ 12,1% a.a.</code> Líquido PF: <code>12,1% × 0,85 ≈ 10,3%</code> — marginal acima da LCI (10,0%). Custo ao banco: <code>+2,1 p.p.</code> vs LCI para ganhar apenas <code>+0,3 p.p.</code> de líquido ao PF. Competitividade aparente: paga-se mais caro por uma margem que o investidor mal percebe.",
+          risco: true
+        }
+      }
+    ]
   },
   reflexao: {
     enunciado: "O que a lógica de gross-up ensina sobre captação no varejo?",
     opcoes: [
       {
         id: "a",
-        text: "O que importa é o líquido: a isenção da LCI permite captar a um % menor do CDI e ainda vencer o CDB; o IR regressivo muda a decisão por prazo, e olhar só a taxa bruta encarece o funding",
-        correct: true
+        text: "Ofereça sempre o maior percentual de CDI possível"
       },
       {
         id: "b",
-        text: "Sempre ofereça o maior % de CDI possível"
+        text: "LCI e CDB são equivalentes para o investidor final"
       },
       {
         id: "c",
-        text: "LCI e CDB são equivalentes ao investidor"
+        text: "O IR não afeta a decisão de funding do banco"
       },
       {
         id: "d",
-        text: "O IR não afeta a decisão de funding"
+        text: "O que importa é o líquido: a isenção da LCI permite captar a um % menor do CDI e ainda vencer o CDB; o IR regressivo muda a decisão por prazo, e olhar só a taxa bruta encarece o funding",
+        correct: true
       }
     ],
     feedback: "Gross-up alinha a oferta ao rendimento líquido do cliente e ao custo real do funding — evitando pagar caro por uma competitividade apenas aparente.",

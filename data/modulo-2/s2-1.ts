@@ -46,20 +46,20 @@ export const s2_1: Scenario = {
       opcoes: [
         {
           id: "a",
+          text: "A taxa spot de cada vértice"
+        },
+        {
+          id: "b",
+          text: "O PU do título no intervalo"
+        },
+        {
+          id: "c",
           text: "A taxa forward (a termo) implícita entre os vértices",
           correct: true
         },
         {
-          id: "b",
-          text: "A taxa spot"
-        },
-        {
-          id: "c",
-          text: "O PU do título"
-        },
-        {
           id: "d",
-          text: "A duration"
+          text: "A duration do papel"
         }
       ],
       feedback: "Flat-forward assume <b>forward constante</b> entre dois vértices, preservando a multiplicatividade dos fatores de capitalização — por isso é o padrão no mercado DU/252.",
@@ -72,20 +72,20 @@ export const s2_1: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "≈ 13,40% a.a.",
-          correct: true
-        },
-        {
-          id: "b",
           text: "≈ 12,65% a.a."
         },
         {
-          id: "c",
+          id: "b",
           text: "≈ 12,80% a.a."
         },
         {
-          id: "d",
+          id: "c",
           text: "≈ 13,10% a.a."
+        },
+        {
+          id: "d",
+          text: "≈ 13,40% a.a.",
+          correct: true
         }
       ],
       feedback: "<code>(1+f)^(21/252) = (1,128)^(63/252) / (1,125)^(42/252) = 1,01054</code> → anualizando <code>1,01054^12 ≈ 1,1340</code>, logo <b>f ≈ 13,40% a.a.</b> A média simples (12,65%) ignora a composição e subestima a forward numa curva que sobe.",
@@ -98,16 +98,16 @@ export const s2_1: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "Pequeno e sistemático em prazos curtos — mas pode virar marcação equivocada em vértices longos ou curva íngreme/invertida",
+          text: "Pequeno e sistemático em prazos curtos — mas vira marcação equivocada em vértices longos ou curva íngreme/invertida",
           correct: true
         },
         {
           id: "b",
-          text: "Grande e aleatório, sem padrão"
+          text: "Grande e aleatório, sem padrão identificável"
         },
         {
           id: "c",
-          text: "Nulo: os dois métodos são idênticos"
+          text: "Nulo: os dois métodos são sempre idênticos"
         },
         {
           id: "d",
@@ -121,27 +121,77 @@ export const s2_1: Scenario = {
   encruzilhada: {
     titulo: "Como interpolar e marcar o CDB de 50 du?",
     subtitulo: "Cada caminho equilibra rigor × atalho.",
-    ramos: []
+    ramos: [
+      {
+        id: "A",
+        rotulo: "Flat-forward",
+        titulo: "Interpolar via flat-forward (padrão ANBIMA)",
+        resumo: "Forward constante entre vértices; marcação coerente e sem arbitragem.",
+        resultado: {
+          titulo: "Rigoroso — padrão de mercado",
+          deltas: [
+            { k: "Método", v: "Flat-forward", tone: "pos" },
+            { k: "Taxa 50 du", v: "≈ 12,64%", tone: "neu" },
+            { k: "Arbitragem", v: "Sem brecha", tone: "pos" },
+            { k: "Esforço", v: "Maior (composto)", tone: "neu" }
+          ],
+          analise: "<code>F₄₂=(1,125)^(42/252)≈1,01982; F₆₃=(1,128)^(63/252)≈1,03057.</code> Forward entre vértices: <code>FF=1,03057/1,01982≈1,01054 → f=1,01054^12−1≈13,40% a.a.</code> Ponto 50 du (8 du além de 42): <code>F₅₀=1,01982×1,01054^(8/21)≈1,02390 → r₅₀=1,02390^(252/50)−1≈12,64%.</code> CDB: <code>12,64%×1,02≈12,89% a.a.</code> Padrão ANBIMA: forward constante preserva a multiplicatividade — sem brecha de arbitragem."
+        }
+      },
+      {
+        id: "B",
+        rotulo: "Linear na taxa",
+        titulo: "Interpolar linearmente na taxa (atalho)",
+        resumo: "Rápido; erro de poucos bps em 50 du, mas com viés sistemático.",
+        resultado: {
+          titulo: "Atalho — viés pequeno mas sistemático",
+          deltas: [
+            { k: "Método", v: "Linear na taxa", tone: "neu" },
+            { k: "Taxa 50 du", v: "≈ 12,61%", tone: "neu" },
+            { k: "Erro vs flat-fwd", v: "≈ −3 bps", tone: "neg" },
+            { k: "Esforço", v: "Menor", tone: "pos" }
+          ],
+          analise: "Interpolação linear: <code>r₅₀ = 12,50% + (12,80%−12,50%) × (50−42)/(63−42) = 12,50% + 0,30%×8/21 ≈ 12,61%</code>. Erro vs flat-fwd: <code>12,64%−12,61% = −3 bps</code>; CDB: <code>12,61%×1,02≈12,86%</code>. Aceitável para conferência rápida; em vértices longos ou curva íngreme/invertida o viés cresce e pode inverter o sinal da forward."
+        }
+      },
+      {
+        id: "C",
+        rotulo: "Vértice cheio",
+        titulo: "Usar o vértice de 63 du sem interpolar",
+        resumo: "Pega a taxa de um vértice publicado; ignora o prazo exato.",
+        resultado: {
+          titulo: "Atalho grosseiro — marcação equivocada",
+          deltas: [
+            { k: "Método", v: "Vértice de 63 du", tone: "neg" },
+            { k: "Taxa usada", v: "12,80%", tone: "neg" },
+            { k: "Erro vs flat-fwd", v: "≈ +16 bps", tone: "neg" },
+            { k: "Risco", v: "Marcação inflada", tone: "neg" }
+          ],
+          analise: "Usa 12,80% de 63 du para um papel de 50 du. Erro: <code>12,80%−12,64% = +16 bps</code>; CDB inflado: <code>12,80%×1,02 = 13,06%</code> vs <code>12,89%</code> correto. Em um book de R$ 100 mi, +16 bps representam ~R$ 160 mil de marcação equivocada por ano — exatamente o acúmulo que o flat-forward existe para evitar.",
+          risco: true
+        }
+      }
+    ]
   },
   reflexao: {
     enunciado: "Por que o mercado padroniza o flat-forward em vez da interpolação linear na taxa?",
     opcoes: [
       {
         id: "a",
+        text: "Porque é simplesmente mais fácil e rápido de calcular"
+      },
+      {
+        id: "b",
+        text: "Porque a interpolação linear não funciona com pós-fixados"
+      },
+      {
+        id: "c",
         text: "Porque preserva a multiplicatividade dos fatores (forward constante), evitando arbitragem; o erro da linear é pequeno em prazos curtos, mas sistemático e pode inverter a relação forward em curva invertida",
         correct: true
       },
       {
-        id: "b",
-        text: "Porque é mais fácil de calcular"
-      },
-      {
-        id: "c",
-        text: "Porque a linear não funciona com pós-fixados"
-      },
-      {
         id: "d",
-        text: "Porque a ANBIMA proíbe cálculo composto"
+        text: "Porque a ANBIMA proíbe o uso de cálculo composto"
       }
     ],
     feedback: "O flat-forward é coerente com a forma como os fatores se compõem no tempo; a linear é um atalho que acumula viés e, em curva invertida, distorce o sinal da forward.",

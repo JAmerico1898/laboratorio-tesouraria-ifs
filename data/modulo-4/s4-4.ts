@@ -47,15 +47,15 @@ export const s4_4: Scenario = {
         },
         {
           id: "b",
-          text: "Eliminar o risco de crédito"
+          text: "Maximizar o cupom recebido no período"
         },
         {
           id: "c",
-          text: "Maximizar o cupom"
+          text: "Zerar a exposição à inflação"
         },
         {
           id: "d",
-          text: "Zerar a inflação"
+          text: "Eliminar o risco de crédito da carteira"
         }
       ],
       feedback: "O objetivo é proteger o valor de um passivo/objetivo futuro contra variações da taxa, casando duration e valor presente entre ativos e passivos.",
@@ -68,12 +68,12 @@ export const s4_4: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "50% / 50%",
-          correct: true
+          text: "25% / 75%"
         },
         {
           id: "b",
-          text: "25% / 75%"
+          text: "50% / 50%",
+          correct: true
         },
         {
           id: "c",
@@ -94,20 +94,20 @@ export const s4_4: Scenario = {
       opcoes: [
         {
           id: "a",
+          text: "A imunização é perfeita e nada muda na carteira"
+        },
+        {
+          id: "b",
+          text: "A convexidade da carteira simplesmente desaparece"
+        },
+        {
+          id: "c",
           text: "Descasamento residual: a imunização por duration protege contra choque paralelo, não contra inclinação/curvatura",
           correct: true
         },
         {
-          id: "b",
-          text: "A imunização é perfeita e nada muda"
-        },
-        {
-          id: "c",
-          text: "A convexidade some"
-        },
-        {
           id: "d",
-          text: "O risco de crédito aumenta"
+          text: "O risco de crédito da carteira aumenta"
         }
       ],
       feedback: "Duration assume choque paralelo. Movimentos de inclinação/curvatura geram risco residual — daí o uso de medidas por fator (key-rate durations) e rebalanceamento.",
@@ -117,27 +117,76 @@ export const s4_4: Scenario = {
   encruzilhada: {
     titulo: "Qual estratégia de proteção adotar?",
     subtitulo: "Precisão × custo × robustez a choques não-paralelos.",
-    ramos: []
+    ramos: [
+      {
+        id: "A",
+        rotulo: "Barbell duration",
+        titulo: "Barbell 50/50 (zeros 1 e 5) p/ duration 3,0",
+        resumo: "Casa a duration; protege o paralelo, deixa resíduo no não-paralelo.",
+        resultado: {
+          titulo: "Casa o nível — resíduo em steepening",
+          deltas: [
+            { k: "Duration", v: "Casada (3,0)", tone: "pos" },
+            { k: "Choque paralelo", v: "Protegido", tone: "pos" },
+            { k: "Steepening", v: "Descasamento residual", tone: "neg" },
+            { k: "Convexidade", v: "Maior que bullet", tone: "pos" }
+          ],
+          analise: "<code>w×1+(1−w)×5=3 → w=0,5</code>: R$ 50 mi em zeros de 1a + R$ 50 mi em zeros de 5a. Choque paralelo +50 bps: <code>ΔPV_ativo ≈ −3,0×100mi×0,005 = −R$ 1,5 mi = ΔPV_passivo → descasamento zero ✓</code>. Choque de steepening (+30 bps em 1a, +70 bps em 5a): as pontas reagem de forma diferente → descasamento residual ≠ 0."
+        }
+      },
+      {
+        id: "B",
+        rotulo: "Cash-flow",
+        titulo: "Cash-flow matching (casar os fluxos)",
+        resumo: "Casa fluxo a fluxo; robusto a qualquer formato de curva.",
+        resultado: {
+          titulo: "Robusto — imune ao formato da curva",
+          deltas: [
+            { k: "Casamento", v: "Fluxo a fluxo", tone: "pos" },
+            { k: "Choque não-paralelo", v: "Protegido", tone: "pos" },
+            { k: "Custo", v: "Maior / menos flexível", tone: "neg" },
+            { k: "Reinvestimento", v: "Eliminado", tone: "pos" }
+          ],
+          analise: "Para casar o passivo de duration 3,0 (pagamento único em t=3), precisaria de um zero de 3 anos — não disponível aqui (só 1a e 5a). Quando o ativo existe: qualquer formato de curva (paralelo, inclinação, curvatura) é neutralizado pois cada fluxo do passivo tem ativo correspondente. Custo: engessamento e eventual escassez de papéis nos vencimentos exatos."
+        }
+      },
+      {
+        id: "C",
+        rotulo: "Key-rate",
+        titulo: "Duration + key-rate e rebalanceamento",
+        resumo: "Cobre nível e inclinação por fator; exige monitoramento.",
+        resultado: {
+          titulo: "Por fator — cobre inclinação ao custo de gestão",
+          deltas: [
+            { k: "Medida", v: "Key-rate durations", tone: "pos" },
+            { k: "Inclinação/curvatura", v: "Endereçada", tone: "pos" },
+            { k: "Rebalanceamento", v: "Necessário", tone: "neu" },
+            { k: "Custo", v: "Monitoramento contínuo", tone: "neg" }
+          ],
+          analise: "Decompõe a duration em sensibilidades por vértice: <code>KRD_1a = 0,5×1 = 0,5</code> e <code>KRD_5a = 0,5×5 = 2,5 → soma = 3,0 ✓</code>. Em steepening (+70 bps na ponta 5a): perda adicional ≈ <code>KRD_5a × 0,70% × PV = 2,5×0,007×100mi = R$ 1,75 mi</code>; rebalanceia para restaurar o casamento. Endereça o não-paralelo ao custo de monitoramento e giro contínuos."
+        }
+      }
+    ]
   },
   reflexao: {
     enunciado: "Qual a principal limitação da imunização por duration e como mitigá-la?",
     opcoes: [
       {
         id: "a",
-        text: "Ela protege contra deslocamentos paralelos; inclinação/curvatura geram descasamento residual — mitiga-se com cash-flow matching (robusto, caro) ou com medidas por fator (key-rate) e rebalanceamento",
-        correct: true
+        text: "Não tem limitação: a imunização por duration é perfeita"
       },
       {
         id: "b",
-        text: "Não tem limitação: é perfeita"
+        text: "A limitação é o risco de crédito do emissor"
       },
       {
         id: "c",
-        text: "A limitação é o risco de crédito"
+        text: "A duration captura qualquer formato de movimento da curva"
       },
       {
         id: "d",
-        text: "A duration captura qualquer formato de curva"
+        text: "Ela protege contra deslocamentos paralelos; inclinação/curvatura geram descasamento residual — mitiga-se com cash-flow matching (robusto, caro) ou com medidas por fator (key-rate) e rebalanceamento",
+        correct: true
       }
     ],
     feedback: "Casar duration é necessário, mas não suficiente: a curva se move em nível, inclinação e curvatura. Proteger só o nível deixa um resíduo que exige cash-flow matching ou gestão por fator.",

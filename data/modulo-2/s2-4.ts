@@ -47,11 +47,11 @@ export const s2_4: Scenario = {
         },
         {
           id: "b",
-          text: "≈ 6,00% a.a."
+          text: "≈ 5,90% a.a."
         },
         {
           id: "c",
-          text: "≈ 5,90% a.a."
+          text: "≈ 6,00% a.a."
         },
         {
           id: "d",
@@ -68,20 +68,20 @@ export const s2_4: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "É o breakeven: a inflação na qual pré e IPCA+ rendem o mesmo — acima dela o IPCA+ vence; abaixo, o pré vence",
-          correct: true
+          text: "É a meta de inflação definida pelo Banco Central"
         },
         {
           id: "b",
-          text: "É a meta de inflação do Banco Central"
+          text: "É a inflação garantida pela NTN-B no período"
         },
         {
           id: "c",
-          text: "É a inflação garantida pela NTN-B"
+          text: "É o cupom real pago pela NTN-B ao investidor"
         },
         {
           id: "d",
-          text: "É o cupom real da NTN-B"
+          text: "É o breakeven: a inflação na qual pré e IPCA+ rendem o mesmo — acima dela o IPCA+ vence; abaixo, o pré vence",
+          correct: true
         }
       ],
       feedback: "O breakeven é o ponto de indiferença. A decisão pré × IPCA+ vira uma <b>aposta</b> sobre a inflação realizada em relação a 5,66%.",
@@ -94,20 +94,20 @@ export const s2_4: Scenario = {
       opcoes: [
         {
           id: "a",
+          text: "O pré, sempre, por travar a taxa nominal"
+        },
+        {
+          id: "b",
           text: "IPCA+ (NTN-B): o real é preservado e o nominal supera o pré",
           correct: true
         },
         {
-          id: "b",
-          text: "O pré, sempre"
-        },
-        {
           id: "c",
-          text: "A LFT"
+          text: "A LFT, por acompanhar a Selic diária"
         },
         {
           id: "d",
-          text: "Ambos rendem igual por definição"
+          text: "Ambos rendem igual, por definição do breakeven"
         }
       ],
       feedback: "Inflação acima do breakeven faz o IPCA+ superar o pré em termos nominais — além de preservar o poder de compra.",
@@ -117,23 +117,72 @@ export const s2_4: Scenario = {
   encruzilhada: {
     titulo: "Qual indexador escolher?",
     subtitulo: "Depende da sua leitura de inflação vs. o breakeven de 5,66%.",
-    ramos: []
+    ramos: [
+      {
+        id: "A",
+        rotulo: "Pré 12%",
+        titulo: "Aplicar 100% pré a 12%",
+        resumo: "Vence se a inflação ficar abaixo de 5,66%.",
+        resultado: {
+          titulo: "Aposta em inflação baixa",
+          deltas: [
+            { k: "Indexador", v: "Pré 12%", tone: "neu" },
+            { k: "Se π < 5,66%", v: "Vence o IPCA+", tone: "pos" },
+            { k: "Se π > 5,66%", v: "Perde para o IPCA+", tone: "neg" },
+            { k: "Poder de compra", v: "Não protegido", tone: "neg" }
+          ],
+          analise: "Breakeven: <code>(1,12)/(1,06)−1 ≈ 5,66%</code>. Se π = 4,5% (&lt;5,66%): <code>real do pré = 1,12/1,045−1 ≈ 7,18%</code> vs <code>IPCA+ = 6,0%</code> — pré vence por 1,18 p.p. Se π = 7% (&gt;5,66%): <code>real do pré = 1,12/1,07−1 ≈ 4,67%</code> vs <code>IPCA+ = 6,0%</code> — pré perde por 1,33 p.p. Poder de compra não protegido se π superar 5,66%."
+        }
+      },
+      {
+        id: "B",
+        rotulo: "IPCA+ 6%",
+        titulo: "Aplicar 100% em NTN-B IPCA+6%",
+        resumo: "Vence se a inflação superar 5,66%; protege o real.",
+        resultado: {
+          titulo: "Aposta em inflação alta / proteção real",
+          deltas: [
+            { k: "Indexador", v: "IPCA + 6%", tone: "neu" },
+            { k: "Se π > 5,66%", v: "Vence o pré", tone: "pos" },
+            { k: "Poder de compra", v: "Protegido", tone: "pos" },
+            { k: "Se π < 5,66%", v: "Rende menos que o pré", tone: "neg" }
+          ],
+          analise: "Qualquer π: entrega <code>real = 6,0%</code>. Nominal = <code>(1,06)(1+π)−1</code>. Se π = 7%: <code>nominal = 1,06×1,07−1 = 13,42%</code> vs pré 12% → vantagem de +1,42 p.p. Se π = 4% (&lt;5,66%): <code>nominal = 1,06×1,04−1 = 10,24%</code> vs pré 12% → desvantagem de −1,76 p.p. Ponto de indiferença = breakeven de 5,66%."
+        }
+      },
+      {
+        id: "C",
+        rotulo: "Barbell",
+        titulo: "Metade pré, metade IPCA+",
+        resumo: "Reparte a aposta de inflação; não maximiza nenhum cenário.",
+        resultado: {
+          titulo: "Diversificado — não aposta tudo",
+          deltas: [
+            { k: "Composição", v: "50% pré / 50% IPCA+", tone: "pos" },
+            { k: "Erro de leitura", v: "Reduzido", tone: "pos" },
+            { k: "Retorno máximo", v: "Abdicado", tone: "neu" },
+            { k: "Proteção real", v: "Parcial", tone: "neu" }
+          ],
+          analise: "Carrego esperado com π = 5%: <code>50%×12% + 50%×[(1,06)(1,05)−1] = 50%×12% + 50%×11,3% = 11,65%</code>. Se π = 3%: <code>50%×12% + 50%×9,18% = 10,59%</code> (vs 12% puro pré). Se π = 8%: <code>50%×12% + 50%×14,48% = 13,24%</code> (vs 14,48% puro IPCA+). Reduz o erro de leitura pela metade ao custo de não maximizar o retorno."
+        }
+      }
+    ]
   },
   reflexao: {
     enunciado: "Qual o papel da inflação implícita (breakeven) na decisão pré × IPCA+?",
     opcoes: [
       {
         id: "a",
-        text: "É o ponto de indiferença entre os dois: a escolha vira uma aposta sobre a inflação realizada vs. o breakeven, e o barbell é a forma de não apostar tudo numa única leitura",
-        correct: true
+        text: "O breakeven garante o retorno nominal do IPCA+"
       },
       {
         id: "b",
-        text: "O breakeven garante o retorno do IPCA+"
+        text: "Abaixo do breakeven o IPCA+ sempre vence o pré"
       },
       {
         id: "c",
-        text: "Abaixo do breakeven o IPCA+ sempre vence"
+        text: "É o ponto de indiferença entre os dois: a escolha vira uma aposta sobre a inflação realizada vs. o breakeven, e o barbell é a forma de não apostar tudo numa única leitura",
+        correct: true
       },
       {
         id: "d",

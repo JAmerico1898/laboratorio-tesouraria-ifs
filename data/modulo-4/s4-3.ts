@@ -46,12 +46,12 @@ export const s4_3: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "≈ −R$ 20,29",
-          correct: true
+          text: "≈ −R$ 20,58"
         },
         {
           id: "b",
-          text: "≈ −R$ 20,58"
+          text: "≈ −R$ 20,29",
+          correct: true
         },
         {
           id: "c",
@@ -72,20 +72,20 @@ export const s4_3: Scenario = {
       opcoes: [
         {
           id: "a",
+          text: "É apenas um erro de cálculo na conta"
+        },
+        {
+          id: "b",
+          text: "É efeito da diferença de cupom entre os papéis"
+        },
+        {
+          id: "c",
           text: "Convexidade positiva: o termo ½·C·Δy² é sempre positivo — soma ao ganho e abate a perda",
           correct: true
         },
         {
-          id: "b",
-          text: "Erro de cálculo"
-        },
-        {
-          id: "c",
-          text: "Diferença de cupom"
-        },
-        {
           id: "d",
-          text: "Efeito da inflação"
+          text: "É efeito da inflação sobre os fluxos"
         }
       ],
       feedback: "Como <code>Δy²</code> é positivo nos dois sentidos, o termo de convexidade amplia o ganho na queda e reduz a perda na alta — a assimetria favorável da convexidade positiva.",
@@ -103,15 +103,15 @@ export const s4_3: Scenario = {
         },
         {
           id: "b",
-          text: "Reduz o cupom"
+          text: "Porque a convexidade elimina o risco de crédito"
         },
         {
           id: "c",
-          text: "Elimina o risco de crédito"
+          text: "Porque a convexidade diminui a duration"
         },
         {
           id: "d",
-          text: "Diminui a duration"
+          text: "Porque a convexidade reduz o cupom pago"
         }
       ],
       feedback: "A convexidade é uma assimetria a favor do detentor. Funciona como um “seguro” contra grandes movimentos — mas, como todo seguro, tem um custo (prêmio embutido no preço).",
@@ -121,27 +121,77 @@ export const s4_3: Scenario = {
   encruzilhada: {
     titulo: "Pagar pela convexidade?",
     subtitulo: "Convexidade é seguro: vale pelo cenário de volatilidade.",
-    ramos: []
+    ramos: [
+      {
+        id: "A",
+        rotulo: "Convexo (C=24)",
+        titulo: "Comprar o título mais convexo (C=24)",
+        resumo: "Paga o prêmio; assimetria favorável sob alta vol.",
+        resultado: {
+          titulo: "Seguro contratado — bom sob alta vol",
+          deltas: [
+            { k: "Convexidade", v: "24 (alta)", tone: "pos" },
+            { k: "Sob alta vol", v: "Ganha mais / perde menos", tone: "pos" },
+            { k: "Prêmio pago", v: "Ligeiro (mais caro)", tone: "neg" },
+            { k: "Se mercado de lado", v: "Prêmio vira custo", tone: "neg" }
+          ],
+          analise: "<code>ΔP = (−4,2×Δy + ½×24×Δy²)×980</code>. Em +100 bps: <code>(−0,042+0,0012)×980 = −R$ 39,98</code>. Em −100 bps: <code>(+0,042+0,0012)×980 = +R$ 42,34</code>. Assimetria favorável: <code>42,34−39,98 = R$ 2,36/PU</code> por 1% de choque bilateral — o valor do seguro comprado ao pagar o prêmio de convexidade."
+        }
+      },
+      {
+        id: "B",
+        rotulo: "Pouco convexo (C=12)",
+        titulo: "Comprar o título menos convexo (C=12)",
+        resumo: "Economiza o prêmio; melhor em mercado de lado.",
+        resultado: {
+          titulo: "Sem seguro — melhor em mercado calmo",
+          deltas: [
+            { k: "Convexidade", v: "12 (baixa)", tone: "neu" },
+            { k: "Preço", v: "Mais barato", tone: "pos" },
+            { k: "Se mercado de lado", v: "Não desperdiça prêmio", tone: "pos" },
+            { k: "Sob alta vol", v: "Assimetria menor", tone: "neg" }
+          ],
+          analise: "<code>ΔP = (−4,2×Δy + ½×12×Δy²)×980</code>. Em +100 bps: <code>(−0,042+0,0006)×980 = −R$ 40,37</code>. Em −100 bps: <code>(+0,042+0,0006)×980 = +R$ 41,15</code>. Assimetria: <code>41,15−40,37 = R$ 0,78/PU</code> — vs R$ 2,36 do C=24. Economiza o prêmio ao custo de R$ 1,58/PU a menos de seguro por 1% de choque bilateral."
+        }
+      },
+      {
+        id: "C",
+        rotulo: "Só pelo carrego",
+        titulo: "Decidir só pelo carrego/preço, ignorando a vol",
+        resumo: "Escolhe pelo número de hoje; ignora a expectativa de vol.",
+        resultado: {
+          titulo: "Processo incompleto — decisão cega à vol",
+          deltas: [
+            { k: "Critério", v: "Só carrego/preço", tone: "neg" },
+            { k: "Expectativa de vol", v: "Ignorada", tone: "neg" },
+            { k: "Risco", v: "Pagar/abrir mão na hora errada", tone: "neg" },
+            { k: "Convexidade", v: "Tratada como detalhe", tone: "neg" }
+          ],
+          analise: "PU similar (≈R$ 980) e mesma Dmod (4,2): quem olha só o carrego trata os papéis como idênticos. A diferença de convexidade vale: <code>R$ 2,36−R$ 0,78 = R$ 1,58/PU por 1% de choque bilateral</code>. Em um book de R$ 100 mi (≈102.000 títulos): <code>R$ 1,58×102.000 ≈ R$ 161.000</code> por 1% de movimento — custo implícito de ignorar a convexidade.",
+          risco: true
+        }
+      }
+    ]
   },
   reflexao: {
     enunciado: "Como pensar a convexidade numa decisão de carteira?",
     opcoes: [
       {
         id: "a",
+        text: "Convexidade é sempre melhor; pague o prêmio em qualquer caso"
+      },
+      {
+        id: "b",
         text: "Convexidade é um “seguro” contra grandes movimentos: vale o prêmio quando se espera alta vol (ganha mais na queda, perde menos na alta), mas num mercado de lado o prêmio vira custo morto — a decisão depende da expectativa de vol, não só da duration",
         correct: true
       },
       {
-        id: "b",
-        text: "Convexidade é sempre melhor; pague o prêmio"
-      },
-      {
         id: "c",
-        text: "Convexidade é irrelevante para a decisão"
+        text: "Convexidade é irrelevante para a decisão de carteira"
       },
       {
         id: "d",
-        text: "Convexidade reduz o risco de crédito"
+        text: "Convexidade serve para reduzir o risco de crédito"
       }
     ],
     feedback: "Duas carteiras de mesma duration não são iguais: a convexidade é o fator que as separa diante de choques. Comprá-la é uma decisão sobre volatilidade futura.",

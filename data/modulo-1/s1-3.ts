@@ -29,14 +29,14 @@ export const s1_3: Scenario = {
       enunciado:
         "A taxa cobrada do cliente decompõe-se em quais blocos, do funding ao preço final?",
       opcoes: [
+        { id: "a", text: "Apenas funding interno mais a margem comercial do banco" },
+        { id: "b", text: "Apenas o prêmio de crédito do rating do cliente" },
+        { id: "c", text: "Apenas a inflação esperada para o período do crédito" },
         {
-          id: "a",
+          id: "d",
           text: "Funding interno + prêmio de crédito + prêmio de liquidez + margem comercial",
           correct: true,
         },
-        { id: "b", text: "Apenas funding interno + margem comercial" },
-        { id: "c", text: "Apenas o prêmio de crédito" },
-        { id: "d", text: "Apenas a inflação esperada" },
       ],
       feedback:
         "A taxa observada agrega o <b>custo de captação</b> mais os prêmios por <b>crédito</b>, <b>liquidez</b> e <b>prazo</b>, e a <b>margem comercial</b>. Omitir blocos subprecifica o risco.",
@@ -47,14 +47,14 @@ export const s1_3: Scenario = {
       titulo: "Etapa 2 — Por que o prêmio de liquidez",
       enunciado: "Por que um papel <b>não-negociável</b> exige um prêmio de liquidez adicional?",
       opcoes: [
+        { id: "a", text: "Porque o papel passa automaticamente a ter maior risco de crédito" },
+        { id: "b", text: "Porque a inflação esperada é maior nesses papéis ilíquidos" },
         {
-          id: "a",
+          id: "c",
           text: "Porque o banco não conseguirá vendê-lo facilmente e precisa ser compensado por carregar o ativo ilíquido",
           correct: true,
         },
-        { id: "b", text: "Porque automaticamente tem maior risco de crédito" },
-        { id: "c", text: "Porque a inflação esperada é maior nesses papéis" },
-        { id: "d", text: "Não exige: liquidez não afeta o preço" },
+        { id: "d", text: "Não exige: a liquidez não afeta o preço do crédito" },
       ],
       feedback:
         "Mantidos crédito e prazo, o que sobra é o <b>fator liquidez</b>: o investidor/banco exige spread extra para carregar um papel difícil de negociar. É o mesmo princípio do prêmio de liquidez de mercado.",
@@ -94,7 +94,7 @@ export const s1_3: Scenario = {
             { k: "Risco", v: "Perder o cliente", tone: "neg" },
           ],
           analise:
-            "Protege o banco e remunera todos os riscos. O custo é comercial: o cliente pode buscar um concorrente mais agressivo.",
+            "<code>11,0% + 2,5% + 0,5% + 1,8% = 15,8% a.a.</code> Cobre todos os blocos: crédito BB (2,5%), iliquidez de papel não-negociável (0,5%) e margem adequada (1,8%). Qualquer piora do rating BB caberia dentro do prêmio de crédito. Risco: cliente encontra concorrente disposto a sacrificar os 2,3 p.p. de prêmio.",
         },
       },
       {
@@ -111,7 +111,7 @@ export const s1_3: Scenario = {
             { k: "Risco", v: "Rating BB pode piorar", tone: "neg" },
           ],
           analise:
-            "Ganha o negócio ao custo de margem comprimida. Aceitável se houver <b>monitoramento ativo do rating</b> e relação de longo prazo.",
+            "<code>11,0% + 1,5% + 0% + 1,0% = 13,5% a.a.</code> Crédito comprimido de 2,5% → 1,5% (−1 p.p.) e liquidez zerada (−0,5 p.p.); margem cai de 1,8% → 1,0% (−0,8 p.p.). Buffer restante: apenas 1,0% de margem para absorver qualquer deterioração do rating BB ao longo dos 6 meses.",
         },
       },
       {
@@ -128,7 +128,7 @@ export const s1_3: Scenario = {
             { k: "Risco residual", v: "Papel ilíquido no balanço", tone: "neg" },
           ],
           analise:
-            "Erro recorrente: o preço parece intermediário, mas <b>não remunera a iliquidez</b>. O banco carrega um papel não-negociável sem ser pago por isso — subprecificação de risco.",
+            "<code>11,0% + 2,5% + 0% + 1,0% = 14,5% a.a.</code> Parece intermediário, mas o prêmio de liquidez (0,5%) está ausente: o banco carrega o papel no balanço por 6 meses sem ser compensado pela iliquidez. Vs conservador: <code>15,8% − 14,5% = 1,3 p.p.</code> faltante — sendo 0,5 p.p. de risco não remunerado e 0,8 p.p. de margem sacrificada.",
           risco: true,
         },
       },
@@ -137,14 +137,14 @@ export const s1_3: Scenario = {
   reflexao: {
     enunciado: "Qual o erro mais comum e perigoso na precificação de crédito corporativo?",
     opcoes: [
+      { id: "a", text: "Cobrar prêmio de crédito em excesso, encarecendo a operação" },
+      { id: "b", text: "Usar o funding interno como referência de preço" },
+      { id: "c", text: "Somar os spreads em vez de compô-los multiplicativamente" },
       {
-        id: "a",
+        id: "d",
         text: "Subprecificar o prêmio de liquidez de um papel não-negociável: a taxa parece competitiva, mas não remunera o risco de carregar o ativo ilíquido",
         correct: true,
       },
-      { id: "b", text: "Cobrar prêmio de crédito em excesso" },
-      { id: "c", text: "Usar o funding interno como referência" },
-      { id: "d", text: "Somar os spreads em vez de compô-los" },
     ],
     feedback:
       "Crédito costuma ser olhado; <b>liquidez é o bloco esquecido</b>. Ignorá-lo num papel que ficará no balanço gera carteira mal remunerada — exatamente o caminho C.",

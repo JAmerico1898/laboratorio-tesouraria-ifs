@@ -47,11 +47,11 @@ export const s4_2: Scenario = {
         },
         {
           id: "b",
-          text: "R$ 3.800/bp"
+          text: "R$ 380.000/bp"
         },
         {
           id: "c",
-          text: "R$ 380.000/bp"
+          text: "R$ 3.800/bp"
         },
         {
           id: "d",
@@ -68,20 +68,20 @@ export const s4_2: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "≈ R$ 13.000/bp (de 38 para 25 → Dmod de 3,8 para ~2,5)",
-          correct: true
-        },
-        {
-          id: "b",
           text: "R$ 25.000/bp"
         },
         {
-          id: "c",
+          id: "b",
           text: "R$ 38.000/bp"
         },
         {
-          id: "d",
+          id: "c",
           text: "R$ 63.000/bp"
+        },
+        {
+          id: "d",
+          text: "≈ R$ 13.000/bp (de 38 para 25 → Dmod de 3,8 para ~2,5)",
+          correct: true
         }
       ],
       feedback: "<code>38.000 − 25.000 = R$ 13.000/bp</code>. Equivale a baixar a Dmod para <code>25.000 / (100mm × 0,0001) = 2,5</code> — reduzir cerca de 34% do risco de taxa.",
@@ -94,20 +94,20 @@ export const s4_2: Scenario = {
       opcoes: [
         {
           id: "a",
+          text: "Porque a LFT paga um cupom maior que o pré"
+        },
+        {
+          id: "b",
           text: "A LFT é pós-Selic, com duration de taxa pré ~zero (marcação estável) — não contribui para o DV01 da curva pré",
           correct: true
         },
         {
-          id: "b",
-          text: "Porque a LFT tem cupom maior"
-        },
-        {
           id: "c",
-          text: "Porque a LFT tem mais convexidade"
+          text: "Porque a LFT tem mais convexidade que o pré"
         },
         {
           id: "d",
-          text: "Porque a LFT elimina o risco de crédito"
+          text: "Porque a LFT elimina o risco de crédito do book"
         }
       ],
       feedback: "Como o VNA da LFT acompanha a Selic, sua sensibilidade à curva pré é mínima. Substituir pré por LFT corta o DV01 de forma estrutural (no balanço), não apenas via derivativo.",
@@ -117,23 +117,73 @@ export const s4_2: Scenario = {
   encruzilhada: {
     titulo: "Como enquadrar o book no limite?",
     subtitulo: "Reduzir risco no balanço, via derivativo, ou não agir.",
-    ramos: []
+    ramos: [
+      {
+        id: "A",
+        rotulo: "LFT no balanço",
+        titulo: "Trocar pré por LFT (reduzir no balanço)",
+        resumo: "Corta o DV01 de forma estrutural; baixa a Dmod.",
+        resultado: {
+          titulo: "Corte estrutural do DV01",
+          deltas: [
+            { k: "Ação", v: "Pré → LFT", tone: "neu" },
+            { k: "DV01", v: "Reduzido p/ ≤ 25 mil", tone: "pos" },
+            { k: "Dmod", v: "3,8 → ~2,5", tone: "pos" },
+            { k: "Custo", v: "Realiza marcação / gira book", tone: "neg" }
+          ],
+          analise: "DV01 atual: <code>3,8×100mi×0,0001 = R$ 38.000/bp</code>. Dmod alvo: <code>25.000/(100mi×0,0001) = 2,5</code>. Fração a substituir: <code>(3,8−2,5)/3,8 ≈ 34%</code> do book pré → LFT (Dmod pré ≈ 0). Novo DV01: <code>2,5×100mi×0,0001 = R$ 25.000/bp ✓</code>. Corte estrutural no balanço; custo = girar ~R$ 34 mi e eventualmente realizar marcação."
+        }
+      },
+      {
+        id: "B",
+        rotulo: "DI futuro",
+        titulo: "Hedgear via DI futuro (overlay)",
+        resumo: "Corta o DV01 sem vender os papéis; mantém o book.",
+        resultado: {
+          titulo: "Overlay — hedge sem girar o book",
+          deltas: [
+            { k: "Ação", v: "Vender DI futuro", tone: "neu" },
+            { k: "DV01", v: "Reduzido p/ ≤ 25 mil", tone: "pos" },
+            { k: "Papéis do book", v: "Mantidos", tone: "pos" },
+            { k: "Custo", v: "Margem / ajuste diário", tone: "neg" }
+          ],
+          analise: "Vender DI futuro com DV01 de <code>R$ 13.000/bp</code> (= R$ 38.000 − R$ 25.000). DV01 resultante: <code>R$ 38.000 − R$ 13.000 = R$ 25.000/bp ✓</code>. Sem girar os papéis do book; o ajuste é rápido e reversível. Custo: margem de garantia + ajuste diário do futuro. Adequado se a alta de vol for temporária."
+        }
+      },
+      {
+        id: "C",
+        rotulo: "Não agir",
+        titulo: "Não agir — esperar a vol passar",
+        resumo: "Mantém DV01 acima do limite; aposta na calmaria.",
+        resultado: {
+          titulo: "Acima do limite — risco descoberto",
+          deltas: [
+            { k: "DV01", v: "R$ 38 mil (> limite)", tone: "neg" },
+            { k: "Enquadramento", v: "Estourado", tone: "neg" },
+            { k: "Se a vol subir", v: "Perda além do apetite", tone: "neg" },
+            { k: "Governança", v: "Limite violado", tone: "neg" }
+          ],
+          analise: "DV01 permanece em R$ 38.000/bp — <code>R$ 13.000/bp acima do limite</code>. Para choque de +100 bps: perda = <code>R$ 38.000 × 100 = R$ 3,8 mi</code> vs máximo autorizado de <code>R$ 25.000 × 100 = R$ 2,5 mi</code>. Excesso: <code>R$ 1,3 mi por 100 bps</code> de choque — fora do mandato, passível de acionamento imediato do comitê de risco.",
+          risco: true
+        }
+      }
+    ]
   },
   reflexao: {
     enunciado: "O que o DV01 e seu limite representam na gestão do book?",
     opcoes: [
       {
         id: "a",
-        text: "DV01 é a métrica linear de risco de taxa (perda/ganho por bp); o limite é disciplina obrigatória — ao estourá-lo, reduz-se duration (LFT/venda de longos) ou hedgeia-se (DI futuro), nunca se ignora",
-        correct: true
+        text: "O limite de DV01 é apenas uma sugestão flexível"
       },
       {
         id: "b",
-        text: "O limite é uma sugestão flexível"
+        text: "DV01 mede o risco de crédito do book"
       },
       {
         id: "c",
-        text: "DV01 mede risco de crédito"
+        text: "DV01 é a métrica linear de risco de taxa (perda/ganho por bp); o limite é disciplina obrigatória — ao estourá-lo, reduz-se duration (LFT/venda de longos) ou hedgeia-se (DI futuro), nunca se ignora",
+        correct: true
       },
       {
         id: "d",

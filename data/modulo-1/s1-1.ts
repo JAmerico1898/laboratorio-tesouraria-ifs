@@ -44,10 +44,10 @@ export const s1_1: Scenario = {
       enunciado:
         "Um cliente institucional só aceita aplicar a <b>101% do CDI</b>. Quanto custa <i>a mais</i>, por dia, aceitar 101% em vez de 100%?",
       opcoes: [
-        { id: "a", text: "≈ R$ 1.016/dia", correct: true },
-        { id: "b", text: "≈ R$ 101.600/dia" },
-        { id: "c", text: "≈ R$ 10.160/dia" },
-        { id: "d", text: "≈ R$ 2.032/dia" },
+        { id: "a", text: "≈ R$ 101.600/dia" },
+        { id: "b", text: "≈ R$ 10.160/dia" },
+        { id: "c", text: "≈ R$ 2.032/dia" },
+        { id: "d", text: "≈ R$ 1.016/dia", correct: true },
       ],
       feedback:
         'O 1% adicional incide sobre o custo-base: <code>1% × R$ 101.600 = R$ 1.016/dia</code> por R$ 200 mi. É um prêmio pequeno em termos absolutos — daí ser uma decisão de <b>conveniência/relacionamento</b>, não de cálculo.',
@@ -61,37 +61,43 @@ export const s1_1: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "O haircut consome o desconto aparente e o lastro pré (LTN) sofre marcação se a curva abrir — funding instável nas rolagens",
+          text: "Haircut: os 0,2% de sobrecolateral já anulam todo o desconto da taxa",
+        },
+        {
+          id: "b",
+          text: "Crédito: o risco é de calote do emissor do lastro (Tesouro Nacional)",
+        },
+        {
+          id: "c",
+          text: "Marcação: se a curva pré abrir, a LTN desvaloriza e a rolagem encarece — o haircut é de 2ª ordem",
           correct: true,
         },
-        { id: "b", text: "Não há risco: 99,8% do CDI é sempre melhor que 100%" },
-        { id: "c", text: "O risco é de crédito do emissor do lastro (Tesouro Nacional)" },
-        { id: "d", text: "O risco é exclusivamente cambial" },
+        { id: "d", text: "Nenhum: 99,8% do CDI é sempre melhor que captar a 100%" },
       ],
       feedback:
-        'A taxa de face (99,8% CDI) ignora dois efeitos: o <b>haircut</b> de 0,2% sobre o funding e o <b>risco de marcação</b> da LTN (prefixada) — se a curva pré abrir, o lastro desvaloriza e a rolagem fica cara/instável. Risco soberano de LTN é desprezível; o problema é de <b>marcação</b>, não de crédito. Trocar o lastro por <b>LFT</b> (pós-Selic) removeria a marcação.',
+        'A taxa de 99,8% do CDI esconde dois efeitos. O <b>haircut</b> — você sobrecolateraliza em LTN, imobilizando garantia — mas, a 0,2%, isso quase não corrói o desconto da taxa (efeito de <b>segunda ordem</b>). O que importa é o <b>risco de marcação</b> da LTN (prefixada): se a curva pré abrir, o lastro desvaloriza e a rolagem fica cara e instável. O risco de crédito do Tesouro é desprezível — o problema é de <b>marcação, não de crédito</b>. Trocar o lastro por <b>LFT</b> (pós-Selic) removeria a marcação.',
       pontos: 20,
     },
   ],
   encruzilhada: {
     titulo: "Escolha sua decisão de funding",
-    subtitulo: "Cada caminho leva a um resultado diferente. Avalie custo × risco de rolagem.",
+    subtitulo: "Cada caminho leva a um resultado diferente. Avalie custo marginal × estabilidade do lastro.",
     ramos: [
       {
         id: "A",
         rotulo: "Interbancário 100%",
         titulo: "Captar 100% CDI no interbancário",
-        resumo: "Custo mínimo do dia; spread preservado. Depende de disponibilidade de contraparte.",
+        resumo: "Custo limpo do dia, sem lastro a gerir. Depende de disponibilidade de contraparte.",
         resultado: {
-          titulo: "Custo mínimo, risco mínimo",
+          titulo: "Simples e sem marcação",
           deltas: [
             { k: "Custo do dia", v: "R$ 101.600", tone: "neu" },
-            { k: "Δ vs base", v: "R$ 0", tone: "pos" },
+            { k: "Δ vs LTN", v: "+R$ 203/dia", tone: "neu" },
             { k: "Risco de marcação", v: "Nenhum (pós)", tone: "pos" },
             { k: "Risco residual", v: "Execução/contraparte", tone: "neu" },
           ],
           analise:
-            "Melhor prática para caixa tático: pós-fixado casa o prazo (1 du × 1 du), preserva o spread e não expõe a curva. Único cuidado: garantir liquidez de contraparte no interbancário.",
+            "Custo: <code>200.000.000 × 0,000508 = R$ 101.600/dia</code>. Comparado com a compromissada LTN (99,8%): <code>200.000.000 × 0,000508 × (1−0,998) = +R$ 203/dia a mais</code>. Sem colateral a marcar, sem risco de lastro pré. Não é a mais barata, mas é a mais simples — adequado quando a disponibilidade de contraparte interbancária está garantida.",
         },
       },
       {
@@ -108,44 +114,52 @@ export const s1_1: Scenario = {
             { k: "Risco de marcação", v: "Nenhum (pós)", tone: "pos" },
           ],
           analise:
-            "Aceitável quando a relação comercial com o institucional vale o prêmio de ~R$ 1.016/dia. Decisão de relacionamento, não de erro técnico.",
+            "Custo: <code>200.000.000 × 0,000508 × 1,01 = R$ 102.616/dia</code> — delta de <code>R$ 1.016/dia</code> vs 100% CDI (= 1% × R$ 101.600). Em R$ 200 mi, R$ 1.016/dia é residual frente ao valor do relacionamento. Decisão de conveniência comercial, não de cálculo de custo.",
         },
       },
       {
         id: "C",
         rotulo: "Compromissada LTN",
         titulo: "Compromissada lastreada em LTN (99,8%, assume haircut)",
-        resumo: "Taxa de face baixa; expõe a haircut + marcação do lastro pré.",
+        resumo: "A mais barata de face; introduz o lastro pré (marcação/rolagem) a observar.",
         resultado: {
-          titulo: "Custo baixo de face, risco escondido",
+          titulo: "A mais barata; lastro pré a observar",
           deltas: [
             { k: "Taxa de face", v: "99,8% CDI", tone: "pos" },
-            { k: "Haircut", v: "−0,2% do funding", tone: "neg" },
-            { k: "Lastro", v: "LTN (pré)", tone: "neg" },
-            { k: "Risco residual", v: "Alto — marcação/rolagem", tone: "neg" },
+            { k: "Custo do dia", v: "≈ R$ 101.397", tone: "pos" },
+            { k: "Haircut", v: "2ª ordem", tone: "neu" },
+            { k: "Lastro", v: "LTN — marcação/rolagem", tone: "neg" },
           ],
           analise:
-            "Armadilha clássica de olhar só a taxa de face: o haircut anula o desconto e a marcação da LTN torna a rolagem instável se a curva abrir. Se quisesse compromissada, o correto seria lastro em <b>LFT</b> (pós), eliminando a marcação.",
-          risco: true,
+            "Custo: <code>200.000.000 × 0,000508 × 0,998 ≈ R$ 101.397/dia</code> — economia de <code>R$ 203/dia</code> vs 100% CDI. Haircut 0,2%: imobiliza colateral extra em LTN, mas o desconto da taxa já absorve o custo (efeito de 2ª ordem). Risco principal: marcação do lastro pré — se a curva pré abrir, o colateral LTN desvaloriza e a rolagem fica instável. Lastrear em <b>LFT</b> mantém o desconto sem esse risco.",
         },
       },
     ],
   },
   reflexao: {
     enunciado:
-      "Para um caixa <b>puramente tático overnight</b>, qual é a melhor prática de funding e por quê?",
+      "Para um caixa <b>puramente tático overnight</b>, qual leitura de custo × risco do funding é a correta?",
     opcoes: [
       {
         id: "a",
-        text: "Captar pós-fixado (100% CDI, ou compromissada com lastro em LFT): minimiza custo e elimina risco de marcação no overnight",
+        text: "O interbancário a 100% é sempre o mais barato; a compromissada em LTN é uma armadilha que sai mais cara",
+      },
+      {
+        id: "b",
+        text: "A compromissada em LTN (99,8%) é a mais barata — o haircut é de 2ª ordem; o risco real é a marcação do lastro pré, desprezível em 1 du e crítica na rolagem. Lastro em LFT preserva o desconto sem marcar",
         correct: true,
       },
-      { id: "b", text: "Aceitar sempre 101% CDI, pela conveniência de garantir volume" },
-      { id: "c", text: "Usar sempre compromissada com LTN, por ter a menor taxa de face" },
-      { id: "d", text: "Tanto faz: operações overnight não carregam risco relevante" },
+      {
+        id: "c",
+        text: "A compromissada em LTN é mais barata e, por ser overnight, não há nenhum risco de lastro a considerar",
+      },
+      {
+        id: "d",
+        text: "Tanto faz: no overnight não há diferença de custo nem risco relevante entre as captações",
+      },
     ],
     feedback:
-      'No tático, o pós-fixado casa prazo e remoção de marcação; a taxa de face mais baixa (compromissada LTN) esconde haircut e risco de curva. O prêmio de 101% só se justifica por relacionamento. "Overnight sem risco" é falso quando há descasamento de lastro.',
+      'No tático de 1 du, o desconto de 0,2% da compromissada em LTN sobrevive ao haircut (efeito de <b>2ª ordem</b>). O que pesa é a <b>marcação</b> do lastro pré: irrelevante para 1 dia, mas instável na rolagem. Trocar o lastro por <b>LFT</b> entrega o mesmo desconto sem risco de marcação.',
     pontos: 25,
   },
   pontuacaoMax: 85,

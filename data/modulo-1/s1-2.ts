@@ -24,9 +24,9 @@ export const s1_2: Scenario = {
       enunciado:
         "Como referência, qual o rendimento esperado de aplicar 100% do CDI por 21 du <b>se a Selic não mudar</b> (10,40% a.a., DU/252)?",
       opcoes: [
-        { id: "a", text: "≈ 0,828% no período", correct: true },
-        { id: "b", text: "≈ 0,867% no período" },
-        { id: "c", text: "≈ 10,40% no período" },
+        { id: "a", text: "≈ 0,867% no período" },
+        { id: "b", text: "≈ 10,40% no período" },
+        { id: "c", text: "≈ 0,828% no período", correct: true },
         { id: "d", text: "≈ 0,433% no período" },
       ],
       feedback:
@@ -41,12 +41,12 @@ export const s1_2: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "Um descasamento de prazos (gap): uma aposta direcional em juros, com risco de marcação/rolagem",
+          text: "Um descasamento de prazos (gap): aposta direcional em juros, com risco de marcação/rolagem",
           correct: true,
         },
-        { id: "b", text: "Elimina o risco, pois trava a taxa" },
-        { id: "c", text: "Um risco de crédito do emissor" },
-        { id: "d", text: "Um risco cambial" },
+        { id: "b", text: "Eliminação de risco: trava a taxa e remove a exposição à Selic" },
+        { id: "c", text: "Um risco de crédito do emissor do título aplicado" },
+        { id: "d", text: "Um risco cambial sobre o fluxo aplicado" },
       ],
       feedback:
         "Ativo mais longo que o funding = <b>gap</b>. Você passa a depender da direção da Selic: trava taxa hoje, mas fica exposto a marcação adversa e ao custo de rolar o caixa. É decisão que exige <b>limite de risco</b>.",
@@ -56,12 +56,12 @@ export const s1_2: Scenario = {
       id: "etapa-3",
       titulo: "Etapa 3 — Efeito na marcação",
       enunciado:
-        "Você aplicou <b>pré 21 du a 10,60%</b> e, no dia seguinte, a taxa de mercado desse vértice <b>sobe</b> para 11,60%. Efeito imediato na marcação a mercado da posição?",
+        "Você aplicou <b>pré 21 du a 10,60%</b> e, no dia seguinte, a taxa de mercado desse vértice <b>sobe</b> para 11,60%. Qual o efeito imediato na marcação a mercado da posição?",
       opcoes: [
-        { id: "a", text: "Perda de marcação: o PU cai quando a taxa exigida sobe", correct: true },
-        { id: "b", text: "Ganho de marcação" },
-        { id: "c", text: "Neutro: por ser pré, não marca a mercado" },
-        { id: "d", text: "Depende apenas do CDI do dia" },
+        { id: "a", text: "Ganho de marcação: o PU sobe quando a taxa exigida sobe" },
+        { id: "b", text: "Neutro: por ser pré, não marca a mercado" },
+        { id: "c", text: "Depende apenas do CDI do dia, não da curva pré" },
+        { id: "d", text: "Perda de marcação: o PU cai quando a taxa exigida sobe", correct: true },
       ],
       feedback:
         "Em renda fixa prefixada, <b>preço e taxa andam em sentidos opostos</b>: subir a taxa exigida derruba o PU. É exatamente o risco de marcação que o gap introduz — invisível em quem só olha o carrego.",
@@ -86,7 +86,7 @@ export const s1_2: Scenario = {
             { k: "Se Selic subir", v: "Marcação adversa", tone: "neg" },
           ],
           analise:
-            "Maximiza o ganho se o corte se confirmar, mas é assimétrico: aposta direcional que só compensa com leitura de cenário acertada e <b>limite de DV01</b> respeitado.",
+            "Carrego nos 21 du: <code>(1,1050)^(21/252)−1 ≈ 0,836%</code> vs <code>0,828%</code> do CDI puro (+0,8 bps). Se a curva pré recuar 50 bps após a compra, ganho de marcação ≈ <code>Dmod × PV × 0,005</code> — supera amplamente a diferença de carrego. Se a Selic surpreender para cima, perda equivalente. Aposta assimétrica: compensa apenas com leitura acertada e limite de DV01 respeitado.",
         },
       },
       {
@@ -103,7 +103,7 @@ export const s1_2: Scenario = {
             { k: "Risco de marcação", v: "Mínimo", tone: "pos" },
           ],
           analise:
-            "Escolha disciplinada quando não há convicção de cenário (Copom dividido). Acompanha a Selic seja qual for a direção.",
+            "Carrego: <code>(1,1040)^(21/252)−1 ≈ 0,828%</code> no período — referência do CDI. Zero gap: prazo do ativo = prazo do passivo (21 du × 21 du); sem exposição à marcação da curva pré. Não captura o prêmio de carrego do pré (0,836%), mas elimina o risco de marcação adversa se o Copom subir.",
         },
       },
       {
@@ -120,7 +120,7 @@ export const s1_2: Scenario = {
             { k: "Risco residual", v: "Liquidez", tone: "neg" },
           ],
           analise:
-            "Boa expressão de visão de alta, com spread extra. O preço é o <b>risco de liquidez</b> do prazo maior exigido pelo cliente.",
+            "Carrego: <code>102% × CDI ≈ 0,828% × 1,02 ≈ 0,845%</code> no período — melhor carrego absoluto dos três. Se Selic subir, acompanha + spread de 2%. Contrapartida: o prazo maior do cliente (> 21 du) cria um gap de liquidez — se o caixa for necessário antes do vencimento, saída a mercado com custo de deságio.",
         },
       },
     ],
@@ -129,14 +129,14 @@ export const s1_2: Scenario = {
     enunciado:
       "Qual frase melhor descreve a natureza de uma decisão pré × pós com descasamento de prazo?",
     opcoes: [
+      { id: "a", text: "Pré é sempre superior porque trava a taxa antecipadamente" },
+      { id: "b", text: "Pós elimina todo o risco da tesouraria, em qualquer cenário" },
       {
-        id: "a",
-        text: 'É uma aposta direcional em juros que exige limite de risco e disciplina de stop — não existe escolha "certa" sem uma visão de cenário',
+        id: "c",
+        text: 'É uma aposta direcional em juros que exige limite de risco e disciplina de stop — não existe escolha "certa" sem visão de cenário',
         correct: true,
       },
-      { id: "b", text: "Pré é sempre superior porque trava a taxa" },
-      { id: "c", text: "Pós elimina todo o risco da tesouraria" },
-      { id: "d", text: "É uma decisão de risco de crédito" },
+      { id: "d", text: "É essencialmente uma decisão de risco de crédito do emissor" },
     ],
     feedback:
       "O gap transforma uma aplicação em <b>posição direcional</b>. Apostar pré e a Selic subir gera marcação negativa e custo de oportunidade; por isso o limite de risco precede a convicção.",
