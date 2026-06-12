@@ -8,11 +8,11 @@ export default function HomePage() {
   return (
     <div className="pb-10">
       {/* Hero */}
-      <section className="py-12 sm:py-16">
-        <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.08] tracking-tight text-ink sm:text-5xl lg:text-6xl">
+      <section className="py-12 sm:py-16 text-center">
+        <h1 className="mx-auto max-w-3xl text-4xl font-extrabold leading-[1.08] tracking-tight text-ink sm:text-5xl lg:text-6xl">
           Laboratório de Tesouraria de Instituições Financeiras
         </h1>
-        <p className="mt-3 max-w-2xl text-[16px] leading-relaxed text-muted">
+        <p className="mx-auto mt-3 max-w-2xl text-[16px] leading-relaxed text-muted">
           Simulações interativas para a aprendizagem prática das operações de tesouraria em
           instituições financeiras — matemática financeira, estrutura temporal das taxas,
           apreçamento e gestão de risco.
@@ -31,16 +31,16 @@ export default function HomePage() {
             <ModuleCard key={m.id} mod={m} />
           ))}
 
-          {/* Card especial: Estudos de Caso */}
+          {/* Card especial: Síntese */}
           <Link
-            href="/estudos-de-caso"
+            href="/sintese"
             className="flex flex-col rounded-2xl bg-secondary-container p-5 text-on-secondary-container shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg"
           >
             <div className="grid h-11 w-11 place-items-center rounded-xl bg-white/60 text-secondary">
               <Icon name="menu_book" size={22} />
             </div>
             <h3 className="mt-4 text-[17px] font-bold text-on-secondary-container">
-              Estudos de Caso
+              Síntese
             </h3>
             <p className="mt-1.5 text-[13.5px] leading-relaxed text-on-secondary-container/85">
               Casos abertos que integram os tópicos de cada módulo, com diagnóstico, análise e

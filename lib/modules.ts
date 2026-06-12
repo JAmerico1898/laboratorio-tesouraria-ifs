@@ -8,11 +8,11 @@ export const MODULES: ModuleMeta[] = [
     nav: "Operações de Tesouraria",
     titulo: "Principais operações de tesouraria",
     descricao:
-      "Base de matemática financeira e leitura do mercado monetário: funding, gap pré×pós, precificação de crédito e defesa do juro real.",
+      "Base de matemática financeira e leitura do mercado monetário: funding, gap préÃ—pós, precificação de crédito e defesa do juro real.",
     icon: "account_balance",
     objetivos: [
       "Aplicar modelos fundamentais de matemática financeira (equivalência de taxas, capitalização DU/252).",
-      "Conhecer a dinâmica do mercado monetário e suas taxas (Selic-meta × Selic-over, CDI).",
+      "Conhecer a dinâmica do mercado monetário e suas taxas (Selic-meta Ã— Selic-over, CDI).",
       "Compreender o impacto do cenário econômico na formação da taxa de juros.",
       "Aplicar a dinâmica de juros a partir do estudo dos riscos financeiros (gap, crédito, liquidez, inflação).",
     ],
@@ -70,8 +70,26 @@ export const MODULES: ModuleMeta[] = [
     totalSimulacoes: 4,
     disponivel: true,
   },
+  {
+    id: "modulo-5",
+    numero: 5,
+    slug: "estudos-de-caso",
+    nav: "Estudos de Caso",
+    titulo: "Estudos de Caso",
+    descricao: "Casos narrativos que integram os quatro módulos em decisões reais de tesouraria â€” do diagnóstico macro ao parecer ao ALCO.",
+    icon: "menu_book",
+    objetivos: [
+      "Mobilizar os quatro módulos simultaneamente numa decisão real de balanço.",
+      "Distinguir prêmio de expectativa na curva de juros.",
+      "Apreçar posições e medir exposição em reais (DV01, EVE, NII).",
+      "Ancorar recomendações no mandato e no passivo da instituição.",
+    ],
+    totalSimulacoes: 3,
+    disponivel: true,
+  },
 ];
 
 export function getModule(slug: string): ModuleMeta | undefined {
   return MODULES.find((m) => m.slug === slug);
 }
+

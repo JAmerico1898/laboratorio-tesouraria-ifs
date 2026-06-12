@@ -111,3 +111,164 @@ export interface CaseStudy {
   debrief: string;
   rubrica: RubricaItem[];
 }
+
+// ── Caso SVB (timeline + embedded checkpoints) ──────────────────────────────
+
+export type SvbMarcoTipo = "normal" | "critico";
+
+export interface SvbTimelineMarco {
+  id: string;
+  data: string;
+  evento: string; // HTML
+  numero?: string;
+  modulos: string[];
+  leitura: string;
+  tipo: SvbMarcoTipo;
+  cpId?: string; // referência ao checkpoint embutido neste marco
+}
+
+export interface SvbOpcao {
+  id: string;
+  texto: string; // HTML
+  leituraCurso: boolean; // destaca como "leitura do curso"; não é certo/errado
+  feedback: string; // HTML
+}
+
+export interface SvbCheckpoint {
+  id: string;
+  titulo: string;
+  modulos: string[];
+  contexto: string; // HTML
+  pergunta: string;
+  opcoes: SvbOpcao[];
+  svbFez: string; // HTML — bloco vermelho
+  ponte: string; // HTML — "↳ Ponte para o curso"
+}
+
+export interface SvbEspelhoLinha {
+  dimensao: string;
+  svbFez: string;
+  cursoEnsina: string;
+  modulos: string[];
+}
+
+export interface SvbReflexao {
+  pergunta: string;
+  modulos: string[];
+  leituraCurso: string; // bloco colapsável
+}
+
+export interface CaseSvb {
+  id: "svb";
+  titulo: string;
+  subtitulo: string;
+  aviso: string;
+  timeline: SvbTimelineMarco[];
+  checkpoints: SvbCheckpoint[];
+  espelho: SvbEspelhoLinha[];
+  reflexao: SvbReflexao[];
+}
+
+// ── Caso Narrativo (checkpoint-based interactive case) ──────────────────────
+
+export type CheckpointRotulo = "forte" | "parcial" | "armadilha" | "fraca";
+
+export interface CpOpcao {
+  id: string;
+  texto: string;
+  rotulo: CheckpointRotulo;
+  esperada: boolean;
+  feedback: string;
+  continua?: string;
+}
+
+export interface CpCalculoGuiado {
+  label: string;
+  corpo: string; // HTML
+}
+
+export interface CpSegundaPergunta {
+  pergunta: string;
+  opcoes: CpOpcao[];
+}
+
+export interface Checkpoint {
+  id: string;
+  titulo: string;
+  modulos: string[];
+  cena: string; // HTML narrative
+  calculo_guiado?: CpCalculoGuiado;
+  pergunta: string;
+  opcoes: CpOpcao[];
+  segunda_pergunta?: CpSegundaPergunta;
+}
+
+export interface CaseNarrativo {
+  id: string;
+  titulo: string;
+  subtitulo: string;
+  chips: string[];
+  dados: {
+    curva: Record<string, number>;
+    forwards: Record<string, number>;
+    balanco: { dv01_juros: number; dv01_spread_liq: number; gap12m: number };
+  };
+  checkpoints: Checkpoint[];
+}
+
+// === CaseMtmLft ===
+export interface MtmTimelineMarco {
+  id: string;
+  data: string;
+  evento: string;
+  modulos: string[];
+  tipo: "normal" | "critico";
+  cpId?: string;
+  numero?: string;
+  leitura?: string;
+}
+
+export interface MtmOpcao {
+  id: string;
+  texto: string;
+  leituraCurso: boolean;
+  feedback: string;
+}
+
+export interface MtmCheckpoint {
+  id: string;
+  titulo: string;
+  modulos: string[];
+  contexto: string;
+  usaSimulador: boolean;
+  simuladorDica?: string;
+  pergunta: string;
+  opcoes: MtmOpcao[];
+  oQueAconteceu: string;
+  ponte: string;
+}
+
+export interface MtmEspelhoLinha {
+  dimensao: string;
+  br2002: string;
+  svb: string;
+  cursoEnsina: string;
+  modulos: string[];
+}
+
+export interface MtmReflexao {
+  pergunta: string;
+  modulos: string[];
+  usaSimulador?: boolean;
+}
+
+export interface CaseMtmLft {
+  id: "mtm-lft";
+  titulo: string;
+  subtitulo: string;
+  aviso: string;
+  timeline: MtmTimelineMarco[];
+  checkpoints: MtmCheckpoint[];
+  espelho: MtmEspelhoLinha[];
+  reflexao: MtmReflexao[];
+}

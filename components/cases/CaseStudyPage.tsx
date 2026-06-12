@@ -10,10 +10,10 @@ export function CaseStudyPage({ caso }: { caso: CaseStudy }) {
   return (
     <div className="py-8">
       <Link
-        href="/estudos-de-caso"
+        href="/sintese"
         className="inline-flex items-center gap-1 text-[13px] font-semibold text-muted hover:text-ink"
       >
-        <Icon name="arrow_back" size={16} /> Estudos de Caso
+        <Icon name="arrow_back" size={16} /> Síntese
       </Link>
 
       <header className="mt-5 rounded-2xl bg-tertiary-container p-6 text-tertiary-fixed sm:p-8">

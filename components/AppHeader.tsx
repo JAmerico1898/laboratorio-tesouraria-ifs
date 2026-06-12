@@ -9,7 +9,7 @@ export function AppHeader() {
 
   const links: { href: string; label: string; highlight?: boolean }[] = [
     ...MODULES.map((m) => ({ href: `/${m.slug}`, label: m.nav })),
-    { href: "/estudos-de-caso", label: "Estudos de Caso", highlight: true },
+    { href: "/sintese", label: "Síntese", highlight: true },
   ];
 
   return (
