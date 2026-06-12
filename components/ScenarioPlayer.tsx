@@ -182,7 +182,7 @@ export function ScenarioPlayer({ scenario }: { scenario: Scenario }) {
               Tentar outro cenário
             </button>
             <Link
-              href="/modulo-1"
+              href={`/modulo-${scenario.id.match(/^s(\d+)/)?.[1] ?? "1"}`}
               className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-on-primary transition-colors hover:bg-primary-container active:scale-95"
             >
               Finalizar e voltar

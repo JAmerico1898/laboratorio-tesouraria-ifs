@@ -7,7 +7,7 @@ export const s4_1: Scenario = {
   titulo: "Definindo o perfil da carteira",
   nivel: "int",
   duracaoMin: 20,
-  contexto: "Você tem <span class=\"num\">R$ 500 mi</span> para alocar por <span class=\"num\">~3 anos</span>. A curva está <b>íngreme</b> e o Copom está <b>perto do fim do ciclo</b>. Você precisa escolher o perfil da carteira (bullet, barbell ou ladder) e o indexador.",
+  contexto: "Você tem <span class=\"num\">R$ 500 mi</span> para alocar por <span class=\"num\">~3 anos</span>. A curva está <b>íngreme e ascendente</b> e o Copom está <b>perto do fim do ciclo</b>. Você precisa escolher o perfil da carteira (bullet, barbell ou ladder) e o indexador.",
   chips: [
     {
       k: "Volume",
