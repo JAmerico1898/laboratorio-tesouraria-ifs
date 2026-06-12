@@ -22,10 +22,6 @@ export const s3_1: Scenario = {
       v: "11,50% a.a."
     },
     {
-      k: "PU da LTN",
-      v: "R$ 947,03"
-    },
-    {
       k: "Selic atual",
       v: "10,40%"
     },
@@ -167,7 +163,7 @@ export const s3_1: Scenario = {
             { k: "Risco de crédito", v: "Do emissor", tone: "neg" },
             { k: "Liquidez", v: "Menor que título público", tone: "neg" }
           ],
-          analise: "Carrego ≈ 102% do CDI → <code>(1,1040)^(126/252) × 1,02... ≈ 5,20%</code> no período. Delta vs LFT pura: <code>+0,13 p.p.</code> → sobre R$ 300 mi: <code>R$ 300 mi × 0,0013 ≈ R$ 390 mil adicionais em 126 du</code>. Contrapartida: risco de crédito do emissor do CDB e menor liquidez vs título público — aceitável dentro de limites de concentração por emissor."
+          analise: "Carrego 102% do CDI: taxa diária <code>i_d = (1,1040)^(1/252) − 1 ≈ 0,03929%</code>; aplicando 102%: <code>1,02 × i_d ≈ 0,04007%</code> ao dia; reanualizado: <code>(1,0004007)^252 − 1 ≈ 10,64% a.a.</code>; para 126 du: <code>(1,0004007)^126 − 1 ≈ 5,19%</code> no período. Delta vs LFT pura (5,07%): <code>+0,12 p.p.</code> → sobre R$ 300 mi: <code>R$ 300 mi × 0,0012 ≈ R$ 360 mil adicionais em 126 du</code>. Contrapartida: risco de crédito do emissor do CDB e menor liquidez vs título público — aceitável dentro de limites de concentração por emissor."
         }
       }
     ]

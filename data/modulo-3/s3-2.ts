@@ -106,7 +106,7 @@ export const s3_2: Scenario = {
         },
         {
           id: "c",
-          text: "A LCI: ≈ 10,0% líquido vs. ≈ 9,8% do CDB (11,5% bruto × 0,85)",
+          text: "A LCI: ≈ 9,96% líquido vs. ≈ 9,77% do CDB (11,50% bruto × 0,85)",
           correct: true
         },
         {
@@ -114,7 +114,7 @@ export const s3_2: Scenario = {
           text: "Depende apenas da cobertura do FGC"
         }
       ],
-      feedback: "LCI 96% isenta ≈ <b>10,0%</b> líquido; CDB 110% bruto 11,5%, menos IR de 15% ≈ <b>9,8%</b>. A isenção faz a LCI vencer mesmo com percentual menor de CDI — é o gross-up na prática.",
+      feedback: "Taxa diária base: <code>i_d = (1,1040)^(1/252) − 1 ≈ 0,03929%</code>. LCI 96% isenta: <code>(1 + 0,96 × i_d)^252 − 1 ≈ 9,96% a.a. líquido</code>. CDB 110% bruto: <code>(1 + 1,10 × i_d)^252 − 1 ≈ 11,50% a.a.</code>; líquido (IR 15%): <code>11,50% × 0,85 ≈ 9,77%</code>. Vantagem da LCI: <code>+0,19 p.p. líquido</code> custando ao banco <code>−1,54 p.p.</code> de funding. A isenção faz a LCI vencer mesmo com percentual menor de CDI — é o gross-up na prática.",
       pontos: 20
     }
   ],
@@ -131,11 +131,11 @@ export const s3_2: Scenario = {
           titulo: "Funding eficiente para PF",
           deltas: [
             { k: "Produto", v: "LCI 96% (isenta)", tone: "pos" },
-            { k: "Líquido ao PF", v: "≈ 10,0%", tone: "pos" },
+            { k: "Líquido ao PF", v: "≈ 9,96%", tone: "pos" },
             { k: "Custo de funding", v: "Menor (% do CDI)", tone: "pos" },
             { k: "Restrição", v: "Lastro imobiliário", tone: "neu" }
           ],
-          analise: "Bruto ao banco: <code>96% CDI → ≈10,0% a.a.</code> Gross-up para o PF (IR 15%): equivale a CDB de <code>10,0%/(1−0,15) ≈ 11,76% bruto</code> — acima do CDB 110% (11,5%). Custo ao banco: 10,0% para entregar 10,0% líquido; CDB 110% custa 11,5% para entregar 9,8% líquido. Funding 1,5 p.p. mais barato por entregar 0,2 p.p. a mais ao investidor."
+          analise: "Bruto ao banco: <code>i_d = (1,1040)^(1/252)−1 ≈ 0,03929%; (1+0,96×i_d)^252−1 ≈ 9,96% a.a.</code> Gross-up para o PF (IR 15%): equivale a CDB de <code>9,96%/(1−0,15) ≈ 11,72% bruto</code> — acima do CDB 110% (11,50%). Custo ao banco: 9,96% para entregar 9,96% líquido; CDB 110% custa 11,50% para entregar 9,77% líquido. Funding <code>~1,54 p.p.</code> mais barato por entregar <code>+0,19 p.p.</code> a mais ao investidor."
         }
       },
       {
@@ -147,11 +147,11 @@ export const s3_2: Scenario = {
           titulo: "Flexível, sem restrição de lastro",
           deltas: [
             { k: "Produto", v: "CDB 110%", tone: "neu" },
-            { k: "Líquido ao PF (15%)", v: "≈ 9,8%", tone: "neu" },
+            { k: "Líquido ao PF (15%)", v: "≈ 9,77%", tone: "neu" },
             { k: "Cobertura FGC", v: "Sim", tone: "pos" },
             { k: "Restrição de lastro", v: "Nenhuma", tone: "pos" }
           ],
-          analise: "Bruto: <code>(1+110%×i_d)^252−1 ≈ 11,5% a.a.</code> Líquido PF (IR 15%): <code>11,5% × 0,85 = 9,78%</code> — abaixo dos 10,0% da LCI 96%. Diferença: <code>−0,22 p.p. líquido</code> a um custo de funding 1,5 p.p. maior. Justificado para PJ (sem isenção) e quando FGC ou ausência de lastro imobiliário é determinante."
+          analise: "Bruto: <code>(1+1,10×i_d)^252−1 ≈ 11,50% a.a.</code> Líquido PF (IR 15%): <code>11,50% × 0,85 = 9,77%</code> — abaixo dos 9,96% da LCI 96%. Diferença: <code>−0,19 p.p. líquido</code> a um custo de funding <code>+1,54 p.p.</code> maior. Justificado para PJ (sem isenção) e quando FGC ou ausência de lastro imobiliário é determinante."
         }
       },
       {

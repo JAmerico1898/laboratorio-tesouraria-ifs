@@ -147,7 +147,7 @@ export const s3_3: Scenario = {
             { k: "Marcação de juro real", v: "Neutralizada", tone: "pos" },
             { k: "Custo", v: "Operacional do hedge", tone: "neu" }
           ],
-          analise: "Vender NTN-B 4 anos (Dmod ≈ 3,6): <code>zera a sensibilidade ao juro real</code>. Posição residual = long crédito (IPCA+6,2%) + short NTN-B (IPCA+X%) = spread de crédito puro de <code>+100 bps</code>. Se o setor melhorar e spread voltar de 7,2% a 6,2%: <code>ganho ≈ +3,6% × nocional</code>. Carrega-se apenas o que se escolheu — não o juro real por inércia."
+          analise: "Vender NTN-B 4 anos (Dmod ≈ 3,6): <code>zera a sensibilidade ao juro real</code>. Posição residual = long crédito (IPCA+6,2%) + short NTN-B (IPCA+X%) = spread de crédito puro de <code>+100 bps</code>. Se o setor melhorar e spread voltar de 7,2% a 6,2%: <code>ganho ≈ +3,6% × nocional</code>. Carrega-se apenas o que se escolheu — não o juro real por inércia. <b>Operacionalização:</b> (1) identificar NTN-B com vencimento mais próximo dos 4 anos (ex.: NTN-B 2028 ou 2029); (2) calcular o volume a vender: <code>Q_NTN-B = (Dmod_deb × PU_deb × Q_deb) / (Dmod_NTN-B × PU_NTN-B)</code> para igualar o BPV (sensibilidade por bp) das duas pontas; (3) executar a venda no mercado secundário via dealers/bancos (B3 REUNA ou mesa de RF). Como debênture e NTN-B compartilham o indexador IPCA, movimentos paralelos da ETTJ real se anulam: o que resta é exatamente o spread de crédito de +100 bps."
         }
       },
       {

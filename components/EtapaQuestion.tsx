@@ -67,7 +67,7 @@ export function EtapaQuestion({
             >
               {opt.text}
               {isCorrect && (
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-tertiary-container px-2.5 py-1 text-[10.5px] font-bold tracking-wide text-on-tertiary-fixed">
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-emerald-600 px-2.5 py-1 text-[10.5px] font-bold tracking-wide text-white">
                   ✔ CORRETA
                 </span>
               )}
