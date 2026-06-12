@@ -29,9 +29,9 @@ export const s1_3: Scenario = {
       enunciado:
         "A taxa cobrada do cliente decompõe-se em quais blocos, do funding ao preço final?",
       opcoes: [
-        { id: "a", text: "Apenas funding interno mais a margem comercial do banco" },
-        { id: "b", text: "Apenas o prêmio de crédito do rating do cliente" },
-        { id: "c", text: "Apenas a inflação esperada para o período do crédito" },
+        { id: "a", text: "Apenas funding interno mais a margem comercial do banco — os prêmios de crédito e liquidez são absorvidos pela spread de tesouraria e não entram na composição da taxa cliente" },
+        { id: "b", text: "Apenas o prêmio de crédito do rating do cliente — o funding é repassado ao custo de captação do mercado e os demais spreads ficam embutidos no resultado de intermediação" },
+        { id: "c", text: "Apenas a inflação esperada para o período do crédito — a taxa real já embute funding, risco e margem, sendo a inflação o único componente necessário para preservar o poder de compra do emprestador" },
         {
           id: "d",
           text: "Funding interno + prêmio de crédito + prêmio de liquidez + margem comercial",
@@ -47,14 +47,14 @@ export const s1_3: Scenario = {
       titulo: "Etapa 2 — Por que o prêmio de liquidez",
       enunciado: "Por que um papel <b>não-negociável</b> exige um prêmio de liquidez adicional?",
       opcoes: [
-        { id: "a", text: "Porque o papel passa automaticamente a ter maior risco de crédito" },
-        { id: "b", text: "Porque a inflação esperada é maior nesses papéis ilíquidos" },
+        { id: "a", text: "Porque o papel passa automaticamente a ter maior risco de crédito — a baixa negociabilidade sinaliza deterioração do emissor, elevando o spread de inadimplência exigido pelo mercado" },
+        { id: "b", text: "Porque a inflação esperada é maior nesses papéis ilíquidos — o desequilíbrio entre oferta e demanda dos ativos não-negociáveis pressiona o IPCA implícito na curva de juro real" },
         {
           id: "c",
           text: "Porque o banco não conseguirá vendê-lo facilmente e precisa ser compensado por carregar o ativo ilíquido",
           correct: true,
         },
-        { id: "d", text: "Não exige: a liquidez não afeta o preço do crédito" },
+        { id: "d", text: "Não exige: a liquidez não afeta o preço do crédito — a taxa de retorno é determinada exclusivamente pelo risco de crédito e pelo prazo, independente da facilidade de negociação secundária" },
       ],
       feedback:
         "Mantidos crédito e prazo, o que sobra é o <b>fator liquidez</b>: o investidor/banco exige spread extra para carregar um papel difícil de negociar. É o mesmo princípio do prêmio de liquidez de mercado.",
@@ -137,9 +137,9 @@ export const s1_3: Scenario = {
   reflexao: {
     enunciado: "Qual o erro mais comum e perigoso na precificação de crédito corporativo?",
     opcoes: [
-      { id: "a", text: "Cobrar prêmio de crédito em excesso, encarecendo a operação" },
-      { id: "b", text: "Usar o funding interno como referência de preço" },
-      { id: "c", text: "Somar os spreads em vez de compô-los multiplicativamente" },
+      { id: "a", text: "Cobrar prêmio de crédito em excesso, encarecendo a operação — o spread de inadimplência superdimensionado penaliza o cliente bom pagador e elimina a competitividade do banco no segmento" },
+      { id: "b", text: "Usar o funding interno como referência de preço — a taxa de captação interna já embute todos os spreads de risco, fazendo com que a composição aditiva superestime a taxa final ao cliente" },
+      { id: "c", text: "Somar os spreads em vez de compô-los multiplicativamente — a adição linear gera uma taxa final inferior à multiplicativa, causando subprecificação sistemática independente do prêmio de liquidez" },
       {
         id: "d",
         text: "Subprecificar o prêmio de liquidez de um papel não-negociável: a taxa parece competitiva, mas não remunera o risco de carregar o ativo ilíquido",

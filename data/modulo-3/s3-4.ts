@@ -46,7 +46,7 @@ export const s3_4: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "A marcação diária a mercado dos dois papéis"
+          text: "A marcação diária a mercado dos dois papéis — as oscilações de PU acumuladas ao longo do carrego determinam o retorno total mesmo para quem mantém até o vencimento"
         },
         {
           id: "b",
@@ -55,11 +55,11 @@ export const s3_4: Scenario = {
         },
         {
           id: "c",
-          text: "O rating de crédito do Tesouro Nacional"
+          text: "O rating de crédito do Tesouro Nacional — variações no risco soberano alteram o prêmio exigido e superam o efeito do breakeven de inflação no retorno final do carrego"
         },
         {
           id: "d",
-          text: "Apenas o cupom nominal pago pela NTN-F"
+          text: "Apenas o cupom nominal pago pela NTN-F — quem carrega até o vencimento recebe os cupons semestrais, e é esse fluxo de caixa intermediário que decide o resultado frente à NTN-B"
         }
       ],
       feedback: "Carregando até o vencimento, o resultado se resolve no fluxo final: se a inflação superar 5,66%, a NTN-B vence; abaixo, a NTN-F. Oscilações de preço pelo caminho não alteram o desfecho.",
@@ -72,11 +72,11 @@ export const s3_4: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "Só a inflação realizada lá no vencimento"
+          text: "Só a inflação realizada lá no vencimento — mesmo operando marcação, o resultado final é idêntico ao de carregar, pois a posição é fechada sempre pelo valor intrínseco do papel"
         },
         {
           id: "b",
-          text: "Nada muda em relação a carregar até o fim"
+          text: "Nada muda em relação a carregar até o fim — o preço de mercado dos dois títulos converge ao mesmo ponto independentemente do horizonte, tornando a distinção irrelevante"
         },
         {
           id: "c",
@@ -85,7 +85,7 @@ export const s3_4: Scenario = {
         },
         {
           id: "d",
-          text: "Apenas o IPCA do mês corrente"
+          text: "Apenas o IPCA do mês corrente — a variação mensal do índice reajusta o VNA da NTN-B e sinaliza simultaneamente se a curva pré vai se mover, determinando o resultado de ambos os papéis"
         }
       ],
       feedback: "Operando marcação, o ganho/perda vem do <b>preço antes do vencimento</b>: cada título responde à sua própria curva (real para a NTN-B, pré para a NTN-F).",
@@ -103,15 +103,15 @@ export const s3_4: Scenario = {
         },
         {
           id: "b",
-          text: "Garante o maior retorno possível em qualquer cenário"
+          text: "Garante o maior retorno possível em qualquer cenário — combinar os dois títulos captura o melhor de cada curva simultaneamente, superando qualquer posição concentrada em um único indexador"
         },
         {
           id: "c",
-          text: "Remove totalmente o risco de marcação"
+          text: "Remove totalmente o risco de marcação — as sensibilidades opostas da NTN-F e da NTN-B se cancelam, tornando o barbell imune a movimentos paralelos ou não-paralelos das curvas de juros"
         },
         {
           id: "d",
-          text: "Elimina por completo o risco da carteira"
+          text: "Elimina por completo o risco da carteira — a combinação de pré e IPCA+ produz uma posição sintética neutra ao risco de taxa de juros real e nominal em qualquer horizonte"
         }
       ],
       feedback: "O barbell reparte a aposta de inflação entre pré e IPCA+: protege contra errar a leitura, mas abre mão de maximizar caso você acerte a direção. Antecipa as estratégias de carteira do Módulo 4.",
@@ -177,7 +177,7 @@ export const s3_4: Scenario = {
     opcoes: [
       {
         id: "a",
-        text: "Carregar e operar são equivalentes para o resultado"
+        text: "Carregar e operar são equivalentes para o resultado — o preço de mercado converge para o valor de carrego ao longo do tempo, de modo que a intenção do gestor não muda o retorno efetivo"
       },
       {
         id: "b",
@@ -186,11 +186,11 @@ export const s3_4: Scenario = {
       },
       {
         id: "c",
-        text: "A marcação nunca importa em título público federal"
+        text: "A marcação nunca importa em título público federal — o risco soberano nulo garante que o PU não sofre volatilidade relevante independentemente do prazo ou do indexador escolhido"
       },
       {
         id: "d",
-        text: "Só o breakeven importa, em qualquer horizonte"
+        text: "Só o breakeven importa, em qualquer horizonte — o ponto de indiferença entre NTN-F e NTN-B é fixo e define o resultado tanto para quem carrega até o fim quanto para quem opera marcação"
       }
     ],
     feedback: "O horizonte define o que precifica: fluxo final (carregar) ou preço de mercado (operar). A mesma posição tem riscos diferentes conforme a intenção de manter ou negociar.",

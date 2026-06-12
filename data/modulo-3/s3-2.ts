@@ -51,15 +51,15 @@ export const s3_2: Scenario = {
         },
         {
           id: "b",
-          text: "Porque o CDI usado é diferente para cada instrumento"
+          text: "Porque o CDI usado é diferente para cada instrumento — a LCI aplica o CDI over enquanto o CDB usa o CDI cetip, gerando bases de cálculo incomparáveis diretamente"
         },
         {
           id: "c",
-          text: "Porque a LCI sempre rende mais em termos brutos"
+          text: "Porque a LCI sempre rende mais em termos brutos — o percentual de CDI oferecido pela LCI supera o do CDB quando ajustado pelo prazo de liquidez mínima"
         },
         {
           id: "d",
-          text: "Porque a LCI tem cobertura do FGC e o CDB não"
+          text: "Porque a LCI tem cobertura do FGC e o CDB não — o prêmio de risco embutido no CDB exige ajuste antes de qualquer comparação de taxas entre os instrumentos"
         }
       ],
       feedback: "Comparar taxas brutas é enganoso: a LCI é isenta de IR para PF. Trazendo tudo ao líquido (ou “elevando” a LCI ao bruto equivalente), compara-se maçãs com maçãs.",
@@ -72,7 +72,7 @@ export const s3_2: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "≈ 11,44% a.a."
+          text: "≈ 11,44% a.a. — obtido multiplicando a taxa anual diretamente (10,40% × 1,10), sem aplicar o percentual ao fator diário e recompor pela capitalização composta"
         },
         {
           id: "b",
@@ -81,11 +81,11 @@ export const s3_2: Scenario = {
         },
         {
           id: "c",
-          text: "≈ 10,92% a.a."
+          text: "≈ 10,92% a.a. — resultado de aplicar 110% sobre a taxa mensal equivalente e recompor para 12 meses, usando convenção linear em vez de capitalização diária DU/252"
         },
         {
           id: "d",
-          text: "≈ 10,40% a.a."
+          text: "≈ 10,40% a.a. — o percentual do CDI não alteraria a taxa base, pois o spread do CDB seria integralmente absorvido pela tributação do IR antes de afetar o rendimento bruto"
         }
       ],
       feedback: "O percentual incide no fator diário: <code>i_d=(1,1040)^(1/252)−1</code>; <code>(1+1,10·i_d)^252 − 1 ≈ 11,5%</code>. Multiplicar a taxa anual direto (10,40×1,10 = 11,44%) subestima por ignorar a capitalização diária.",
@@ -98,11 +98,11 @@ export const s3_2: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "O CDB, sempre, por ter o maior percentual de CDI"
+          text: "O CDB, sempre, por ter o maior percentual de CDI — a taxa bruta mais alta gera carrego superior que supera o benefício fiscal da isenção para qualquer alíquota de IR"
         },
         {
           id: "b",
-          text: "Empatam: a isenção compensa exatamente o IR"
+          text: "Empatam: a isenção da LCI compensa exatamente o IR do CDB — a tabela regressiva foi calibrada para igualar o líquido dos dois instrumentos em qualquer prazo acima de 180 dias"
         },
         {
           id: "c",
@@ -111,7 +111,7 @@ export const s3_2: Scenario = {
         },
         {
           id: "d",
-          text: "Depende apenas da cobertura do FGC"
+          text: "Depende apenas da cobertura do FGC — o limite de R$ 250 mil por emissor reduz o rendimento efetivo da LCI e pode tornar o CDB mais atraente para carteiras de menor porte"
         }
       ],
       feedback: "Taxa diária base: <code>i_d = (1,1040)^(1/252) − 1 ≈ 0,03929%</code>. LCI 96% isenta: <code>(1 + 0,96 × i_d)^252 − 1 ≈ 9,96% a.a. líquido</code>. CDB 110% bruto: <code>(1 + 1,10 × i_d)^252 − 1 ≈ 11,50% a.a.</code>; líquido (IR 15%): <code>11,50% × 0,85 ≈ 9,77%</code>. Vantagem da LCI: <code>+0,19 p.p. líquido</code> custando ao banco <code>−1,54 p.p.</code> de funding. A isenção faz a LCI vencer mesmo com percentual menor de CDI — é o gross-up na prática.",
@@ -178,15 +178,15 @@ export const s3_2: Scenario = {
     opcoes: [
       {
         id: "a",
-        text: "Ofereça sempre o maior percentual de CDI possível"
+        text: "Ofereça sempre o maior percentual de CDI possível — elevar o spread bruto maximiza a captação sem distorcer o custo de funding, pois o cliente compara apenas taxas nominais"
       },
       {
         id: "b",
-        text: "LCI e CDB são equivalentes para o investidor final"
+        text: "LCI e CDB são equivalentes para o investidor final — ambos seguem o CDI e têm cobertura semelhante, tornando o benefício fiscal da LCI irrelevante na comparação de retorno líquido"
       },
       {
         id: "c",
-        text: "O IR não afeta a decisão de funding do banco"
+        text: "O IR não afeta a decisão de funding do banco — a alíquota recai sobre o investidor, de modo que o custo bruto pago pela instituição independe da tributação do produto ofertado"
       },
       {
         id: "d",

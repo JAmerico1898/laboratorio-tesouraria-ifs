@@ -42,15 +42,15 @@ export const s2_3: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "R$ 50,0 milhões"
+          text: "R$ 50,0 milhões (US$ 10 mi convertidos pela taxa pronta S = 5,00, ignorando o prêmio embutido no futuro de dólar a 5,12)"
         },
         {
           id: "b",
-          text: "R$ 5,12 milhões"
+          text: "R$ 5,12 milhões (valor do dólar futuro unitário a R$ 5,12, sem multiplicar pelo nocional de US$ 10 mi do recebível)"
         },
         {
           id: "c",
-          text: "R$ 512 milhões"
+          text: "R$ 512 milhões (US$ 10 mi × R$ 5,12, com erro de escala de 10×, como se o recebível fosse US$ 100 mi)"
         },
         {
           id: "d",
@@ -68,7 +68,7 @@ export const s2_3: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "≈ 2,4% a.a."
+          text: "≈ 2,4% a.a. (prêmio cambial simples (F−S)/S = (5,12−5,00)/5,00, sem incluir o diferencial de juros entre o pré em reais e o cupom em dólar)"
         },
         {
           id: "b",
@@ -77,11 +77,11 @@ export const s2_3: Scenario = {
         },
         {
           id: "c",
-          text: "≈ 12,5% a.a."
+          text: "≈ 12,5% a.a. (taxa pré em reais aplicada diretamente como cupom cambial, sem converter pela relação S/F nem ajustar pela paridade de juros coberta)"
         },
         {
           id: "d",
-          text: "≈ 3,6% a.a."
+          text: "≈ 3,6% a.a. (fator do período não anualizado — resultado bruto de (1+i_pré)×S/F−1 para 180 dc, sem multiplicar por 360/180 para obter a taxa ao ano)"
         }
       ],
       feedback: "<code>(1,125)^(126/252) × (5,00/5,12) = 1,06066 × 0,97656 = 1,0358</code> → <code>cupom = 0,0358 / 0,5 ≈ 7,2% a.a.</code> O distrator 2,4% é apenas o prêmio do dólar <code>(F−S)/S</code>; 12,5% é o pré em reais; 3,6% é o fator do período não anualizado.",
@@ -99,15 +99,15 @@ export const s2_3: Scenario = {
         },
         {
           id: "b",
-          text: "O limpo já desconta o IR sobre o cupom"
+          text: "O limpo já desconta o IR sobre o cupom — a alíquota regressiva de 15% é subtraída do juro em dólar bruto, tornando o resultado líquido comparável ao rendimento pós-IR de outros instrumentos de renda fixa"
         },
         {
           id: "c",
-          text: "O limpo usa base 252 em vez de 360"
+          text: "O limpo usa base 252 em vez de 360 — ao converter o prazo de dias corridos para dias úteis, elimina os dias sem negociação e torna a taxa mais representativa do juro efetivo do período"
         },
         {
           id: "d",
-          text: "O limpo inclui o cupom real da NTN-B no cálculo"
+          text: "O limpo inclui o cupom real da NTN-B no cálculo — ao incorporar o juro real da NTN-B como componente do denominador, obtém-se uma medida purificada do retorno em dólar da operação"
         }
       ],
       feedback: "Cupom limpo = referência casada com PTAX de D−1; isola o juro em dólar da variação cambial intradia. O sujo embute o pronto de D.",
@@ -174,15 +174,15 @@ export const s2_3: Scenario = {
     opcoes: [
       {
         id: "a",
-        text: "É a variação esperada do câmbio no período do hedge"
+        text: "É a variação esperada do câmbio no período do hedge — calculada como a diferença percentual entre o dólar futuro e o pronto, refletindo as expectativas do mercado sobre a apreciação ou depreciação cambial"
       },
       {
         id: "b",
-        text: "É o IR incidente sobre a receita de exportação"
+        text: "É o IR incidente sobre a receita de exportação — alíquota calculada sobre o ganho cambial convertido em reais, que incide no momento do fechamento do câmbio junto ao banco autorizado"
       },
       {
         id: "c",
-        text: "Limpo e sujo dão sempre exatamente o mesmo número"
+        text: "Limpo e sujo dão sempre exatamente o mesmo número — a PTAX de D−1 e o dólar pronto de D convergem ao mesmo valor ao longo do dia, portanto a distinção é meramente terminológica e sem impacto prático"
       },
       {
         id: "d",

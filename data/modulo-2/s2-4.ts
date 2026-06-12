@@ -47,15 +47,15 @@ export const s2_4: Scenario = {
         },
         {
           id: "b",
-          text: "≈ 5,90% a.a."
+          text: "≈ 5,90% a.a. (diferença aritmética entre o pré e o cupom real, ajustada pela duration de 2 anos sem aplicar a divisão pela composição pelo fator (1+real))"
         },
         {
           id: "c",
-          text: "≈ 6,00% a.a."
+          text: "≈ 6,00% a.a. (diferença simples 12% − 6%, ignorando o termo cruzado da composição (1+pré)/(1+real) − 1 que reduz o breakeven para abaixo de 6%)"
         },
         {
           id: "d",
-          text: "≈ 18,00% a.a."
+          text: "≈ 18,00% a.a. (soma aritmética das duas taxas, como se o pré e o cupom real fossem componentes aditivos do retorno total em vez de fator composto)"
         }
       ],
       feedback: "<code>(1,12)/(1,06) − 1 = 1,05660 − 1 ≈ 5,66%</code>. O distrator 6,00% é a diferença simples (12% − 6%), que ignora o termo cruzado da composição.",
@@ -68,15 +68,15 @@ export const s2_4: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "É a meta de inflação definida pelo Banco Central"
+          text: "É a meta de inflação definida pelo Banco Central — o IPCA implícito na curva converge para o centro da meta porque os formadores de preço incorporam o compromisso do BCB como âncora da precificação dos títulos"
         },
         {
           id: "b",
-          text: "É a inflação garantida pela NTN-B no período"
+          text: "É a inflação garantida pela NTN-B no período — ao comprar o título indexado ao IPCA, o investidor recebe exatamente o breakeven acrescido do cupom real, independentemente do índice realizado"
         },
         {
           id: "c",
-          text: "É o cupom real pago pela NTN-B ao investidor"
+          text: "É o cupom real pago pela NTN-B ao investidor — representa o juro acima da inflação embutido no título, equivalente aos 6,00% a.a. do IPCA+, antes de qualquer composição com a inflação do período"
         },
         {
           id: "d",
@@ -94,7 +94,7 @@ export const s2_4: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "O pré, sempre, por travar a taxa nominal"
+          text: "O pré, sempre, por travar a taxa nominal — ao fixar 12% a.a. desde o início, o investidor garante o maior retorno nominal independente da inflação realizada, pois a taxa está contratada e não pode ser reduzida"
         },
         {
           id: "b",
@@ -103,11 +103,11 @@ export const s2_4: Scenario = {
         },
         {
           id: "c",
-          text: "A LFT, por acompanhar a Selic diária"
+          text: "A LFT, por acompanhar a Selic diária — como a Selic sobe para conter a inflação acima do breakeven, a LFT captura esse ajuste automaticamente e entrega retorno nominal superior ao do IPCA+"
         },
         {
           id: "d",
-          text: "Ambos rendem igual, por definição do breakeven"
+          text: "Ambos rendem igual, por definição do breakeven — o ponto de indiferença significa que os dois títulos sempre produzem o mesmo resultado, tornando a escolha entre pré e IPCA+ irrelevante para qualquer nível de inflação"
         }
       ],
       feedback: "Inflação acima do breakeven faz o IPCA+ superar o pré em termos nominais — além de preservar o poder de compra.",
@@ -173,11 +173,11 @@ export const s2_4: Scenario = {
     opcoes: [
       {
         id: "a",
-        text: "O breakeven garante o retorno nominal do IPCA+"
+        text: "O breakeven garante o retorno nominal do IPCA+ — ao comprar a NTN-B quando a inflação implícita é 5,66%, o investidor trava esse nível de IPCA realizado e recebe exatamente o retorno calculado na emissão"
       },
       {
         id: "b",
-        text: "Abaixo do breakeven o IPCA+ sempre vence o pré"
+        text: "Abaixo do breakeven o IPCA+ sempre vence o pré — quando a inflação fica abaixo de 5,66%, a NTN-B entrega menos em termos nominais, mas a proteção real do cupom de 6% garante retorno absoluto superior ao título prefixado"
       },
       {
         id: "c",
@@ -186,7 +186,7 @@ export const s2_4: Scenario = {
       },
       {
         id: "d",
-        text: "A inflação implícita é irrelevante para a decisão"
+        text: "A inflação implícita é irrelevante para a decisão — como a NTN-B protege o capital real em qualquer cenário de IPCA, a comparação com o prefixado deve ser feita apenas pela liquidez e duration, não pelo nível de inflação esperada"
       }
     ],
     feedback: "O breakeven traduz a curva numa pergunta única: “a inflação virá acima ou abaixo de 5,66%?”. O barbell é a resposta para quem não quer apostar tudo na própria leitura.",

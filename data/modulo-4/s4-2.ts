@@ -47,15 +47,15 @@ export const s4_2: Scenario = {
         },
         {
           id: "b",
-          text: "R$ 380.000/bp"
+          text: "R$ 380.000/bp (Dmod × PV sem o fator 0,0001)"
         },
         {
           id: "c",
-          text: "R$ 3.800/bp"
+          text: "R$ 3.800/bp (aplica 0,001 em vez de 0,0001 sobre Dmod × PV)"
         },
         {
           id: "d",
-          text: "R$ 380/bp"
+          text: "R$ 380/bp (divide por 100 mi em vez de multiplicar o PV)"
         }
       ],
       feedback: "<code>DV01 = Dmod × PV × 0,0001 = 3,8 × 100.000.000 × 0,0001 = R$ 38.000/bp</code>. É a métrica linear de risco de taxa da mesa.",
@@ -68,15 +68,15 @@ export const s4_2: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "R$ 25.000/bp"
+          text: "R$ 25.000/bp (confunde o limite-alvo com a redução necessária)"
         },
         {
           id: "b",
-          text: "R$ 38.000/bp"
+          text: "R$ 38.000/bp (zera o DV01 ao invés de enquadrá-lo no limite)"
         },
         {
           id: "c",
-          text: "R$ 63.000/bp"
+          text: "R$ 63.000/bp (soma limite e DV01 atual em vez de subtrair)"
         },
         {
           id: "d",
@@ -94,7 +94,7 @@ export const s4_2: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "Porque a LFT paga um cupom maior que o pré"
+          text: "Porque a LFT paga um cupom maior que o pré — o excesso de carrego sobre a taxa prefixada absorve parte do DV01 e reduz a sensibilidade líquida do book"
         },
         {
           id: "b",
@@ -103,11 +103,11 @@ export const s4_2: Scenario = {
         },
         {
           id: "c",
-          text: "Porque a LFT tem mais convexidade que o pré"
+          text: "Porque a LFT tem mais convexidade que o pré — a curvatura positiva do título pós-fixado compensa o DV01 do prefixado e neutraliza o risco de taxa do book"
         },
         {
           id: "d",
-          text: "Porque a LFT elimina o risco de crédito do book"
+          text: "Porque a LFT elimina o risco de crédito do book — sendo emitida pelo Tesouro, substitui papéis privados e remove o spread de crédito que infla o DV01 da carteira"
         }
       ],
       feedback: "Como o VNA da LFT acompanha a Selic, sua sensibilidade à curva pré é mínima. Substituir pré por LFT corta o DV01 de forma estrutural (no balanço), não apenas via derivativo.",
@@ -174,11 +174,11 @@ export const s4_2: Scenario = {
     opcoes: [
       {
         id: "a",
-        text: "O limite de DV01 é apenas uma sugestão flexível"
+        text: "O limite de DV01 é apenas uma sugestão flexível: o gestor pode excedê-lo quando tem convicção direcional forte — o comitê de risco avalia caso a caso e a penalidade é só documental, sem impacto no mandato de gestão"
       },
       {
         id: "b",
-        text: "DV01 mede o risco de crédito do book"
+        text: "DV01 mede o risco de crédito do book: quanto maior o spread dos emissores, maior o DV01 — o limite serve para controlar a concentração em papéis de menor rating e proteger o portfólio de eventos de default"
       },
       {
         id: "c",
@@ -187,7 +187,7 @@ export const s4_2: Scenario = {
       },
       {
         id: "d",
-        text: "Estar acima do limite não tem consequência se a vol cair"
+        text: "Estar acima do limite não tem consequência se a vol cair: quando a volatilidade recua, o DV01 elevado se converte em ganho — o excesso de risco funciona como alavancagem natural e compensa o custo de enquadramento"
       }
     ],
     feedback: "O limite traduz o apetite de risco da instituição em um número operável. Geri-lo é rotina: diagnosticar, enquadrar e documentar — antes do movimento de mercado, não depois.",

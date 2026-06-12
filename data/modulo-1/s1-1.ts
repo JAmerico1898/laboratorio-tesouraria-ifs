@@ -61,18 +61,18 @@ export const s1_1: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "Haircut: os 0,2% de sobrecolateral já anulam todo o desconto da taxa",
+          text: "Haircut: os 0,2% de sobrecolateral já anulam todo o desconto da taxa — o custo efetivo é zero independente da abertura da curva pré",
         },
         {
           id: "b",
-          text: "Crédito: o risco é de calote do emissor do lastro (Tesouro Nacional)",
+          text: "Crédito: o risco é de calote do emissor do lastro (Tesouro Nacional) — a garantia soberana não elimina o spread, pois o lastro precifica a inadimplência",
         },
         {
           id: "c",
           text: "Marcação: se a curva pré abrir, a LTN desvaloriza e a rolagem encarece — o haircut é de 2ª ordem",
           correct: true,
         },
-        { id: "d", text: "Nenhum: 99,8% do CDI é sempre melhor que captar a 100%" },
+        { id: "d", text: "Nenhum: 99,8% do CDI é sempre melhor que captar a 100% — o deságio cobre qualquer risco de marcação, tornando a compromissada a opção dominante em todos os cenários" },
       ],
       feedback:
         'A taxa de 99,8% do CDI esconde dois efeitos. O <b>haircut</b> — você sobrecolateraliza em LTN, imobilizando garantia — mas, a 0,2%, isso quase não corrói o desconto da taxa (efeito de <b>segunda ordem</b>). O que importa é o <b>risco de marcação</b> da LTN (prefixada): se a curva pré abrir, o lastro desvaloriza e a rolagem fica cara e instável. O risco de crédito do Tesouro é desprezível — o problema é de <b>marcação, não de crédito</b>. Trocar o lastro por <b>LFT</b> (pós-Selic) removeria a marcação.',
@@ -142,7 +142,7 @@ export const s1_1: Scenario = {
     opcoes: [
       {
         id: "a",
-        text: "O interbancário a 100% é sempre o mais barato; a compromissada em LTN é uma armadilha que sai mais cara",
+        text: "O interbancário a 100% é sempre o mais barato — o spread de 0,2% do CDI na compromissada supera qualquer vantagem do lastro pré, tornando o DI direto a escolha dominante independente da duration do colateral",
       },
       {
         id: "b",
@@ -151,11 +151,11 @@ export const s1_1: Scenario = {
       },
       {
         id: "c",
-        text: "A compromissada em LTN é mais barata e, por ser overnight, não há nenhum risco de lastro a considerar",
+        text: "A compromissada em LTN é mais barata e, por ser overnight, não há nenhum risco de lastro a considerar — a marcação do pré só importa em operações com prazo superior a 30 dias úteis, nunca no 1 du",
       },
       {
         id: "d",
-        text: "Tanto faz: no overnight não há diferença de custo nem risco relevante entre as captações",
+        text: "Tanto faz: no overnight não há diferença de custo nem risco relevante entre as captações — o custo de carrego do lastro é nulo em 1 du e o spread de 0,2% é absorvido pelo ajuste de custódia, zerando o diferencial",
       },
     ],
     feedback:

@@ -51,15 +51,15 @@ export const s4_1: Scenario = {
         },
         {
           id: "b",
-          text: "O barbell carrega maior risco de crédito"
+          text: "O barbell carrega maior risco de crédito — concentra vencimentos nos extremos e eleva a exposição a emissores de prazos mais longos"
         },
         {
           id: "c",
-          text: "O barbell tem sempre menor carrego"
+          text: "O barbell tem sempre menor carrego — ao dividir o capital entre pontas curta e longa, dilui o prêmio de prazo e comprime a taxa média da carteira"
         },
         {
           id: "d",
-          text: "O barbell tem menor duration que o bullet"
+          text: "O barbell tem menor duration que o bullet — a ponta curta domina o peso do portfólio e comprime a sensibilidade média à variação de taxa"
         }
       ],
       feedback: "Para a mesma duration, distribuir o fluxo nas pontas (1 e 5) gera mais convexidade que concentrar no centro (3). Maior convexidade = assimetria favorável diante de grandes movimentos.",
@@ -72,7 +72,7 @@ export const s4_1: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "Concentra todo o fluxo no vértice de 3 anos"
+          text: "Concentra todo o fluxo no vértice de 3 anos — casar o prazo único ao horizonte da carteira minimiza o risco de reinvestimento e maximiza o carrego"
         },
         {
           id: "b",
@@ -81,11 +81,11 @@ export const s4_1: Scenario = {
         },
         {
           id: "c",
-          text: "Maximiza a duration total da carteira"
+          text: "Maximiza a duration total da carteira — ao escalonar vencimentos até o prazo mais longo disponível, eleva a sensibilidade média e o carrego do portfólio"
         },
         {
           id: "d",
-          text: "Elimina por completo o risco de reinvestimento"
+          text: "Elimina por completo o risco de reinvestimento — cada vencimento escalonado é reaplicado à taxa travada no início, imunizando a carteira de variações futuras da Selic"
         }
       ],
       feedback: "A ladder escalona vencimentos: a cada ano um pedaço vence e é reinvestido na taxa vigente. Reduz a dependência de uma única visão de curva — defensiva sob incerteza.",
@@ -98,11 +98,11 @@ export const s4_1: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "Ganho de marcação, por ser bullet"
+          text: "Ganho de marcação, por ser bullet — a concentração no vértice de 3 anos amplifica a valorização quando a curva se move em qualquer direção"
         },
         {
           id: "b",
-          text: "Neutro: por ser pré, não marca a mercado"
+          text: "Neutro: por ser pré, não marca a mercado — títulos prefixados carregam até o vencimento sem atualização do PU, independentemente do movimento da curva"
         },
         {
           id: "c",
@@ -111,7 +111,7 @@ export const s4_1: Scenario = {
         },
         {
           id: "d",
-          text: "Protegido, justamente por ser um bullet"
+          text: "Protegido, justamente por ser um bullet — a concentração em único vértice reduz a exposição a movimentos em diferentes pontos da curva"
         }
       ],
       feedback: "Bullet pré é aposta concentrada de duration. Se a curva sobe (em vez de cair), o PU recua (marcação negativa) e ainda se carrega taxa menor que a nova de mercado — o trade-off duration × convicção.",
@@ -178,15 +178,15 @@ export const s4_1: Scenario = {
     opcoes: [
       {
         id: "a",
-        text: "O perfil da carteira independe do cenário de curva"
+        text: "O perfil da carteira independe do cenário de curva: bullet, barbell e ladder têm o mesmo comportamento de marcação e carrego — a escolha é apenas operacional e não expressa nenhuma visão direcional de taxa ou apetite por convexidade"
       },
       {
         id: "b",
-        text: "O bullet é sempre superior aos demais perfis"
+        text: "O bullet é sempre superior aos demais perfis: concentrar o fluxo no vértice-alvo maximiza o carrego e a convexidade — barbell e ladder sacrificam retorno sem oferecer proteção adicional em nenhum cenário de curva"
       },
       {
         id: "c",
-        text: "A convexidade não tem valor numa carteira de renda fixa"
+        text: "A convexidade não tem valor numa carteira de renda fixa: como os títulos soberanos são marcados pelo carrego contratado, variações da curva não afetam o PU e o benefício assimétrico da convexidade nunca se materializa no resultado do portfólio"
       },
       {
         id: "d",

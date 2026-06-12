@@ -47,15 +47,15 @@ export const s3_3: Scenario = {
         },
         {
           id: "b",
-          text: "O PU não muda, pois o papel é IPCA+"
+          text: "O PU não muda, pois o papel é IPCA+ — a correção pelo índice garante que o valor de mercado acompanha o VNA, tornando o PU imune à variação do spread de crédito"
         },
         {
           id: "c",
-          text: "O PU sobe, acompanhando o novo cupom"
+          text: "O PU sobe acompanhando o novo cupom — a elevação do spread exigido sinaliza maior remuneração futura, valorizando o papel no mercado secundário pela ótica do carrego"
         },
         {
           id: "d",
-          text: "Depende apenas do IPCA do mês corrente"
+          text: "Depende apenas do IPCA do mês corrente — o ajuste do VNA pelo índice absorve o movimento do spread, de modo que somente a inflação corrente determina a variação do PU"
         }
       ],
       feedback: "Mais cupom real exigido = maior desconto dos fluxos = <b>PU menor</b>. A correção pelo IPCA protege o poder de compra, mas não o preço de marcação quando o <b>spread</b> abre.",
@@ -68,15 +68,15 @@ export const s3_3: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "Risco de inflação medido pelo IPCA"
+          text: "Risco de inflação medido pelo IPCA — a aceleração do índice eleva o desconto dos fluxos reais, comprimindo o PU mesmo sem alteração no spread de crédito do emissor"
         },
         {
           id: "b",
-          text: "Risco cambial sobre o valor do papel"
+          text: "Risco cambial sobre o valor do papel — a exposição do setor do emissor a moeda estrangeira contamina o IPCA+ e força o mercado a remarcar o prêmio exigido"
         },
         {
           id: "c",
-          text: "Nenhum risco real — é apenas ruído contábil"
+          text: "Nenhum risco real — é apenas ruído contábil transitório, pois a marcação a mercado reverte ao par quando o spread volta ao patamar original de 6,2%"
         },
         {
           id: "d",
@@ -94,7 +94,7 @@ export const s3_3: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "Comprar mais da mesma debênture para baratear o preço médio"
+          text: "Comprar mais da mesma debênture para baratear o preço médio — reduzir o custo médio da posição diminui a perda de marcação e aumenta o carrego total do book de crédito"
         },
         {
           id: "b",
@@ -103,11 +103,11 @@ export const s3_3: Scenario = {
         },
         {
           id: "c",
-          text: "Trocar toda a posição por LFT pós-Selic"
+          text: "Trocar toda a posição por LFT pós-Selic — migrar para um indexador Selic elimina simultaneamente o risco de juro real e o risco de crédito, zerando toda a exposição do book"
         },
         {
           id: "d",
-          text: "Não há como separar juro real de crédito"
+          text: "Não há como separar juro real de crédito — os dois componentes estão fundidos no spread IPCA+, impossibilitando qualquer hedge parcial sem liquidar a posição inteira"
         }
       ],
       feedback: "Vender NTN-B de prazo semelhante neutraliza o componente de juro real; o que sobra na posição é o <b>risco de crédito</b> do emissor — que você mantém por convicção, conscientemente.",
@@ -174,11 +174,11 @@ export const s3_3: Scenario = {
     opcoes: [
       {
         id: "a",
-        text: "Sempre vender ao primeiro sinal negativo do setor"
+        text: "Sempre vender ao primeiro sinal negativo do setor — realizar a perda imediatamente evita qualquer exposição adicional e é a única conduta compatível com gestão conservadora de risco de crédito"
       },
       {
         id: "b",
-        text: "Sempre carregar o papel até o vencimento"
+        text: "Sempre carregar o papel até o vencimento — a marcação a mercado é transitória e o spread reverte ao nível de emissão ao longo do tempo, garantindo o retorno original contratado"
       },
       {
         id: "c",
@@ -187,7 +187,7 @@ export const s3_3: Scenario = {
       },
       {
         id: "d",
-        text: "Ignorar a marcação, pois é apenas contábil"
+        text: "Ignorar a marcação, pois é apenas contábil — o PU marcado a mercado não reflete o valor econômico do papel e será revertido naturalmente pelo pull-to-par até o vencimento"
       }
     ],
     feedback: "Nem pânico (vender tudo) nem inércia (carregar no escuro): a decomposição permite cobrir o risco que não se quer e manter, por convicção, apenas o risco de crédito.",

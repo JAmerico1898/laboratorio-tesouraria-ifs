@@ -46,7 +46,7 @@ export const s4_3: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "≈ −R$ 20,58"
+          text: "≈ −R$ 20,58 (só duration, sem o ajuste positivo do termo de convexidade)"
         },
         {
           id: "b",
@@ -55,11 +55,11 @@ export const s4_3: Scenario = {
         },
         {
           id: "c",
-          text: "≈ −R$ 19,80"
+          text: "≈ −R$ 19,80 (aplica C = 12 em vez de C = 24 no termo de convexidade)"
         },
         {
           id: "d",
-          text: "≈ +R$ 20,29"
+          text: "≈ +R$ 20,29 (inverte o sinal da duration, como se alta de taxa valorizasse o título)"
         }
       ],
       feedback: "<code>ΔP = (−4,2·0,005 + ½·24·0,005²)·980 = (−0,021 + 0,0003)·980 ≈ −R$ 20,29</code>. Só duration daria −20,58; a convexidade <b>suaviza</b> a queda.",
@@ -72,11 +72,11 @@ export const s4_3: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "É apenas um erro de cálculo na conta"
+          text: "É apenas um erro de cálculo na conta — a fórmula deveria ser simétrica, e a diferença de centavos entre alta e queda de 100 bps reflete imprecisão no arredondamento do Δy²"
         },
         {
           id: "b",
-          text: "É efeito da diferença de cupom entre os papéis"
+          text: "É efeito da diferença de cupom entre os papéis — quando os fluxos intermediários são maiores em alta de juros, o reinvestimento compensa parte da perda e gera essa assimetria no retorno total"
         },
         {
           id: "c",
@@ -85,7 +85,7 @@ export const s4_3: Scenario = {
         },
         {
           id: "d",
-          text: "É efeito da inflação sobre os fluxos"
+          text: "É efeito da inflação sobre os fluxos — na alta de juros, o IPCA implícito cai e reduz o valor real dos pagamentos futuros, gerando perda assimétrica menor que o ganho na queda"
         }
       ],
       feedback: "Como <code>Δy²</code> é positivo nos dois sentidos, o termo de convexidade amplia o ganho na queda e reduz a perda na alta — a assimetria favorável da convexidade positiva.",
@@ -103,15 +103,15 @@ export const s4_3: Scenario = {
         },
         {
           id: "b",
-          text: "Porque a convexidade elimina o risco de crédito"
+          text: "Porque a convexidade elimina o risco de crédito — títulos mais convexos tendem a ser emitidos por emissores de maior qualidade, reduzindo o spread e protegendo o investidor de eventos de default"
         },
         {
           id: "c",
-          text: "Porque a convexidade diminui a duration"
+          text: "Porque a convexidade diminui a duration — ao curvar a relação preço-taxa, reduz a sensibilidade média do título e torna o portfólio menos exposto a variações da taxa básica"
         },
         {
           id: "d",
-          text: "Porque a convexidade reduz o cupom pago"
+          text: "Porque a convexidade reduz o cupom pago — títulos com curvatura elevada distribuem menos fluxos intermediários, concentrando o valor no vencimento e comprimindo o carrego corrente"
         }
       ],
       feedback: "A convexidade é uma assimetria a favor do detentor. Funciona como um “seguro” contra grandes movimentos — mas, como todo seguro, tem um custo (prêmio embutido no preço).",
@@ -178,7 +178,7 @@ export const s4_3: Scenario = {
     opcoes: [
       {
         id: "a",
-        text: "Convexidade é sempre melhor; pague o prêmio em qualquer caso"
+        text: "Convexidade é sempre melhor; pague o prêmio em qualquer caso: como o termo ½·C·Δy² é sempre positivo, o título mais convexo supera o menos convexo independentemente do nível de volatilidade — o prêmio é sempre recuperado pelo ganho assimétrico ao longo do tempo"
       },
       {
         id: "b",
@@ -187,11 +187,11 @@ export const s4_3: Scenario = {
       },
       {
         id: "c",
-        text: "Convexidade é irrelevante para a decisão de carteira"
+        text: "Convexidade é irrelevante para a decisão de carteira: como as duas carteiras têm a mesma duration, respondem identicamente a qualquer choque de taxa — a diferença de convexidade só aparece em cenários de movimento não-paralelo que raramente ocorrem na prática"
       },
       {
         id: "d",
-        text: "Convexidade serve para reduzir o risco de crédito"
+        text: "Convexidade serve para reduzir o risco de crédito: carteiras mais convexas tendem a concentrar exposição em emissores soberanos de alta qualidade, comprimindo o spread médio e limitando a perda esperada em cenários de estresse de crédito"
       }
     ],
     feedback: "Duas carteiras de mesma duration não são iguais: a convexidade é o fator que as separa diante de choques. Comprá-la é uma decisão sobre volatilidade futura.",

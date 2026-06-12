@@ -47,15 +47,15 @@ export const s4_4: Scenario = {
         },
         {
           id: "b",
-          text: "Maximizar o cupom recebido no período"
+          text: "Maximizar o cupom recebido no período — escolher os ativos de maior taxa garante que o fluxo gerado supere o passivo e protege a carteira de variações de juros"
         },
         {
           id: "c",
-          text: "Zerar a exposição à inflação"
+          text: "Zerar a exposição à inflação — ao casar os fluxos reais de ativo e passivo com IPCA+, o valor do portfólio fica imune a choques de preços e variações da curva nominal"
         },
         {
           id: "d",
-          text: "Eliminar o risco de crédito da carteira"
+          text: "Eliminar o risco de crédito da carteira — ao selecionar ativos com duration equivalente ao passivo, concentra-se em emissores soberanos e afasta o risco de default"
         }
       ],
       feedback: "O objetivo é proteger o valor de um passivo/objetivo futuro contra variações da taxa, casando duration e valor presente entre ativos e passivos.",
@@ -68,7 +68,7 @@ export const s4_4: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "25% / 75%"
+          text: "25% / 75% (pesa mais o vencimento longo, resultando em duration 4,0)"
         },
         {
           id: "b",
@@ -77,11 +77,11 @@ export const s4_4: Scenario = {
         },
         {
           id: "c",
-          text: "75% / 25%"
+          text: "75% / 25% (pesa mais o vencimento curto, resultando em duration 2,0)"
         },
         {
           id: "d",
-          text: "0% / 100%"
+          text: "0% / 100% (alocar tudo no zero de 5 anos, resultando em duration 5,0)"
         }
       ],
       feedback: "<code>w·1 + (1−w)·5 = 3 → w = 0,5</code>. Metade em 1 ano e metade em 5 anos atinge duration 3,0 — com mais convexidade que um bullet de 3 anos.",
@@ -94,11 +94,11 @@ export const s4_4: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "A imunização é perfeita e nada muda na carteira"
+          text: "A imunização é perfeita e nada muda na carteira — desde que a duration de ativos e passivos esteja casada, qualquer formato de movimento da curva é integralmente compensado pela variação simétrica do portfólio"
         },
         {
           id: "b",
-          text: "A convexidade da carteira simplesmente desaparece"
+          text: "A convexidade da carteira simplesmente desaparece — o steepening redistribui o peso dos vencimentos e elimina o benefício assimétrico do barbell, tornando-o equivalente a um bullet de mesma duration"
         },
         {
           id: "c",
@@ -107,7 +107,7 @@ export const s4_4: Scenario = {
         },
         {
           id: "d",
-          text: "O risco de crédito da carteira aumenta"
+          text: "O risco de crédito da carteira aumenta — o steepening sinaliza deterioração fiscal e eleva o spread soberano dos títulos longos, expondo o barbell a maior risco de default na ponta de 5 anos"
         }
       ],
       feedback: "Duration assume choque paralelo. Movimentos de inclinação/curvatura geram risco residual — daí o uso de medidas por fator (key-rate durations) e rebalanceamento.",
@@ -173,15 +173,15 @@ export const s4_4: Scenario = {
     opcoes: [
       {
         id: "a",
-        text: "Não tem limitação: a imunização por duration é perfeita"
+        text: "Não tem limitação: a imunização por duration é perfeita — ao casar Dmod e VP de ativos e passivos, a carteira fica protegida contra qualquer deslocamento da curva, paralelo ou não, e não requer rebalanceamento ao longo do tempo"
       },
       {
         id: "b",
-        text: "A limitação é o risco de crédito do emissor"
+        text: "A limitação é o risco de crédito do emissor: como os ativos são títulos soberanos, o principal risco residual após casar a duration é o default do Tesouro, que mitiga-se diversificando entre emissores de diferentes ratings"
       },
       {
         id: "c",
-        text: "A duration captura qualquer formato de movimento da curva"
+        text: "A duration captura qualquer formato de movimento da curva: por ser uma média ponderada dos prazos dos fluxos, a Dmod incorpora tanto deslocamentos paralelos quanto inclinações e curvaturas, protegendo a carteira de forma completa"
       },
       {
         id: "d",

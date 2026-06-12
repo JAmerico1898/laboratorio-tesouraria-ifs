@@ -42,7 +42,7 @@ export const s3_1: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "R$ 892,86"
+          text: "R$ 892,86 — resultado de descontar R$ 1.000 por 252 du inteiros a 11,50%, ignorando que o prazo é de apenas meio ano"
         },
         {
           id: "b",
@@ -51,11 +51,11 @@ export const s3_1: Scenario = {
         },
         {
           id: "c",
-          text: "R$ 1.057,00"
+          text: "R$ 1.057,00 — valor acima do VN, como se a taxa negativa descontasse fluxo futuro abaixo de zero, invertendo a lógica de precificação do zero-cupom"
         },
         {
           id: "d",
-          text: "R$ 885,00"
+          text: "R$ 885,00 — cálculo aplicando 11,50% como taxa linear sobre 126 dias corridos, em vez de potência fracionária sobre dias úteis (DU/252)"
         }
       ],
       feedback: "<code>PU = 1000/(1,115)^(126/252) = 1000/√1,115 = 1000/1,05594 ≈ R$ 947,03</code>. O distrator R$ 892,86 usa <code>1000/1,115</code> como se fosse 252 du (1 ano inteiro).",
@@ -73,15 +73,15 @@ export const s3_1: Scenario = {
         },
         {
           id: "b",
-          text: "O PU não muda: a taxa está travada na compra"
+          text: "O PU não muda — a taxa travada na compra congela o desconto do fluxo, tornando o papel imune a oscilações da curva pré até o vencimento"
         },
         {
           id: "c",
-          text: "O PU cai, acompanhando a queda da Selic"
+          text: "O PU cai acompanhando a queda da Selic — pois o prefixado replica o carrego do pós, reduzindo seu valor à medida que o CDI recua"
         },
         {
           id: "d",
-          text: "Depende apenas do CDI diário acumulado"
+          text: "Depende apenas do CDI diário acumulado — pois o pré é reprecificado pelo fator DI overnight que vai compondo o PU até o vencimento"
         }
       ],
       feedback: "Em prefixados, preço e taxa andam em sentidos opostos. Travar 11,50% e a curva cair gera <b>ganho de marcação</b> — exatamente o atrativo do pré numa aposta de corte.",
@@ -94,15 +94,15 @@ export const s3_1: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "Grande perda de marcação, como na LTN"
+          text: "Grande perda de marcação, como na LTN — pois a alta da Selic eleva a taxa de desconto do VNA, gerando impacto simétrico ao do prefixado"
         },
         {
           id: "b",
-          text: "Grande ganho de marcação com a alta"
+          text: "Grande ganho de marcação com a alta — pois o aumento da Selic valoriza o VNA acima do par, produzindo ganho imediato no PU da LFT"
         },
         {
           id: "c",
-          text: "Igual ao efeito sofrido pela LTN"
+          text: "Igual ao efeito sofrido pela LTN — pois ambos são títulos públicos com a mesma duration efetiva e sensibilidade à curva de juros"
         },
         {
           id: "d",
@@ -173,7 +173,7 @@ export const s3_1: Scenario = {
     opcoes: [
       {
         id: "a",
-        text: "Porque a LTN carrega risco de crédito do Tesouro"
+        text: "Porque a LTN carrega risco de crédito do Tesouro — emissor soberano que pode alterar o fluxo prometido, tornando o payoff incerto nos dois sentidos"
       },
       {
         id: "b",
@@ -182,11 +182,11 @@ export const s3_1: Scenario = {
       },
       {
         id: "c",
-        text: "Porque a LFT é mais arriscada que a LTN longa"
+        text: "Porque a LFT é mais arriscada que a LTN longa — sua duration mais elevada amplifica a sensibilidade a choques de juro, gerando perdas assimétricas maiores"
       },
       {
         id: "d",
-        text: "Porque o CDB pós sempre rende mais que a LTN"
+        text: "Porque o CDB pós sempre rende mais que a LTN — o spread de crédito do emissor privado compensa o risco direcional do prefixado em qualquer cenário de Selic"
       }
     ],
     feedback: "Quanto maior a duration, maior a sensibilidade do PU à taxa. A LTN longa é uma aposta de convexidade desfavorável ao gestor desatento — daí a disciplina de limite de duration.",

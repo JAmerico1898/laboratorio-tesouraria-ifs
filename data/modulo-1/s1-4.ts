@@ -44,9 +44,9 @@ export const s1_4: Scenario = {
       enunciado:
         "Por que somar simplesmente juro real + inflação (= 11,00%) subdimensiona a taxa nominal?",
       opcoes: [
-        { id: "a", text: "Porque a inflação realizada tende a vir acima de 4,5%" },
-        { id: "b", text: "Porque o IR incide sobre o rendimento nominal do papel" },
-        { id: "c", text: "Não subdimensiona: a soma simples já é exata" },
+        { id: "a", text: "Porque a inflação realizada tende a vir acima de 4,5% — o histórico do IPCA mostra desvios persistentes que tornam a soma simples insuficiente para capturar o juro real efetivo" },
+        { id: "b", text: "Porque o IR incide sobre o rendimento nominal do papel — o imposto é calculado antes da dedução da inflação, reduzindo o juro real líquido abaixo do que a soma simples indicaria" },
+        { id: "c", text: "Não subdimensiona: a soma simples já é exata — juro real e inflação são componentes aditivos independentes e o produto cruzado é matematicamente zero para taxas anuais abaixo de 15%" },
         {
           id: "d",
           text: "Ignora o termo cruzado r·π de Fisher (≈ 0,065 × 0,045 ≈ 0,29 p.p.)",
@@ -63,14 +63,14 @@ export const s1_4: Scenario = {
       enunciado:
         "Havendo <b>incerteza relevante</b> sobre a inflação realizada, qual indexador protege melhor o mandato de juro real?",
       opcoes: [
-        { id: "a", text: "Prefixado, sempre: travar o nominal já garante o real" },
-        { id: "b", text: "LFT / pós-Selic: acompanha a Selic e protege o real" },
+        { id: "a", text: "Prefixado, sempre: travar o nominal já garante o real — a taxa acordada é imune à variação do IPCA porque o juro real efetivo é o nominal menos a inflação realizada" },
+        { id: "b", text: "LFT / pós-Selic: acompanha a Selic e protege o real — como o Banco Central eleva a Selic para conter a inflação, o retorno pós-Selic sempre supera o IPCA e garante o mandato" },
         {
           id: "c",
           text: "IPCA+ (NTN-B) com cupom real de 6,5%: entrega o juro real do mandato qualquer que seja a inflação",
           correct: true,
         },
-        { id: "d", text: "Tanto faz sob incerteza: todos entregam o mesmo real" },
+        { id: "d", text: "Tanto faz sob incerteza: todos entregam o mesmo real — pelo teorema de paridade, em equilíbrio de mercado prefixado, pós-Selic e IPCA+ convergem para o mesmo juro real ex-post" },
       ],
       feedback:
         "A NTN-B garante o <b>seu próprio cupom real</b>, não um número qualquer: para cumprir o mandato de 6,5%, é preciso um papel com cupom real <b>≥ 6,5%</b>. Um IPCA+ a 6,0% protegeria contra a inflação, mas entregaria só 6,0% real — abaixo do mandato. O pré só trava o real se a inflação vier <i>exatamente</i> em 4,5%; o IPCA+ a 6,5% defende o mandato aconteça o que acontecer com a inflação.",
@@ -139,14 +139,14 @@ export const s1_4: Scenario = {
     enunciado:
       "Qual a lição central de Fisher para defender um mandato de juro real sob incerteza inflacionária?",
     opcoes: [
-      { id: "a", text: "Basta somar juro real + inflação esperada para travar o mandato" },
+      { id: "a", text: "Basta somar juro real + inflação esperada para travar o mandato — a aproximação de Fisher é suficientemente precisa em regimes de inflação baixa, e o termo cruzado é desprezível para fins de decisão de portfólio" },
       {
         id: "b",
         text: "O termo cruzado importa (não basta somar) e, sob incerteza, um IPCA+ com cupom real ≥ 6,5% domina o pré: garante o mandato qualquer que seja a inflação",
         correct: true,
       },
-      { id: "c", text: "O prefixado é sempre superior, pois trava a taxa nominal" },
-      { id: "d", text: "A inflação realizada não afeta o juro real efetivamente entregue" },
+      { id: "c", text: "O prefixado é sempre superior, pois trava a taxa nominal — ao fixar o retorno bruto antecipadamente, o investidor elimina o risco Fisher e garante o juro real independente de qual seja a inflação realizada" },
+      { id: "d", text: "A inflação realizada não afeta o juro real efetivamente entregue — tanto o prefixado quanto o IPCA+ são contratos de juro real fixo, e a inflação só altera o componente nominal do retorno, nunca o real" },
     ],
     feedback:
       "Dois aprendizados: (1) usar <code>(1+r)(1+π)</code>, não a soma; (2) sob incerteza, o indexado à inflação protege o mandato de forma robusta — <b>desde que o cupom real do papel cumpra os 6,5%</b>. Um IPCA+ abaixo de 6,5% protege contra a inflação, mas não entrega o mandato; o pré só acerta no cenário exato de 4,5%.",

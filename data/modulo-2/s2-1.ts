@@ -1,4 +1,4 @@
-import type { Scenario } from "@/lib/types";
+﻿import type { Scenario } from "@/lib/types";
 
 export const s2_1: Scenario = {
   id: "s2-1",
@@ -46,11 +46,11 @@ export const s2_1: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "A taxa spot de cada vértice"
+          text: "A taxa spot de cada vértice — mantida uniforme em todo o intervalo, de modo que pontos intermediários usam o mesmo nível de juros do vértice mais próximo"
         },
         {
           id: "b",
-          text: "O PU do título no intervalo"
+          text: "O PU do título no intervalo — calculado pelo desconto linear do valor de face, preservando a consistência de preço entre os vértices adjacentes"
         },
         {
           id: "c",
@@ -59,7 +59,7 @@ export const s2_1: Scenario = {
         },
         {
           id: "d",
-          text: "A duration do papel"
+          text: "A duration do papel — ponderada pelos fluxos do trecho, garantindo que a sensibilidade a variações de taxa seja uniforme entre os dois vértices"
         }
       ],
       feedback: "Flat-forward assume <b>forward constante</b> entre dois vértices, preservando a multiplicatividade dos fatores de capitalização — por isso é o padrão no mercado DU/252.",
@@ -72,15 +72,15 @@ export const s2_1: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "≈ 12,65% a.a."
+          text: "≈ 12,65% a.a. (média aritmética simples das duas taxas spot adjacentes, sem composição dos fatores de capitalização)"
         },
         {
           id: "b",
-          text: "≈ 12,80% a.a."
+          text: "≈ 12,80% a.a. (taxa spot do vértice de 63 du utilizada diretamente como forward do trecho, ignorando o efeito do segmento anterior)"
         },
         {
           id: "c",
-          text: "≈ 13,10% a.a."
+          text: "≈ 13,10% a.a. (taxa spot do vértice de 126 du extrapolada para o trecho de 21 du, sem descontar o fator acumulado até 42 du)"
         },
         {
           id: "d",
@@ -103,15 +103,15 @@ export const s2_1: Scenario = {
         },
         {
           id: "b",
-          text: "Grande e aleatório, sem padrão identificável"
+          text: "Grande e aleatório, sem padrão identificável — cada ponto da curva produziria um desvio diferente dependendo da inclinação local no dia"
         },
         {
           id: "c",
-          text: "Nulo: os dois métodos são sempre idênticos"
+          text: "Nulo: os dois métodos são sempre idênticos — produzem a mesma taxa interpolada porque a relação entre fator de capitalização e taxa é linear na base DU/252"
         },
         {
           id: "d",
-          text: "Relevante apenas para títulos pós-fixados"
+          text: "Relevante apenas para títulos pós-fixados — pois nesses papéis a taxa de referência muda diariamente e a interpolação precisa acompanhar o CDI do período"
         }
       ],
       feedback: "Em 50 du a diferença é de poucos bps, mas o viés é <b>sistemático</b>. Em vértices longos ou curva muito inclinada o erro cresce; em <b>curva invertida</b> a linear pode até inverter a relação forward — daí a padronização do flat-forward.",
@@ -178,11 +178,11 @@ export const s2_1: Scenario = {
     opcoes: [
       {
         id: "a",
-        text: "Porque é simplesmente mais fácil e rápido de calcular"
+        text: "Porque é simplesmente mais fácil e rápido de calcular — a operação de divisão linear entre dois vértices dispensa exponenciação e reduz o tempo de processamento nos sistemas de precificação"
       },
       {
         id: "b",
-        text: "Porque a interpolação linear não funciona com pós-fixados"
+        text: "Porque a interpolação linear não funciona com pós-fixados — a taxa do CDI varia a cada dia útil, tornando qualquer método de interpolação por trecho incompatível com a remarcação diária da LFT"
       },
       {
         id: "c",
@@ -191,7 +191,7 @@ export const s2_1: Scenario = {
       },
       {
         id: "d",
-        text: "Porque a ANBIMA proíbe o uso de cálculo composto"
+        text: "Porque a ANBIMA proíbe o uso de cálculo composto nos vértices intermediários — a norma de marcação a mercado exige desconto linear para garantir comparabilidade entre carteiras de diferentes gestores"
       }
     ],
     feedback: "O flat-forward é coerente com a forma como os fatores se compõem no tempo; a linear é um atalho que acumula viés e, em curva invertida, distorce o sinal da forward.",

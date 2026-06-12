@@ -47,15 +47,15 @@ export const s2_2: Scenario = {
         },
         {
           id: "b",
-          text: "Comprar a taxa do trecho (FRA de DI comprado), travando 13,40%"
+          text: "Comprar a taxa do trecho (FRA de DI comprado), travando 13,40% — você 'paga' a taxa de mercado e ganha se a forward subir ainda mais, apostando na alta de juros"
         },
         {
           id: "c",
-          text: "Não há instrumento para operar essa visão de curva"
+          text: "Não há instrumento para operar essa visão de curva — forwards de taxas só são acessíveis a participantes com autorização especial do Banco Central para operações estruturadas"
         },
         {
           id: "d",
-          text: "Comprar dólar futuro como proxy da queda de juros"
+          text: "Comprar dólar futuro como proxy da queda de juros — a correlação negativa entre câmbio e taxa DI permite capturar indiretamente a compressão do trecho 63→126 du"
         }
       ],
       feedback: "Forward de mercado (13,40%) acima da sua expectativa (12,80%) → você <b>vende a taxa</b> do trecho. Se a taxa realizada cair, a posição vendida ganha.",
@@ -68,11 +68,11 @@ export const s2_2: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "Risco de crédito do Tesouro emissor dos títulos"
+          text: "Risco de crédito do Tesouro emissor dos títulos — caso o governo deixe de honrar os compromissos do DI futuro, a contraparte central da B3 não cobre a inadimplência da posição"
         },
         {
           id: "b",
-          text: "Risco cambial sobre o valor da posição"
+          text: "Risco cambial sobre o valor da posição — como o DI futuro é liquidado financeiramente em reais, uma apreciação do dólar reduz o valor em moeda estrangeira do resultado da operação"
         },
         {
           id: "c",
@@ -81,7 +81,7 @@ export const s2_2: Scenario = {
         },
         {
           id: "d",
-          text: "Nenhum: é arbitragem pura, sem risco de mercado"
+          text: "Nenhum: é arbitragem pura, sem risco de mercado — a diferença entre forward negociada e forward realizada é matematicamente garantida pela paridade de taxas, tornando o resultado certo desde a abertura"
         }
       ],
       feedback: "Operar contra a forward é uma <b>aposta direcional</b>. Não é arbitragem: se a Selic subir, a forward não cai (ou sobe) e a perda é proporcional ao tamanho.",
@@ -94,15 +94,15 @@ export const s2_2: Scenario = {
       opcoes: [
         {
           id: "a",
-          text: "A convicção do gestor, sem necessidade de limite"
+          text: "A convicção do gestor, sem necessidade de limite — quanto maior a certeza sobre a queda da Selic, maior pode ser o tamanho, pois a probabilidade de perda decresce proporcionalmente à convicção"
         },
         {
           id: "b",
-          text: "Nada: o tamanho é livre em FRA de DI"
+          text: "Nada: o tamanho é livre em FRA de DI — contratos de taxa a termo não têm ajuste diário de margem, portanto não há métrica de risco que justifique impor um limite operacional"
         },
         {
           id: "c",
-          text: "Só o limite de posições cambiais se aplica aqui"
+          text: "Só o limite de posições cambiais se aplica aqui — o FRA de DI, por ser derivado de taxa de juros em reais, enquadra-se na mesma categoria regulatória que operações de câmbio pronto"
         },
         {
           id: "d",
@@ -174,7 +174,7 @@ export const s2_2: Scenario = {
     opcoes: [
       {
         id: "a",
-        text: "Se a convicção é alta, dispensa-se o limite de risco"
+        text: "Se a convicção é alta, dispensa-se o limite de risco — quando o fundamento macro é sólido e o histórico do gestor é favorável, o framework de DV01 pode ser temporariamente suspenso por decisão da tesouraria"
       },
       {
         id: "b",
@@ -183,11 +183,11 @@ export const s2_2: Scenario = {
       },
       {
         id: "c",
-        text: "A forward de mercado é sempre a melhor estimativa; não se opera contra ela"
+        text: "A forward de mercado é sempre a melhor estimativa; não se opera contra ela — o preço do DI futuro reflete toda a informação disponível e qualquer discordância indica apenas erro de modelagem ou dado desatualizado"
       },
       {
         id: "d",
-        text: "FRA de DI não carrega risco de mercado relevante"
+        text: "FRA de DI não carrega risco de mercado relevante — por ser liquidado apenas no vencimento e não ter ajuste diário de margem, o resultado só se materializa ao final e, portanto, não afeta o VaR da carteira"
       }
     ],
     feedback: "Discordar da forward é legítimo, mas o tamanho deriva do risco tolerado, com stop definido — não da intensidade da opinião.",

@@ -44,9 +44,9 @@ export const s1_2: Scenario = {
           text: "Um descasamento de prazos (gap): aposta direcional em juros, com risco de marcação/rolagem",
           correct: true,
         },
-        { id: "b", text: "Eliminação de risco: trava a taxa e remove a exposição à Selic" },
-        { id: "c", text: "Um risco de crédito do emissor do título aplicado" },
-        { id: "d", text: "Um risco cambial sobre o fluxo aplicado" },
+        { id: "b", text: "Eliminação de risco: trava a taxa pré e remove completamente a exposição à Selic — o gap desaparece porque ativo e passivo ficam indexados ao mesmo benchmark" },
+        { id: "c", text: "Um risco de crédito do emissor do título aplicado — a inadimplência do Tesouro afeta o valor de resgate e gera o gap entre o ativo pré e o passivo pós-CDI" },
+        { id: "d", text: "Um risco cambial sobre o fluxo aplicado — a variação do dólar afeta o carrego do papel pré quando o funding é captado em moeda estrangeira no mercado interbancário" },
       ],
       feedback:
         "Ativo mais longo que o funding = <b>gap</b>. Você passa a depender da direção da Selic: trava taxa hoje, mas fica exposto a marcação adversa e ao custo de rolar o caixa. É decisão que exige <b>limite de risco</b>.",
@@ -58,9 +58,9 @@ export const s1_2: Scenario = {
       enunciado:
         "Você aplicou <b>pré 21 du a 10,60%</b> e, no dia seguinte, a taxa de mercado desse vértice <b>sobe</b> para 11,60%. Qual o efeito imediato na marcação a mercado da posição?",
       opcoes: [
-        { id: "a", text: "Ganho de marcação: o PU sobe quando a taxa exigida sobe" },
-        { id: "b", text: "Neutro: por ser pré, não marca a mercado" },
-        { id: "c", text: "Depende apenas do CDI do dia, não da curva pré" },
+        { id: "a", text: "Ganho de marcação: o PU sobe quando a taxa exigida sobe — a abertura de curva valoriza o papel pré por convexidade" },
+        { id: "b", text: "Neutro: por ser pré, não marca a mercado — a taxa contratada é imune a variações da curva DI até o vencimento" },
+        { id: "c", text: "Depende apenas do CDI do dia, não da curva pré — o carrego diário do papel é atualizado pelo overnight, isolando o PU das variações de taxa longa" },
         { id: "d", text: "Perda de marcação: o PU cai quando a taxa exigida sobe", correct: true },
       ],
       feedback:
@@ -129,14 +129,14 @@ export const s1_2: Scenario = {
     enunciado:
       "Qual frase melhor descreve a natureza de uma decisão pré × pós com descasamento de prazo?",
     opcoes: [
-      { id: "a", text: "Pré é sempre superior porque trava a taxa antecipadamente" },
-      { id: "b", text: "Pós elimina todo o risco da tesouraria, em qualquer cenário" },
+      { id: "a", text: "Pré é sempre superior porque trava a taxa antecipadamente — o funding pós-CDI nunca alcança a rentabilidade de uma LTN comprada no início do ciclo de alta" },
+      { id: "b", text: "Pós elimina todo o risco da tesouraria em qualquer cenário — a LFT acompanha a Selic e zera o gap de marcação, tornando o risco de taxa irrelevante para o balanço" },
       {
         id: "c",
         text: 'É uma aposta direcional em juros que exige limite de risco e disciplina de stop — não existe escolha "certa" sem visão de cenário',
         correct: true,
       },
-      { id: "d", text: "É essencialmente uma decisão de risco de crédito do emissor" },
+      { id: "d", text: "É essencialmente uma decisão de risco de crédito do emissor — o spread entre LTN e LFT reflete apenas o prêmio de inadimplência do Tesouro, não a direcionalidade da curva de juros" },
     ],
     feedback:
       "O gap transforma uma aplicação em <b>posição direcional</b>. Apostar pré e a Selic subir gera marcação negativa e custo de oportunidade; por isso o limite de risco precede a convicção.",
