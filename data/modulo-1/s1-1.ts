@@ -131,7 +131,7 @@ export const s1_1: Scenario = {
             { k: "Lastro", v: "LTN — marcação/rolagem", tone: "neg" },
           ],
           analise:
-            "Custo: <code>200.000.000 × 0,000508 × 0,998 ≈ R$ 101.397/dia</code> — economia de <code>R$ 203/dia</code> vs 100% CDI. Haircut 0,2%: imobiliza colateral extra em LTN, mas o desconto da taxa já absorve o custo (efeito de 2ª ordem). Risco principal: marcação do lastro pré — se a curva pré abrir, o colateral LTN desvaloriza e a rolagem fica instável. Lastrear em <b>LFT</b> mantém o desconto sem esse risco.",
+            "Custo: <code>200.000.000 × 0,000508 × 0,998 ≈ R$ 101.397/dia</code> — economia de <code>R$ 203/dia</code> vs 100% CDI. Haircut 0,2%: o colateral exigido é <code>200.000.000 / 0,998 = R$ 200.400.802</code> — <code>R$ 400.802</code> a mais. Em LTN de ~126 du na curva de 13,65% a.a. (<code>PU = 1.000 / 1,1365^(126/252) ≈ R$ 937,99</code>), isso são <code>400.802 / 937,99 ≈ 427 títulos</code> extras sobre os <code>213.223</code> já exigidos — enquanto o interbancário 100% CDI não imobiliza nenhum. Atenção à armadilha aritmética: <code>400.802 × 0,000508 ≈ R$ 204/dia</code> pareceria anular a economia de R$ 203, mas o colateral extra não rende zero — são LTNs que seguem carregando o próprio yield. O custo real é <code>colateral extra × (custo de funding − yield do colateral)</code> ≈ 0 quando a LTN está precificada perto do CDI; por isso o haircut é efeito de 2ª ordem. Risco principal: marcação do lastro pré — se a curva pré abrir, o colateral LTN desvaloriza e a rolagem fica instável. Lastrear em <b>LFT</b> mantém o desconto sem esse risco.",
         },
       },
     ],

@@ -64,7 +64,7 @@ export const s1_2: Scenario = {
         { id: "d", text: "Perda de marcação: o PU cai quando a taxa exigida sobe", correct: true },
       ],
       feedback:
-        "Em renda fixa prefixada, <b>preço e taxa andam em sentidos opostos</b>: subir a taxa exigida derruba o PU. É exatamente o risco de marcação que o gap introduz — invisível em quem só olha o carrego.",
+        "Em renda fixa prefixada, <b>preço e taxa andam em sentidos opostos</b>: subir a taxa exigida derruba o PU. A conta, por <b>R$ 1 milhão aplicado</b> (DU/252): o resgate já está travado em <code>1.000.000 × 1,1060^(21/252) = R$ 1.008.431</code>. No dia seguinte faltam <b>20 du</b> e o mercado desconta a 11,60% — <code>PU = 1.008.431 / 1,1160^(20/252) = R$ 999.686</code>, contra <code>R$ 1.000.400</code> se a curva não tivesse mexido (<code>1.000.000 × 1,1060^(1/252)</code>). Perda de marcação ≈ <code>R$ 714 por milhão</code>, ou <b>−7,1 bps</b> — exatamente o que a duration antecipa: <code>Dmod = (20/252)/1,1160 ≈ 0,0711 ano</code> e <code>−0,0711 × 1,00% ≈ −0,071%</code> (DV01 ≈ R$ 7 por milhão a cada bp). Para dimensionar: o carrego é ~<b>4 bps/dia</b>, então 100 bps de abertura apagam quase <b>2 dias</b> de rendimento. Se o papel for até o vencimento a perda se desfaz (<i>pull to par</i>) e o retorno continua 10,60% — ela vira caixa se a posição for vendida ou se o gap forçar a rolagem. É exatamente o risco de marcação que o gap introduz — invisível em quem só olha o carrego.",
       pontos: 20,
     },
   ],
