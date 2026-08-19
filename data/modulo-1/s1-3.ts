@@ -94,7 +94,7 @@ export const s1_3: Scenario = {
             { k: "Risco", v: "Perder o cliente", tone: "neg" },
           ],
           analise:
-            "<code>11,0% + 2,5% + 0,5% + 1,8% = 15,8% a.a.</code> Cobre todos os blocos: crédito BB (2,5%), iliquidez de papel não-negociável (0,5%) e margem adequada (1,8%). Qualquer piora do rating BB caberia dentro do prêmio de crédito. Risco: cliente encontra concorrente disposto a sacrificar os 2,3 p.p. de prêmio.",
+            "<code>11,0% + 2,5% + 0,5% + 1,8% = 15,8% a.a.</code> Cobre todos os blocos: crédito BB (2,5%), iliquidez de papel não-negociável (0,5%) e margem adequada (1,8%). Qualquer piora do rating BB caberia dentro do prêmio de crédito. Risco: cliente encontra concorrente competitivo a 13,5% — <code>15,8% − 13,5% = 2,3 p.p.</code> de diferença (1,0 p.p. de crédito + 0,5 p.p. de liquidez + 0,8 p.p. de margem).",
         },
       },
       {

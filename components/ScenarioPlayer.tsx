@@ -50,10 +50,17 @@ export function ScenarioPlayer({ scenario }: { scenario: Scenario }) {
     });
   }
 
-  function reset() {
-    setCursor(0);
-    setEarned({});
+  // Volta à encruzilhada para o aluno testar outro caminho:
+  // mantém os pontos das etapas e descarta os da reflexão (será refeita).
+  function retryDecision() {
+    setCursor(phases.indexOf("encruzilhada"));
     setBranch(null);
+    setEarned((prev) => {
+      const copy = { ...prev };
+      delete copy.reflexao;
+      return copy;
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function completeEtapa(idx: number, pontos: number) {
@@ -176,10 +183,10 @@ export function ScenarioPlayer({ scenario }: { scenario: Scenario }) {
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
-              onClick={reset}
+              onClick={retryDecision}
               className="cursor-pointer rounded-xl border border-border-soft bg-surface-container-lowest px-6 py-3 text-sm font-bold text-ink transition-colors hover:bg-surface-container-low active:scale-95"
             >
-              Tentar outro cenário
+              Tentar outra decisão
             </button>
             <Link
               href={`/modulo-${scenario.id.match(/^s(\d+)/)?.[1] ?? "1"}`}
