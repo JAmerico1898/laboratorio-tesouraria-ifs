@@ -36,3 +36,19 @@ npm run build    # build de produção
 
 - **Módulo 1** — completo (4 simulações jogáveis, placar /85).
 - **Módulos 2–4** e **Estudos de Caso** — placeholders ("em breve").
+
+## Módulo 5 — Mercado Hoje
+
+Painel de consulta às curvas do dia (`pyield` via função Python na Vercel) mais 6 pautas
+de debate. As pautas são **ancoradas em 21/08/2026**: suas árvores de decisão afirmam
+fatos qualitativos sobre a curva ("desenha um U", "acima da banda") que só valem naquele
+dia, então elas leem `public/data/mercado-fallback.json`, enquanto o painel livre é ao vivo.
+
+```bash
+npm run snapshot   # regenera o snapshot commitado (requer Python + pyield>=0.56.1)
+npm run verify     # portão de entrega: typecheck + testes/evals com cobertura + build
+```
+
+`npm run verify` roda os evals quantitativos em `tests/evals.test.ts` (estrutura das pautas,
+encadeamento, antiviés de posição 5/5/4/4 e de comprimento ±15%, cobertura das 19 curvas,
+convenções DU/252 × linear 360) e a suíte de fidelidade WinAnsi do PDF do gabarito.

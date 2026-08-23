@@ -1,0 +1,2815 @@
+{
+ "dataSolicitada": "2026-08-21",
+ "dataEfetiva": "2026-08-21",
+ "contingencia": false,
+ "indicadores": {
+  "selicMeta": 0.14,
+  "diOver": 0.139,
+  "ptax": 5.1625,
+  "vnaNtnb": 4742.744422,
+  "vnaNtnbData": "2026-08-15",
+  "vnaNtnbProjetado": 4740.907038,
+  "vnaLft": 19721.750611,
+  "ipcaProjetado": -0.002
+ },
+ "curvas": [
+  {
+   "id": "pre-zero",
+   "familia": "taxas",
+   "nome": "PRE zero-cupom (ANBIMA)",
+   "fonte": "ANBIMA",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "out/26",
+     "vencimento": "2026-10-01",
+     "diasUteis": 28,
+     "taxa": 0.137391
+    },
+    {
+     "rotulo": "jan/27",
+     "vencimento": "2027-01-01",
+     "diasUteis": 90,
+     "taxa": 0.13588909949365502
+    },
+    {
+     "rotulo": "abr/27",
+     "vencimento": "2027-04-01",
+     "diasUteis": 150,
+     "taxa": 0.135618
+    },
+    {
+     "rotulo": "jul/27",
+     "vencimento": "2027-07-01",
+     "diasUteis": 213,
+     "taxa": 0.13509
+    },
+    {
+     "rotulo": "out/27",
+     "vencimento": "2027-10-01",
+     "diasUteis": 278,
+     "taxa": 0.137686
+    },
+    {
+     "rotulo": "jan/28",
+     "vencimento": "2028-01-01",
+     "diasUteis": 341,
+     "taxa": 0.13872
+    },
+    {
+     "rotulo": "abr/28",
+     "vencimento": "2028-04-01",
+     "diasUteis": 404,
+     "taxa": 0.139355
+    },
+    {
+     "rotulo": "jul/28",
+     "vencimento": "2028-07-01",
+     "diasUteis": 465,
+     "taxa": 0.13978
+    },
+    {
+     "rotulo": "out/28",
+     "vencimento": "2028-10-01",
+     "diasUteis": 529,
+     "taxa": 0.141346
+    },
+    {
+     "rotulo": "jan/29",
+     "vencimento": "2029-01-01",
+     "diasUteis": 589,
+     "taxa": 0.141992
+    },
+    {
+     "rotulo": "jul/29",
+     "vencimento": "2029-07-01",
+     "diasUteis": 713,
+     "taxa": 0.143349
+    },
+    {
+     "rotulo": "jan/30",
+     "vencimento": "2030-01-01",
+     "diasUteis": 838,
+     "taxa": 0.143987
+    },
+    {
+     "rotulo": "jan/31",
+     "vencimento": "2031-01-01",
+     "diasUteis": 1090,
+     "taxa": 0.1450522875603215
+    },
+    {
+     "rotulo": "jan/32",
+     "vencimento": "2032-01-01",
+     "diasUteis": 1342,
+     "taxa": 0.145718
+    },
+    {
+     "rotulo": "jan/33",
+     "vencimento": "2033-01-01",
+     "diasUteis": 1594,
+     "taxa": 0.14704057911395485
+    },
+    {
+     "rotulo": "jan/35",
+     "vencimento": "2035-01-01",
+     "diasUteis": 2093,
+     "taxa": 0.14723269452955634
+    },
+    {
+     "rotulo": "jan/37",
+     "vencimento": "2037-01-01",
+     "diasUteis": 2595,
+     "taxa": 0.14646425639473049
+    }
+   ],
+   "rotuloY": "Taxa zero-cupom (% a.a.)"
+  },
+  {
+   "id": "di1",
+   "familia": "taxas",
+   "nome": "DI Futuro (B3)",
+   "fonte": "B3",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "DI1U26",
+     "vencimento": "2026-09-01",
+     "diasUteis": 7,
+     "taxa": 0.13902,
+     "dv01": 0.24299414799076796
+    },
+    {
+     "rotulo": "DI1V26",
+     "vencimento": "2026-10-01",
+     "diasUteis": 28,
+     "taxa": 0.13827,
+     "dv01": 0.9621941874755354
+    },
+    {
+     "rotulo": "DI1X26",
+     "vencimento": "2026-11-03",
+     "diasUteis": 49,
+     "taxa": 0.13764,
+     "dv01": 1.666866642054311
+    },
+    {
+     "rotulo": "DI1Z26",
+     "vencimento": "2026-12-01",
+     "diasUteis": 68,
+     "taxa": 0.13725,
+     "dv01": 2.2918183169508732
+    },
+    {
+     "rotulo": "DI1F27",
+     "vencimento": "2027-01-04",
+     "diasUteis": 90,
+     "taxa": 0.13706,
+     "dv01": 3.0001014521158575
+    },
+    {
+     "rotulo": "DI1G27",
+     "vencimento": "2027-02-01",
+     "diasUteis": 110,
+     "taxa": 0.1371,
+     "dv01": 3.629417426396584
+    },
+    {
+     "rotulo": "DI1H27",
+     "vencimento": "2027-03-01",
+     "diasUteis": 128,
+     "taxa": 0.13721,
+     "dv01": 4.184130836495834
+    },
+    {
+     "rotulo": "DI1J27",
+     "vencimento": "2027-04-01",
+     "diasUteis": 150,
+     "taxa": 0.13741,
+     "dv01": 4.847186234724589
+    },
+    {
+     "rotulo": "DI1K27",
+     "vencimento": "2027-05-03",
+     "diasUteis": 171,
+     "taxa": 0.13755,
+     "dv01": 5.465691084222357
+    },
+    {
+     "rotulo": "DI1M27",
+     "vencimento": "2027-06-01",
+     "diasUteis": 191,
+     "taxa": 0.1377,
+     "dv01": 6.041427497136385
+    },
+    {
+     "rotulo": "DI1N27",
+     "vencimento": "2027-07-01",
+     "diasUteis": 213,
+     "taxa": 0.13789,
+     "dv01": 6.65979265507713
+    },
+    {
+     "rotulo": "DI1Q27",
+     "vencimento": "2027-08-02",
+     "diasUteis": 235,
+     "taxa": 0.13798,
+     "dv01": 7.264152078020731
+    },
+    {
+     "rotulo": "DI1V27",
+     "vencimento": "2027-10-01",
+     "diasUteis": 278,
+     "taxa": 0.1383,
+     "dv01": 8.400913496734894
+    },
+    {
+     "rotulo": "DI1X27",
+     "vencimento": "2027-11-01",
+     "diasUteis": 298,
+     "taxa": 0.13832,
+     "dv01": 8.912848501606936
+    },
+    {
+     "rotulo": "DI1Z27",
+     "vencimento": "2027-12-01",
+     "diasUteis": 318,
+     "taxa": 0.13839,
+     "dv01": 9.412425673016068
+    },
+    {
+     "rotulo": "DI1F28",
+     "vencimento": "2028-01-03",
+     "diasUteis": 341,
+     "taxa": 0.13857,
+     "dv01": 9.970789758414586
+    },
+    {
+     "rotulo": "DI1J28",
+     "vencimento": "2028-04-03",
+     "diasUteis": 404,
+     "taxa": 0.13919,
+     "dv01": 11.41960638420755
+    },
+    {
+     "rotulo": "DI1N28",
+     "vencimento": "2028-07-03",
+     "diasUteis": 465,
+     "taxa": 0.13993,
+     "dv01": 12.712192018473981
+    },
+    {
+     "rotulo": "DI1V28",
+     "vencimento": "2028-10-02",
+     "diasUteis": 529,
+     "taxa": 0.14089,
+     "dv01": 13.952269413171868
+    },
+    {
+     "rotulo": "DI1X28",
+     "vencimento": "2028-11-01",
+     "diasUteis": 550,
+     "taxa": 0.14111,
+     "dv01": 14.33887506915085
+    },
+    {
+     "rotulo": "DI1Z28",
+     "vencimento": "2028-12-01",
+     "diasUteis": 569,
+     "taxa": 0.14129,
+     "dv01": 14.679766602175457
+    },
+    {
+     "rotulo": "DI1F29",
+     "vencimento": "2029-01-02",
+     "diasUteis": 589,
+     "taxa": 0.14145,
+     "dv01": 15.030166875604476
+    },
+    {
+     "rotulo": "DI1J29",
+     "vencimento": "2029-04-02",
+     "diasUteis": 650,
+     "taxa": 0.14213,
+     "dv01": 16.02978975234104
+    },
+    {
+     "rotulo": "DI1N29",
+     "vencimento": "2029-07-02",
+     "diasUteis": 713,
+     "taxa": 0.14269,
+     "dv01": 16.97695805372647
+    },
+    {
+     "rotulo": "DI1V29",
+     "vencimento": "2029-10-01",
+     "diasUteis": 777,
+     "taxa": 0.14294,
+     "dv01": 17.868638846600287
+    },
+    {
+     "rotulo": "DI1X29",
+     "vencimento": "2029-11-01",
+     "diasUteis": 799,
+     "taxa": 0.143,
+     "dv01": 18.157524378897083
+    },
+    {
+     "rotulo": "DI1Z29",
+     "vencimento": "2029-12-03",
+     "diasUteis": 818,
+     "taxa": 0.14308,
+     "dv01": 18.397447469965577
+    },
+    {
+     "rotulo": "DI1F30",
+     "vencimento": "2030-01-02",
+     "diasUteis": 838,
+     "taxa": 0.14323,
+     "dv01": 18.637708530925117
+    },
+    {
+     "rotulo": "DI1J30",
+     "vencimento": "2030-04-01",
+     "diasUteis": 899,
+     "taxa": 0.14334,
+     "dv01": 19.348412802535375
+    },
+    {
+     "rotulo": "DI1N30",
+     "vencimento": "2030-07-01",
+     "diasUteis": 961,
+     "taxa": 0.14358,
+     "dv01": 19.992048234352882
+    },
+    {
+     "rotulo": "DI1V30",
+     "vencimento": "2030-10-01",
+     "diasUteis": 1027,
+     "taxa": 0.14377,
+     "dv01": 20.60999120008449
+    },
+    {
+     "rotulo": "DI1F31",
+     "vencimento": "2031-01-02",
+     "diasUteis": 1090,
+     "taxa": 0.14399,
+     "dv01": 21.130239719322663
+    },
+    {
+     "rotulo": "DI1J31",
+     "vencimento": "2031-04-01",
+     "diasUteis": 1151,
+     "taxa": 0.14406,
+     "dv01": 21.59053415377537
+    },
+    {
+     "rotulo": "DI1N31",
+     "vencimento": "2031-07-01",
+     "diasUteis": 1212,
+     "taxa": 0.1443,
+     "dv01": 21.979263221849077
+    },
+    {
+     "rotulo": "DI1V31",
+     "vencimento": "2031-10-01",
+     "diasUteis": 1278,
+     "taxa": 0.14448,
+     "dv01": 22.350887489764535
+    },
+    {
+     "rotulo": "DI1F32",
+     "vencimento": "2032-01-02",
+     "diasUteis": 1342,
+     "taxa": 0.14479,
+     "dv01": 22.640595786819986
+    },
+    {
+     "rotulo": "DI1F33",
+     "vencimento": "2033-01-03",
+     "diasUteis": 1594,
+     "taxa": 0.14513,
+     "dv01": 23.439756545281682
+    },
+    {
+     "rotulo": "DI1F34",
+     "vencimento": "2034-01-02",
+     "diasUteis": 1845,
+     "taxa": 0.14516,
+     "dv01": 23.699829219123465
+    },
+    {
+     "rotulo": "DI1F35",
+     "vencimento": "2035-01-02",
+     "diasUteis": 2093,
+     "taxa": 0.14519,
+     "dv01": 23.52233360597126
+    },
+    {
+     "rotulo": "DI1F36",
+     "vencimento": "2036-01-02",
+     "diasUteis": 2342,
+     "taxa": 0.14492,
+     "dv01": 23.076797616413486
+    },
+    {
+     "rotulo": "DI1F37",
+     "vencimento": "2037-01-02",
+     "diasUteis": 2595,
+     "taxa": 0.14511,
+     "dv01": 22.279398038699547
+    },
+    {
+     "rotulo": "DI1F38",
+     "vencimento": "2038-01-04",
+     "diasUteis": 2844,
+     "taxa": 0.14494,
+     "dv01": 21.396430505403895
+    },
+    {
+     "rotulo": "DI1F39",
+     "vencimento": "2039-01-03",
+     "diasUteis": 3095,
+     "taxa": 0.14464,
+     "dv01": 20.419003645978943
+    },
+    {
+     "rotulo": "DI1F40",
+     "vencimento": "2040-01-02",
+     "diasUteis": 3346,
+     "taxa": 0.1445,
+     "dv01": 19.329567302558125
+    },
+    {
+     "rotulo": "DI1F41",
+     "vencimento": "2041-01-02",
+     "diasUteis": 3596,
+     "taxa": 0.14441,
+     "dv01": 18.192267645225936
+    }
+   ],
+   "rotuloY": "Taxa de ajuste (% a.a.)"
+  },
+  {
+   "id": "ntnb-zero",
+   "familia": "taxas",
+   "nome": "Juro real zero (NTN-B)",
+   "fonte": "ANBIMA",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "NTN-B 2027",
+     "vencimento": "2027-05-15",
+     "diasUteis": 181,
+     "taxa": 0.070024,
+     "pu": 4787.381946,
+     "duration": 0.70418554374837,
+     "dv01": 0.3128958230376612
+    },
+    {
+     "rotulo": "NTN-B 2028",
+     "vencimento": "2028-08-15",
+     "diasUteis": 496,
+     "taxa": 0.08092102430214965,
+     "pu": 4579.661787,
+     "duration": 1.88229150637888,
+     "dv01": 0.8012029407865884
+    },
+    {
+     "rotulo": "NTN-B 2029",
+     "vencimento": "2029-05-15",
+     "diasUteis": 680,
+     "taxa": 0.07981837473805298,
+     "pu": 4607.912487,
+     "duration": 2.48796508130946,
+     "dv01": 1.061949459945069
+    },
+    {
+     "rotulo": "NTN-B 2030",
+     "vencimento": "2030-08-15",
+     "diasUteis": 994,
+     "taxa": 0.08056811317781687,
+     "pu": 4442.584971,
+     "duration": 3.55319897809107,
+     "dv01": 1.4601805073253398
+    },
+    {
+     "rotulo": "NTN-B 2031",
+     "vencimento": "2031-05-15",
+     "diasUteis": 1180,
+     "taxa": 0.07996506274932824,
+     "pu": 4475.017098,
+     "duration": 4.06162767286646,
+     "dv01": 1.6830002603907515
+    },
+    {
+     "rotulo": "NTN-B 2032",
+     "vencimento": "2032-08-15",
+     "diasUteis": 1498,
+     "taxa": 0.0802762207302441,
+     "pu": 4321.977854,
+     "duration": 5.03570857415529,
+     "dv01": 2.010118620580142
+    },
+    {
+     "rotulo": "NTN-B 2033",
+     "vencimento": "2033-05-15",
+     "diasUteis": 1685,
+     "taxa": 0.0799492087947844,
+     "pu": 4357.799685,
+     "duration": 5.44957062444236,
+     "dv01": 2.1950116069627583
+    },
+    {
+     "rotulo": "NTN-B 2035",
+     "vencimento": "2035-05-15",
+     "diasUteis": 2184,
+     "taxa": 0.07875573170886185,
+     "pu": 4287.478719,
+     "duration": 6.64766013791479,
+     "dv01": 2.6406511123580274
+    },
+    {
+     "rotulo": "NTN-B 2037",
+     "vencimento": "2037-05-15",
+     "diasUteis": 2685,
+     "taxa": 0.07656787587489466,
+     "pu": 4258.028585,
+     "duration": 7.70409230806859,
+     "dv01": 3.0436230057185543
+    },
+    {
+     "rotulo": "NTN-B 2040",
+     "vencimento": "2040-08-15",
+     "diasUteis": 3503,
+     "taxa": 0.07535758363048961,
+     "pu": 4120.145826,
+     "duration": 9.27983264289772,
+     "dv01": 3.550893506967404
+    },
+    {
+     "rotulo": "NTN-B 2045",
+     "vencimento": "2045-05-15",
+     "diasUteis": 4690,
+     "taxa": 0.07394754687820204,
+     "pu": 4128.707793,
+     "duration": 10.67746221911172,
+     "dv01": 4.096090773874808
+    },
+    {
+     "rotulo": "NTN-B 2050",
+     "vencimento": "2050-08-15",
+     "diasUteis": 6005,
+     "taxa": 0.07360211402761485,
+     "pu": 3995.584843,
+     "duration": 12.04294811644019,
+     "dv01": 4.475358438291226
+    },
+    {
+     "rotulo": "NTN-B 2055",
+     "vencimento": "2055-05-15",
+     "diasUteis": 7194,
+     "taxa": 0.07148269917318206,
+     "pu": 4064.369775,
+     "duration": 12.60578252508262,
+     "dv01": 4.764550032573203
+    },
+    {
+     "rotulo": "NTN-B 2060",
+     "vencimento": "2060-08-15",
+     "diasUteis": 8511,
+     "taxa": 0.0717310738367376,
+     "pu": 3958.800621,
+     "duration": 13.35313655629752,
+     "dv01": 4.916257098726028
+    }
+   ],
+   "rotuloY": "Taxa zero real (% a.a.)"
+  },
+  {
+   "id": "ntnb-tir",
+   "familia": "taxas",
+   "nome": "TIR real (NTN-B)",
+   "fonte": "ANBIMA",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "NTN-B 2027",
+     "vencimento": "2027-05-15",
+     "diasUteis": 181,
+     "taxa": 0.070024,
+     "pu": 4787.381946,
+     "duration": 0.70418554374837,
+     "dv01": 0.3128958230376612
+    },
+    {
+     "rotulo": "NTN-B 2028",
+     "vencimento": "2028-08-15",
+     "diasUteis": 496,
+     "taxa": 0.0807,
+     "pu": 4579.661787,
+     "duration": 1.88229150637888,
+     "dv01": 0.8012029407865884
+    },
+    {
+     "rotulo": "NTN-B 2029",
+     "vencimento": "2029-05-15",
+     "diasUteis": 680,
+     "taxa": 0.07969,
+     "pu": 4607.912487,
+     "duration": 2.48796508130946,
+     "dv01": 1.061949459945069
+    },
+    {
+     "rotulo": "NTN-B 2030",
+     "vencimento": "2030-08-15",
+     "diasUteis": 994,
+     "taxa": 0.080435,
+     "pu": 4442.584971,
+     "duration": 3.55319897809107,
+     "dv01": 1.4601805073253398
+    },
+    {
+     "rotulo": "NTN-B 2031",
+     "vencimento": "2031-05-15",
+     "diasUteis": 1180,
+     "taxa": 0.0799,
+     "pu": 4475.017098,
+     "duration": 4.06162767286646,
+     "dv01": 1.6830002603907515
+    },
+    {
+     "rotulo": "NTN-B 2032",
+     "vencimento": "2032-08-15",
+     "diasUteis": 1498,
+     "taxa": 0.080195,
+     "pu": 4321.977854,
+     "duration": 5.03570857415529,
+     "dv01": 2.010118620580142
+    },
+    {
+     "rotulo": "NTN-B 2033",
+     "vencimento": "2033-05-15",
+     "diasUteis": 1685,
+     "taxa": 0.079916,
+     "pu": 4357.799685,
+     "duration": 5.44957062444236,
+     "dv01": 2.1950116069627583
+    },
+    {
+     "rotulo": "NTN-B 2035",
+     "vencimento": "2035-05-15",
+     "diasUteis": 2184,
+     "taxa": 0.078962,
+     "pu": 4287.478719,
+     "duration": 6.64766013791479,
+     "dv01": 2.6406511123580274
+    },
+    {
+     "rotulo": "NTN-B 2037",
+     "vencimento": "2037-05-15",
+     "diasUteis": 2685,
+     "taxa": 0.07729,
+     "pu": 4258.028585,
+     "duration": 7.70409230806859,
+     "dv01": 3.0436230057185543
+    },
+    {
+     "rotulo": "NTN-B 2040",
+     "vencimento": "2040-08-15",
+     "diasUteis": 3503,
+     "taxa": 0.076351,
+     "pu": 4120.145826,
+     "duration": 9.27983264289772,
+     "dv01": 3.550893506967404
+    },
+    {
+     "rotulo": "NTN-B 2045",
+     "vencimento": "2045-05-15",
+     "diasUteis": 4690,
+     "taxa": 0.075355,
+     "pu": 4128.707793,
+     "duration": 10.67746221911172,
+     "dv01": 4.096090773874808
+    },
+    {
+     "rotulo": "NTN-B 2050",
+     "vencimento": "2050-08-15",
+     "diasUteis": 6005,
+     "taxa": 0.075065,
+     "pu": 3995.584843,
+     "duration": 12.04294811644019,
+     "dv01": 4.475358438291226
+    },
+    {
+     "rotulo": "NTN-B 2055",
+     "vencimento": "2055-05-15",
+     "diasUteis": 7194,
+     "taxa": 0.074101,
+     "pu": 4064.369775,
+     "duration": 12.60578252508262,
+     "dv01": 4.764550032573203
+    },
+    {
+     "rotulo": "NTN-B 2060",
+     "vencimento": "2060-08-15",
+     "diasUteis": 8511,
+     "taxa": 0.0741,
+     "pu": 3958.800621,
+     "duration": 13.35313655629752,
+     "dv01": 4.916257098726028
+    }
+   ],
+   "rotuloY": "TIR real (% a.a.)"
+  },
+  {
+   "id": "dap",
+   "familia": "taxas",
+   "nome": "Cupom de IPCA (DAP)",
+   "fonte": "B3",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "DAPU26",
+     "vencimento": "2026-09-15",
+     "diasUteis": 16,
+     "taxa": 0.16326,
+     "nota": "1º vencimento distorcido pela defasagem de indexação"
+    },
+    {
+     "rotulo": "DAPV26",
+     "vencimento": "2026-10-15",
+     "diasUteis": 37,
+     "taxa": 0.11863
+    },
+    {
+     "rotulo": "DAPX26",
+     "vencimento": "2026-11-16",
+     "diasUteis": 58,
+     "taxa": 0.10677
+    },
+    {
+     "rotulo": "DAPZ26",
+     "vencimento": "2026-12-15",
+     "diasUteis": 78,
+     "taxa": 0.10049
+    },
+    {
+     "rotulo": "DAPF27",
+     "vencimento": "2027-01-15",
+     "diasUteis": 99,
+     "taxa": 0.08677
+    },
+    {
+     "rotulo": "DAPG27",
+     "vencimento": "2027-02-15",
+     "diasUteis": 118,
+     "taxa": 0.08812
+    },
+    {
+     "rotulo": "DAPK27",
+     "vencimento": "2027-05-17",
+     "diasUteis": 181,
+     "taxa": 0.074
+    },
+    {
+     "rotulo": "DAPF28",
+     "vencimento": "2028-01-17",
+     "diasUteis": 351,
+     "taxa": 0.08
+    },
+    {
+     "rotulo": "DAPQ28",
+     "vencimento": "2028-08-15",
+     "diasUteis": 496,
+     "taxa": 0.0806
+    },
+    {
+     "rotulo": "DAPK29",
+     "vencimento": "2029-05-15",
+     "diasUteis": 680,
+     "taxa": 0.08035
+    },
+    {
+     "rotulo": "DAPQ30",
+     "vencimento": "2030-08-15",
+     "diasUteis": 994,
+     "taxa": 0.08075
+    },
+    {
+     "rotulo": "DAPK31",
+     "vencimento": "2031-05-15",
+     "diasUteis": 1180,
+     "taxa": 0.08035
+    },
+    {
+     "rotulo": "DAPQ32",
+     "vencimento": "2032-08-16",
+     "diasUteis": 1498,
+     "taxa": 0.08
+    },
+    {
+     "rotulo": "DAPK33",
+     "vencimento": "2033-05-16",
+     "diasUteis": 1685,
+     "taxa": 0.0794
+    },
+    {
+     "rotulo": "DAPK35",
+     "vencimento": "2035-05-15",
+     "diasUteis": 2184,
+     "taxa": 0.0782
+    },
+    {
+     "rotulo": "DAPK37",
+     "vencimento": "2037-05-15",
+     "diasUteis": 2685,
+     "taxa": 0.0766
+    },
+    {
+     "rotulo": "DAPQ40",
+     "vencimento": "2040-08-15",
+     "diasUteis": 3503,
+     "taxa": 0.0757
+    },
+    {
+     "rotulo": "DAPK45",
+     "vencimento": "2045-05-15",
+     "diasUteis": 4690,
+     "taxa": 0.07471
+    },
+    {
+     "rotulo": "DAPQ50",
+     "vencimento": "2050-08-15",
+     "diasUteis": 6005,
+     "taxa": 0.07439
+    },
+    {
+     "rotulo": "DAPK55",
+     "vencimento": "2055-05-17",
+     "diasUteis": 7194,
+     "taxa": 0.0734
+    },
+    {
+     "rotulo": "DAPQ60",
+     "vencimento": "2060-08-16",
+     "diasUteis": 8511,
+     "taxa": 0.07338
+    }
+   ],
+   "rotuloY": "Cupom de IPCA (% a.a.)"
+  },
+  {
+   "id": "ddi",
+   "familia": "taxas",
+   "nome": "Cupom cambial sujo (DDI)",
+   "fonte": "B3",
+   "unidade": "taxa",
+   "convencao": "linear360",
+   "vertices": [
+    {
+     "rotulo": "DDIU26",
+     "vencimento": "2026-09-01",
+     "diasUteis": 7,
+     "taxa": 0.37154,
+     "nota": "1º vencimento distorcido pelo casado"
+    },
+    {
+     "rotulo": "DDIV26",
+     "vencimento": "2026-10-01",
+     "diasUteis": 28,
+     "taxa": 0.13602
+    },
+    {
+     "rotulo": "DDIX26",
+     "vencimento": "2026-11-03",
+     "diasUteis": 49,
+     "taxa": 0.09794
+    },
+    {
+     "rotulo": "DDIZ26",
+     "vencimento": "2026-12-01",
+     "diasUteis": 68,
+     "taxa": 0.08518
+    },
+    {
+     "rotulo": "DDIF27",
+     "vencimento": "2027-01-04",
+     "diasUteis": 90,
+     "taxa": 0.0782
+    },
+    {
+     "rotulo": "DDIG27",
+     "vencimento": "2027-02-01",
+     "diasUteis": 110,
+     "taxa": 0.0737
+    },
+    {
+     "rotulo": "DDIH27",
+     "vencimento": "2027-03-01",
+     "diasUteis": 128,
+     "taxa": 0.07058
+    },
+    {
+     "rotulo": "DDIJ27",
+     "vencimento": "2027-04-01",
+     "diasUteis": 150,
+     "taxa": 0.06842
+    },
+    {
+     "rotulo": "DDIK27",
+     "vencimento": "2027-05-03",
+     "diasUteis": 171,
+     "taxa": 0.06683
+    },
+    {
+     "rotulo": "DDIM27",
+     "vencimento": "2027-06-01",
+     "diasUteis": 191,
+     "taxa": 0.06582
+    },
+    {
+     "rotulo": "DDIN27",
+     "vencimento": "2027-07-01",
+     "diasUteis": 213,
+     "taxa": 0.06493
+    },
+    {
+     "rotulo": "DDIQ27",
+     "vencimento": "2027-08-02",
+     "diasUteis": 235,
+     "taxa": 0.0643
+    },
+    {
+     "rotulo": "DDIV27",
+     "vencimento": "2027-10-01",
+     "diasUteis": 278,
+     "taxa": 0.06369
+    },
+    {
+     "rotulo": "DDIX27",
+     "vencimento": "2027-11-01",
+     "diasUteis": 298,
+     "taxa": 0.06338
+    },
+    {
+     "rotulo": "DDIZ27",
+     "vencimento": "2027-12-01",
+     "diasUteis": 318,
+     "taxa": 0.06316
+    },
+    {
+     "rotulo": "DDIF28",
+     "vencimento": "2028-01-03",
+     "diasUteis": 341,
+     "taxa": 0.06317
+    },
+    {
+     "rotulo": "DDIJ28",
+     "vencimento": "2028-04-03",
+     "diasUteis": 404,
+     "taxa": 0.0624
+    },
+    {
+     "rotulo": "DDIN28",
+     "vencimento": "2028-07-03",
+     "diasUteis": 465,
+     "taxa": 0.06201
+    },
+    {
+     "rotulo": "DDIV28",
+     "vencimento": "2028-10-02",
+     "diasUteis": 529,
+     "taxa": 0.06211
+    },
+    {
+     "rotulo": "DDIX28",
+     "vencimento": "2028-11-01",
+     "diasUteis": 550,
+     "taxa": 0.06225
+    },
+    {
+     "rotulo": "DDIZ28",
+     "vencimento": "2028-12-01",
+     "diasUteis": 569,
+     "taxa": 0.06259
+    },
+    {
+     "rotulo": "DDIF29",
+     "vencimento": "2029-01-02",
+     "diasUteis": 589,
+     "taxa": 0.06254
+    },
+    {
+     "rotulo": "DDIJ29",
+     "vencimento": "2029-04-02",
+     "diasUteis": 650,
+     "taxa": 0.06246
+    },
+    {
+     "rotulo": "DDIN29",
+     "vencimento": "2029-07-02",
+     "diasUteis": 713,
+     "taxa": 0.06285
+    },
+    {
+     "rotulo": "DDIV29",
+     "vencimento": "2029-10-01",
+     "diasUteis": 777,
+     "taxa": 0.06289
+    },
+    {
+     "rotulo": "DDIX29",
+     "vencimento": "2029-11-01",
+     "diasUteis": 799,
+     "taxa": 0.06331
+    },
+    {
+     "rotulo": "DDIZ29",
+     "vencimento": "2029-12-03",
+     "diasUteis": 818,
+     "taxa": 0.06323
+    },
+    {
+     "rotulo": "DDIF30",
+     "vencimento": "2030-01-02",
+     "diasUteis": 838,
+     "taxa": 0.06336
+    },
+    {
+     "rotulo": "DDIJ30",
+     "vencimento": "2030-04-01",
+     "diasUteis": 899,
+     "taxa": 0.06357
+    },
+    {
+     "rotulo": "DDIN30",
+     "vencimento": "2030-07-01",
+     "diasUteis": 961,
+     "taxa": 0.06421
+    },
+    {
+     "rotulo": "DDIV30",
+     "vencimento": "2030-10-01",
+     "diasUteis": 1027,
+     "taxa": 0.06456
+    },
+    {
+     "rotulo": "DDIF31",
+     "vencimento": "2031-01-02",
+     "diasUteis": 1090,
+     "taxa": 0.06534
+    },
+    {
+     "rotulo": "DDIJ31",
+     "vencimento": "2031-04-01",
+     "diasUteis": 1151,
+     "taxa": 0.06583
+    },
+    {
+     "rotulo": "DDIN31",
+     "vencimento": "2031-07-01",
+     "diasUteis": 1212,
+     "taxa": 0.06613
+    },
+    {
+     "rotulo": "DDIV31",
+     "vencimento": "2031-10-01",
+     "diasUteis": 1278,
+     "taxa": 0.06643
+    },
+    {
+     "rotulo": "DDIF32",
+     "vencimento": "2032-01-02",
+     "diasUteis": 1342,
+     "taxa": 0.06755
+    },
+    {
+     "rotulo": "DDIF33",
+     "vencimento": "2033-01-03",
+     "diasUteis": 1594,
+     "taxa": 0.0701
+    },
+    {
+     "rotulo": "DDIF34",
+     "vencimento": "2034-01-02",
+     "diasUteis": 1845,
+     "taxa": 0.07283
+    },
+    {
+     "rotulo": "DDIF35",
+     "vencimento": "2035-01-02",
+     "diasUteis": 2093,
+     "taxa": 0.07591
+    },
+    {
+     "rotulo": "DDIF36",
+     "vencimento": "2036-01-02",
+     "diasUteis": 2342,
+     "taxa": 0.07892
+    },
+    {
+     "rotulo": "DDIF37",
+     "vencimento": "2037-01-02",
+     "diasUteis": 2595,
+     "taxa": 0.08205
+    },
+    {
+     "rotulo": "DDIF38",
+     "vencimento": "2038-01-04",
+     "diasUteis": 2844,
+     "taxa": 0.08491
+    },
+    {
+     "rotulo": "DDIF39",
+     "vencimento": "2039-01-03",
+     "diasUteis": 3095,
+     "taxa": 0.08827
+    },
+    {
+     "rotulo": "DDIF40",
+     "vencimento": "2040-01-02",
+     "diasUteis": 3346,
+     "taxa": 0.09135
+    },
+    {
+     "rotulo": "DDIF41",
+     "vencimento": "2041-01-02",
+     "diasUteis": 3596,
+     "taxa": 0.09454
+    }
+   ],
+   "rotuloY": "Cupom cambial sujo (% a.a., linear 360)"
+  },
+  {
+   "id": "frc",
+   "familia": "taxas",
+   "nome": "FRA de cupom cambial (FRC)",
+   "fonte": "B3",
+   "unidade": "taxa",
+   "convencao": "linear360",
+   "vertices": [
+    {
+     "rotulo": "FRCV26",
+     "vencimento": "2026-10-01",
+     "diasUteis": 28,
+     "taxa": 0.0491
+    },
+    {
+     "rotulo": "FRCX26",
+     "vencimento": "2026-11-03",
+     "diasUteis": 49,
+     "taxa": 0.0496
+    },
+    {
+     "rotulo": "FRCZ26",
+     "vencimento": "2026-12-01",
+     "diasUteis": 68,
+     "taxa": 0.05
+    },
+    {
+     "rotulo": "FRCF27",
+     "vencimento": "2027-01-04",
+     "diasUteis": 90,
+     "taxa": 0.0518
+    },
+    {
+     "rotulo": "FRCG27",
+     "vencimento": "2027-02-01",
+     "diasUteis": 110,
+     "taxa": 0.0517
+    },
+    {
+     "rotulo": "FRCH27",
+     "vencimento": "2027-03-01",
+     "diasUteis": 128,
+     "taxa": 0.0517
+    },
+    {
+     "rotulo": "FRCJ27",
+     "vencimento": "2027-04-01",
+     "diasUteis": 150,
+     "taxa": 0.0521
+    },
+    {
+     "rotulo": "FRCK27",
+     "vencimento": "2027-05-03",
+     "diasUteis": 171,
+     "taxa": 0.0525
+    },
+    {
+     "rotulo": "FRCM27",
+     "vencimento": "2027-06-01",
+     "diasUteis": 191,
+     "taxa": 0.0529
+    },
+    {
+     "rotulo": "FRCN27",
+     "vencimento": "2027-07-01",
+     "diasUteis": 213,
+     "taxa": 0.0532
+    },
+    {
+     "rotulo": "FRCQ27",
+     "vencimento": "2027-08-02",
+     "diasUteis": 235,
+     "taxa": 0.0536
+    },
+    {
+     "rotulo": "FRCV27",
+     "vencimento": "2027-10-01",
+     "diasUteis": 278,
+     "taxa": 0.0545
+    },
+    {
+     "rotulo": "FRCX27",
+     "vencimento": "2027-11-01",
+     "diasUteis": 298,
+     "taxa": 0.0548
+    },
+    {
+     "rotulo": "FRCZ27",
+     "vencimento": "2027-12-01",
+     "diasUteis": 318,
+     "taxa": 0.0551
+    },
+    {
+     "rotulo": "FRCF28",
+     "vencimento": "2028-01-03",
+     "diasUteis": 341,
+     "taxa": 0.0556
+    },
+    {
+     "rotulo": "FRCJ28",
+     "vencimento": "2028-04-03",
+     "diasUteis": 404,
+     "taxa": 0.0559
+    },
+    {
+     "rotulo": "FRCN28",
+     "vencimento": "2028-07-03",
+     "diasUteis": 465,
+     "taxa": 0.0563
+    },
+    {
+     "rotulo": "FRCV28",
+     "vencimento": "2028-10-02",
+     "diasUteis": 529,
+     "taxa": 0.057
+    },
+    {
+     "rotulo": "FRCX28",
+     "vencimento": "2028-11-01",
+     "diasUteis": 550,
+     "taxa": 0.0573
+    },
+    {
+     "rotulo": "FRCZ28",
+     "vencimento": "2028-12-01",
+     "diasUteis": 569,
+     "taxa": 0.0578
+    },
+    {
+     "rotulo": "FRCF29",
+     "vencimento": "2029-01-02",
+     "diasUteis": 589,
+     "taxa": 0.0579
+    },
+    {
+     "rotulo": "FRCJ29",
+     "vencimento": "2029-04-02",
+     "diasUteis": 650,
+     "taxa": 0.0582
+    },
+    {
+     "rotulo": "FRCN29",
+     "vencimento": "2029-07-02",
+     "diasUteis": 713,
+     "taxa": 0.0589
+    },
+    {
+     "rotulo": "FRCV29",
+     "vencimento": "2029-10-01",
+     "diasUteis": 777,
+     "taxa": 0.0592
+    },
+    {
+     "rotulo": "FRCX29",
+     "vencimento": "2029-11-01",
+     "diasUteis": 799,
+     "taxa": 0.0597
+    },
+    {
+     "rotulo": "FRCZ29",
+     "vencimento": "2029-12-03",
+     "diasUteis": 818,
+     "taxa": 0.0597
+    },
+    {
+     "rotulo": "FRCF30",
+     "vencimento": "2030-01-02",
+     "diasUteis": 838,
+     "taxa": 0.0599
+    },
+    {
+     "rotulo": "FRCJ30",
+     "vencimento": "2030-04-01",
+     "diasUteis": 899,
+     "taxa": 0.0603
+    },
+    {
+     "rotulo": "FRCN30",
+     "vencimento": "2030-07-01",
+     "diasUteis": 961,
+     "taxa": 0.0611
+    },
+    {
+     "rotulo": "FRCV30",
+     "vencimento": "2030-10-01",
+     "diasUteis": 1027,
+     "taxa": 0.0616
+    },
+    {
+     "rotulo": "FRCF31",
+     "vencimento": "2031-01-02",
+     "diasUteis": 1090,
+     "taxa": 0.0625
+    },
+    {
+     "rotulo": "FRCJ31",
+     "vencimento": "2031-04-01",
+     "diasUteis": 1151,
+     "taxa": 0.0631
+    },
+    {
+     "rotulo": "FRCN31",
+     "vencimento": "2031-07-01",
+     "diasUteis": 1212,
+     "taxa": 0.0635
+    },
+    {
+     "rotulo": "FRCV31",
+     "vencimento": "2031-10-01",
+     "diasUteis": 1278,
+     "taxa": 0.0639
+    },
+    {
+     "rotulo": "FRCF32",
+     "vencimento": "2032-01-02",
+     "diasUteis": 1342,
+     "taxa": 0.0651
+    },
+    {
+     "rotulo": "FRCF33",
+     "vencimento": "2033-01-03",
+     "diasUteis": 1594,
+     "taxa": 0.0679
+    },
+    {
+     "rotulo": "FRCF34",
+     "vencimento": "2034-01-02",
+     "diasUteis": 1845,
+     "taxa": 0.0708
+    },
+    {
+     "rotulo": "FRCF35",
+     "vencimento": "2035-01-02",
+     "diasUteis": 2093,
+     "taxa": 0.074
+    },
+    {
+     "rotulo": "FRCF36",
+     "vencimento": "2036-01-02",
+     "diasUteis": 2342,
+     "taxa": 0.0771
+    },
+    {
+     "rotulo": "FRCF37",
+     "vencimento": "2037-01-02",
+     "diasUteis": 2595,
+     "taxa": 0.0803
+    },
+    {
+     "rotulo": "FRCF38",
+     "vencimento": "2038-01-04",
+     "diasUteis": 2844,
+     "taxa": 0.0832
+    },
+    {
+     "rotulo": "FRCF39",
+     "vencimento": "2039-01-03",
+     "diasUteis": 3095,
+     "taxa": 0.0866
+    },
+    {
+     "rotulo": "FRCF40",
+     "vencimento": "2040-01-02",
+     "diasUteis": 3346,
+     "taxa": 0.0897
+    },
+    {
+     "rotulo": "FRCF41",
+     "vencimento": "2041-01-02",
+     "diasUteis": 3596,
+     "taxa": 0.0929
+    }
+   ],
+   "rotuloY": "Cupom cambial limpo (% a.a., linear 360)"
+  },
+  {
+   "id": "ltn-pu",
+   "familia": "precos",
+   "nome": "PU LTN",
+   "fonte": "ANBIMA",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "LTN out/26",
+     "vencimento": "2026-10-01",
+     "diasUteis": 28,
+     "taxa": 0.137391,
+     "pu": 985.797701,
+     "duration": 0.1111111111111111,
+     "dv01": 0.00962899999986544
+    },
+    {
+     "rotulo": "LTN abr/27",
+     "vencimento": "2027-04-01",
+     "diasUteis": 150,
+     "taxa": 0.135618,
+     "pu": 927.093743,
+     "duration": 0.5952380952380952,
+     "dv01": 0.0485910000000238
+    },
+    {
+     "rotulo": "LTN jul/27",
+     "vencimento": "2027-07-01",
+     "diasUteis": 213,
+     "taxa": 0.13509,
+     "pu": 898.434242,
+     "duration": 0.8452380952380952,
+     "dv01": 0.06689600000007274
+    },
+    {
+     "rotulo": "LTN out/27",
+     "vencimento": "2027-10-01",
+     "diasUteis": 278,
+     "taxa": 0.137686,
+     "pu": 867.356217,
+     "duration": 1.103174603174603,
+     "dv01": 0.08409700000002952
+    },
+    {
+     "rotulo": "LTN jan/28",
+     "vencimento": "2028-01-01",
+     "diasUteis": 341,
+     "taxa": 0.13872,
+     "pu": 838.79922,
+     "duration": 1.353174603174603,
+     "dv01": 0.09966699999991405
+    },
+    {
+     "rotulo": "LTN abr/28",
+     "vencimento": "2028-04-01",
+     "diasUteis": 404,
+     "taxa": 0.139355,
+     "pu": 811.270398,
+     "duration": 1.603174603174603,
+     "dv01": 0.11414000000001817
+    },
+    {
+     "rotulo": "LTN jul/28",
+     "vencimento": "2028-07-01",
+     "diasUteis": 465,
+     "taxa": 0.13978,
+     "pu": 785.509907,
+     "duration": 1.8452380952380951,
+     "dv01": 0.1271540000000316
+    },
+    {
+     "rotulo": "LTN out/28",
+     "vencimento": "2028-10-01",
+     "diasUteis": 529,
+     "taxa": 0.141346,
+     "pu": 757.650989,
+     "duration": 2.0992063492063493,
+     "dv01": 0.13933099999999823
+    },
+    {
+     "rotulo": "LTN jan/29",
+     "vencimento": "2029-01-01",
+     "diasUteis": 589,
+     "taxa": 0.141992,
+     "pu": 733.202664,
+     "duration": 2.337301587301587,
+     "dv01": 0.15004200000000487
+    },
+    {
+     "rotulo": "LTN jul/29",
+     "vencimento": "2029-07-01",
+     "diasUteis": 713,
+     "taxa": 0.143349,
+     "pu": 684.527482,
+     "duration": 2.829365079365079,
+     "dv01": 0.1693669999999929
+    },
+    {
+     "rotulo": "LTN jan/30",
+     "vencimento": "2030-01-01",
+     "diasUteis": 838,
+     "taxa": 0.143987,
+     "pu": 639.332372,
+     "duration": 3.325396825396825,
+     "dv01": 0.18580899999995196
+    },
+    {
+     "rotulo": "LTN jan/32",
+     "vencimento": "2032-01-01",
+     "diasUteis": 1342,
+     "taxa": 0.145718,
+     "pu": 484.604688,
+     "duration": 5.325396825396825,
+     "dv01": 0.2251870000000309
+    }
+   ],
+   "rotuloY": "Taxa indicativa (% a.a.)"
+  },
+  {
+   "id": "ntnf-pu",
+   "familia": "precos",
+   "nome": "PU NTN-F",
+   "fonte": "ANBIMA",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "NTN-F jan/27",
+     "vencimento": "2027-01-01",
+     "diasUteis": 90,
+     "taxa": 0.134622,
+     "pu": 1002.551356,
+     "duration": 0.3571428571428571,
+     "dv01": 0.031555000000031676
+    },
+    {
+     "rotulo": "NTN-F jan/29",
+     "vencimento": "2029-01-01",
+     "diasUteis": 589,
+     "taxa": 0.140221,
+     "pu": 941.223292,
+     "duration": 2.107307260698223,
+     "dv01": 0.17392800000007566
+    },
+    {
+     "rotulo": "NTN-F jan/31",
+     "vencimento": "2031-01-01",
+     "diasUteis": 1090,
+     "taxa": 0.144928,
+     "pu": 881.8654,
+     "duration": 3.5115704916912565,
+     "dv01": 0.2704150000000317
+    },
+    {
+     "rotulo": "NTN-F jan/33",
+     "vencimento": "2033-01-01",
+     "diasUteis": 1594,
+     "taxa": 0.146109,
+     "pu": 837.95506,
+     "duration": 4.608794377220311,
+     "dv01": 0.33686599999994954
+    },
+    {
+     "rotulo": "NTN-F jan/35",
+     "vencimento": "2035-01-01",
+     "diasUteis": 2093,
+     "taxa": 0.146352,
+     "pu": 806.932609,
+     "duration": 5.436107223547966,
+     "dv01": 0.3825199999999761
+    },
+    {
+     "rotulo": "NTN-F jan/37",
+     "vencimento": "2037-01-01",
+     "diasUteis": 2595,
+     "taxa": 0.145959,
+     "pu": 785.13231,
+     "duration": 6.0590511374919656,
+     "dv01": 0.4149549999999754
+    }
+   ],
+   "rotuloY": "Taxa indicativa (% a.a.)"
+  },
+  {
+   "id": "ntnb-pu",
+   "familia": "precos",
+   "nome": "PU NTN-B",
+   "fonte": "ANBIMA",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "NTN-B 2027",
+     "vencimento": "2027-05-15",
+     "diasUteis": 181,
+     "taxa": 0.070024,
+     "pu": 4787.381946,
+     "duration": 0.70418554374837,
+     "dv01": 0.3128958230376612
+    },
+    {
+     "rotulo": "NTN-B 2028",
+     "vencimento": "2028-08-15",
+     "diasUteis": 496,
+     "taxa": 0.0807,
+     "pu": 4579.661787,
+     "duration": 1.88229150637888,
+     "dv01": 0.8012029407865884
+    },
+    {
+     "rotulo": "NTN-B 2029",
+     "vencimento": "2029-05-15",
+     "diasUteis": 680,
+     "taxa": 0.07969,
+     "pu": 4607.912487,
+     "duration": 2.48796508130946,
+     "dv01": 1.061949459945069
+    },
+    {
+     "rotulo": "NTN-B 2030",
+     "vencimento": "2030-08-15",
+     "diasUteis": 994,
+     "taxa": 0.080435,
+     "pu": 4442.584971,
+     "duration": 3.55319897809107,
+     "dv01": 1.4601805073253398
+    },
+    {
+     "rotulo": "NTN-B 2031",
+     "vencimento": "2031-05-15",
+     "diasUteis": 1180,
+     "taxa": 0.0799,
+     "pu": 4475.017098,
+     "duration": 4.06162767286646,
+     "dv01": 1.6830002603907515
+    },
+    {
+     "rotulo": "NTN-B 2032",
+     "vencimento": "2032-08-15",
+     "diasUteis": 1498,
+     "taxa": 0.080195,
+     "pu": 4321.977854,
+     "duration": 5.03570857415529,
+     "dv01": 2.010118620580142
+    },
+    {
+     "rotulo": "NTN-B 2033",
+     "vencimento": "2033-05-15",
+     "diasUteis": 1685,
+     "taxa": 0.079916,
+     "pu": 4357.799685,
+     "duration": 5.44957062444236,
+     "dv01": 2.1950116069627583
+    },
+    {
+     "rotulo": "NTN-B 2035",
+     "vencimento": "2035-05-15",
+     "diasUteis": 2184,
+     "taxa": 0.078962,
+     "pu": 4287.478719,
+     "duration": 6.64766013791479,
+     "dv01": 2.6406511123580274
+    },
+    {
+     "rotulo": "NTN-B 2037",
+     "vencimento": "2037-05-15",
+     "diasUteis": 2685,
+     "taxa": 0.07729,
+     "pu": 4258.028585,
+     "duration": 7.70409230806859,
+     "dv01": 3.0436230057185543
+    },
+    {
+     "rotulo": "NTN-B 2040",
+     "vencimento": "2040-08-15",
+     "diasUteis": 3503,
+     "taxa": 0.076351,
+     "pu": 4120.145826,
+     "duration": 9.27983264289772,
+     "dv01": 3.550893506967404
+    },
+    {
+     "rotulo": "NTN-B 2045",
+     "vencimento": "2045-05-15",
+     "diasUteis": 4690,
+     "taxa": 0.075355,
+     "pu": 4128.707793,
+     "duration": 10.67746221911172,
+     "dv01": 4.096090773874808
+    },
+    {
+     "rotulo": "NTN-B 2050",
+     "vencimento": "2050-08-15",
+     "diasUteis": 6005,
+     "taxa": 0.075065,
+     "pu": 3995.584843,
+     "duration": 12.04294811644019,
+     "dv01": 4.475358438291226
+    },
+    {
+     "rotulo": "NTN-B 2055",
+     "vencimento": "2055-05-15",
+     "diasUteis": 7194,
+     "taxa": 0.074101,
+     "pu": 4064.369775,
+     "duration": 12.60578252508262,
+     "dv01": 4.764550032573203
+    },
+    {
+     "rotulo": "NTN-B 2060",
+     "vencimento": "2060-08-15",
+     "diasUteis": 8511,
+     "taxa": 0.0741,
+     "pu": 3958.800621,
+     "duration": 13.35313655629752,
+     "dv01": 4.916257098726028
+    }
+   ],
+   "rotuloY": "TIR real (% a.a.)"
+  },
+  {
+   "id": "lft-pu",
+   "familia": "precos",
+   "nome": "PU LFT",
+   "fonte": "ANBIMA",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "LFT set/26",
+     "vencimento": "2026-09-01",
+     "diasUteis": 7,
+     "taxa": 0.000302,
+     "pu": 19711.39021
+    },
+    {
+     "rotulo": "LFT mar/27",
+     "vencimento": "2027-03-01",
+     "diasUteis": 128,
+     "taxa": -3.9e-05,
+     "pu": 19711.942134
+    },
+    {
+     "rotulo": "LFT set/27",
+     "vencimento": "2027-09-01",
+     "diasUteis": 257,
+     "taxa": 7e-06,
+     "pu": 19711.409922
+    },
+    {
+     "rotulo": "LFT mar/28",
+     "vencimento": "2028-03-01",
+     "diasUteis": 381,
+     "taxa": 0.000104,
+     "pu": 19708.453187
+    },
+    {
+     "rotulo": "LFT set/28",
+     "vencimento": "2028-09-01",
+     "diasUteis": 509,
+     "taxa": 0.000201,
+     "pu": 19703.564718
+    },
+    {
+     "rotulo": "LFT mar/29",
+     "vencimento": "2029-03-01",
+     "diasUteis": 629,
+     "taxa": 0.000279,
+     "pu": 19697.828652
+    },
+    {
+     "rotulo": "LFT set/29",
+     "vencimento": "2029-09-01",
+     "diasUteis": 758,
+     "taxa": 0.00038,
+     "pu": 19689.037293
+    },
+    {
+     "rotulo": "LFT mar/30",
+     "vencimento": "2030-03-01",
+     "diasUteis": 880,
+     "taxa": 0.000514,
+     "pu": 19676.224774
+    },
+    {
+     "rotulo": "LFT jun/30",
+     "vencimento": "2030-06-01",
+     "diasUteis": 942,
+     "taxa": 0.000604,
+     "pu": 19667.11803
+    },
+    {
+     "rotulo": "LFT set/30",
+     "vencimento": "2030-09-01",
+     "diasUteis": 1006,
+     "taxa": 0.000659,
+     "pu": 19659.785326
+    },
+    {
+     "rotulo": "LFT dez/30",
+     "vencimento": "2030-12-01",
+     "diasUteis": 1069,
+     "taxa": 0.000674,
+     "pu": 19655.291089
+    },
+    {
+     "rotulo": "LFT mar/31",
+     "vencimento": "2031-03-01",
+     "diasUteis": 1130,
+     "taxa": 0.000731,
+     "pu": 19647.071365
+    },
+    {
+     "rotulo": "LFT jun/31",
+     "vencimento": "2031-06-01",
+     "diasUteis": 1192,
+     "taxa": 0.000776,
+     "pu": 19639.364142
+    },
+    {
+     "rotulo": "LFT set/31",
+     "vencimento": "2031-09-01",
+     "diasUteis": 1256,
+     "taxa": 0.000803,
+     "pu": 19632.859325
+    },
+    {
+     "rotulo": "LFT dez/31",
+     "vencimento": "2031-12-01",
+     "diasUteis": 1320,
+     "taxa": 0.000926,
+     "pu": 19616.222762
+    },
+    {
+     "rotulo": "LFT mar/32",
+     "vencimento": "2032-03-01",
+     "diasUteis": 1381,
+     "taxa": 0.001007,
+     "pu": 19603.134281
+    },
+    {
+     "rotulo": "LFT jun/32",
+     "vencimento": "2032-06-01",
+     "diasUteis": 1444,
+     "taxa": 0.001079,
+     "pu": 19590.124646
+    },
+    {
+     "rotulo": "LFT set/32",
+     "vencimento": "2032-09-01",
+     "diasUteis": 1510,
+     "taxa": 0.001154,
+     "pu": 19575.794337
+    }
+   ],
+   "rotuloY": "Ágio/deságio sobre a Selic (% a.a.)"
+  },
+  {
+   "id": "fwd-pre",
+   "familia": "termo",
+   "nome": "Forward do PRE",
+   "fonte": "ANBIMA",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "out/26",
+     "vencimento": "2026-10-01",
+     "diasUteis": 28,
+     "taxa": 0.137391
+    },
+    {
+     "rotulo": "abr/27",
+     "vencimento": "2027-04-01",
+     "diasUteis": 150,
+     "taxa": 0.1352114720719957
+    },
+    {
+     "rotulo": "jul/27",
+     "vencimento": "2027-07-01",
+     "diasUteis": 213,
+     "taxa": 0.1338338450187584
+    },
+    {
+     "rotulo": "out/27",
+     "vencimento": "2027-10-01",
+     "diasUteis": 278,
+     "taxa": 0.14623456969794169
+    },
+    {
+     "rotulo": "jan/28",
+     "vencimento": "2028-01-01",
+     "diasUteis": 341,
+     "taxa": 0.14329396471105227
+    },
+    {
+     "rotulo": "abr/28",
+     "vencimento": "2028-04-01",
+     "diasUteis": 404,
+     "taxa": 0.14279821400589965
+    },
+    {
+     "rotulo": "jul/28",
+     "vencimento": "2028-07-01",
+     "diasUteis": 465,
+     "taxa": 0.14259875877185468
+    },
+    {
+     "rotulo": "out/28",
+     "vencimento": "2028-10-01",
+     "diasUteis": 529,
+     "taxa": 0.15278876171589428
+    },
+    {
+     "rotulo": "jan/29",
+     "vencimento": "2029-01-01",
+     "diasUteis": 589,
+     "taxa": 0.14770341292757605
+    },
+    {
+     "rotulo": "jul/29",
+     "vencimento": "2029-07-01",
+     "diasUteis": 713,
+     "taxa": 0.14981680328127012
+    },
+    {
+     "rotulo": "jan/30",
+     "vencimento": "2030-01-01",
+     "diasUteis": 838,
+     "taxa": 0.1476329648070347
+    },
+    {
+     "rotulo": "jan/32",
+     "vencimento": "2032-01-01",
+     "diasUteis": 1342,
+     "taxa": 0.14860193089413665
+    }
+   ],
+   "rotuloY": "Taxa a termo entre vértices (% a.a.)"
+  },
+  {
+   "id": "fwd-di",
+   "familia": "termo",
+   "nome": "Forward do DI",
+   "fonte": "B3",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "DI1U26",
+     "vencimento": "2026-09-01",
+     "diasUteis": 7,
+     "taxa": 0.13902
+    },
+    {
+     "rotulo": "DI1V26",
+     "vencimento": "2026-10-01",
+     "diasUteis": 28,
+     "taxa": 0.1380201097595275
+    },
+    {
+     "rotulo": "DI1X26",
+     "vencimento": "2026-11-03",
+     "diasUteis": 49,
+     "taxa": 0.13680054236870465
+    },
+    {
+     "rotulo": "DI1Z26",
+     "vencimento": "2026-12-01",
+     "diasUteis": 68,
+     "taxa": 0.13624482742492994
+    },
+    {
+     "rotulo": "DI1F27",
+     "vencimento": "2027-01-04",
+     "diasUteis": 90,
+     "taxa": 0.13647292794009203
+    },
+    {
+     "rotulo": "DI1G27",
+     "vencimento": "2027-02-01",
+     "diasUteis": 110,
+     "taxa": 0.1372800174140456
+    },
+    {
+     "rotulo": "DI1H27",
+     "vencimento": "2027-03-01",
+     "diasUteis": 128,
+     "taxa": 0.1378824534744547
+    },
+    {
+     "rotulo": "DI1J27",
+     "vencimento": "2027-04-01",
+     "diasUteis": 150,
+     "taxa": 0.13857433422292775
+    },
+    {
+     "rotulo": "DI1K27",
+     "vencimento": "2027-05-03",
+     "diasUteis": 171,
+     "taxa": 0.138550501264878
+    },
+    {
+     "rotulo": "DI1M27",
+     "vencimento": "2027-06-01",
+     "diasUteis": 191,
+     "taxa": 0.13898330778473666
+    },
+    {
+     "rotulo": "DI1N27",
+     "vencimento": "2027-07-01",
+     "diasUteis": 213,
+     "taxa": 0.1395408795987887
+    },
+    {
+     "rotulo": "DI1Q27",
+     "vencimento": "2027-08-02",
+     "diasUteis": 235,
+     "taxa": 0.13885173181302735
+    },
+    {
+     "rotulo": "DI1V27",
+     "vencimento": "2027-10-01",
+     "diasUteis": 278,
+     "taxa": 0.14005042755980424
+    },
+    {
+     "rotulo": "DI1X27",
+     "vencimento": "2027-11-01",
+     "diasUteis": 298,
+     "taxa": 0.13859803639210266
+    },
+    {
+     "rotulo": "DI1Z27",
+     "vencimento": "2027-12-01",
+     "diasUteis": 318,
+     "taxa": 0.13943351004542603
+    },
+    {
+     "rotulo": "DI1F28",
+     "vencimento": "2028-01-03",
+     "diasUteis": 341,
+     "taxa": 0.14106161471468792
+    },
+    {
+     "rotulo": "DI1J28",
+     "vencimento": "2028-04-03",
+     "diasUteis": 404,
+     "taxa": 0.1425517370456928
+    },
+    {
+     "rotulo": "DI1N28",
+     "vencimento": "2028-07-03",
+     "diasUteis": 465,
+     "taxa": 0.1448431326131605
+    },
+    {
+     "rotulo": "DI1V28",
+     "vencimento": "2028-10-02",
+     "diasUteis": 529,
+     "taxa": 0.14788931907269043
+    },
+    {
+     "rotulo": "DI1X28",
+     "vencimento": "2028-11-01",
+     "diasUteis": 550,
+     "taxa": 0.1466659208519343
+    },
+    {
+     "rotulo": "DI1Z28",
+     "vencimento": "2028-12-01",
+     "diasUteis": 569,
+     "taxa": 0.1465128515066978
+    },
+    {
+     "rotulo": "DI1F29",
+     "vencimento": "2029-01-02",
+     "diasUteis": 589,
+     "taxa": 0.14601140889846342
+    },
+    {
+     "rotulo": "DI1J29",
+     "vencimento": "2029-04-02",
+     "diasUteis": 650,
+     "taxa": 0.14871677760674418
+    },
+    {
+     "rotulo": "DI1N29",
+     "vencimento": "2029-07-02",
+     "diasUteis": 713,
+     "taxa": 0.14848383290791167
+    },
+    {
+     "rotulo": "DI1V29",
+     "vencimento": "2029-10-01",
+     "diasUteis": 777,
+     "taxa": 0.14572885788344792
+    },
+    {
+     "rotulo": "DI1X29",
+     "vencimento": "2029-11-01",
+     "diasUteis": 799,
+     "taxa": 0.14512111221641266
+    },
+    {
+     "rotulo": "DI1Z29",
+     "vencimento": "2029-12-03",
+     "diasUteis": 818,
+     "taxa": 0.146449284084883
+    },
+    {
+     "rotulo": "DI1F30",
+     "vencimento": "2030-01-02",
+     "diasUteis": 838,
+     "taxa": 0.14938189551758008
+    },
+    {
+     "rotulo": "DI1J30",
+     "vencimento": "2030-04-01",
+     "diasUteis": 899,
+     "taxa": 0.1448522194137607
+    },
+    {
+     "rotulo": "DI1N30",
+     "vencimento": "2030-07-01",
+     "diasUteis": 961,
+     "taxa": 0.14706566665928356
+    },
+    {
+     "rotulo": "DI1V30",
+     "vencimento": "2030-10-01",
+     "diasUteis": 1027,
+     "taxa": 0.14654009399595447
+    },
+    {
+     "rotulo": "DI1F31",
+     "vencimento": "2031-01-02",
+     "diasUteis": 1090,
+     "taxa": 0.14758232256600068
+    },
+    {
+     "rotulo": "DI1J31",
+     "vencimento": "2031-04-01",
+     "diasUteis": 1151,
+     "taxa": 0.1453115420017843
+    },
+    {
+     "rotulo": "DI1N31",
+     "vencimento": "2031-07-01",
+     "diasUteis": 1212,
+     "taxa": 0.14883797400148446
+    },
+    {
+     "rotulo": "DI1V31",
+     "vencimento": "2031-10-01",
+     "diasUteis": 1278,
+     "taxa": 0.14779049321867133
+    },
+    {
+     "rotulo": "DI1F32",
+     "vencimento": "2032-01-02",
+     "diasUteis": 1342,
+     "taxa": 0.15099792222899833
+    },
+    {
+     "rotulo": "DI1F33",
+     "vencimento": "2033-01-03",
+     "diasUteis": 1594,
+     "taxa": 0.14694233640412113
+    },
+    {
+     "rotulo": "DI1F34",
+     "vencimento": "2034-01-02",
+     "diasUteis": 1845,
+     "taxa": 0.14535053627318284
+    },
+    {
+     "rotulo": "DI1F35",
+     "vencimento": "2035-01-02",
+     "diasUteis": 2093,
+     "taxa": 0.1454132101574983
+    },
+    {
+     "rotulo": "DI1F36",
+     "vencimento": "2036-01-02",
+     "diasUteis": 2342,
+     "taxa": 0.14265299685058475
+    },
+    {
+     "rotulo": "DI1F37",
+     "vencimento": "2037-01-02",
+     "diasUteis": 2595,
+     "taxa": 0.1468703117872514
+    },
+    {
+     "rotulo": "DI1F38",
+     "vencimento": "2038-01-04",
+     "diasUteis": 2844,
+     "taxa": 0.14316981461850764
+    },
+    {
+     "rotulo": "DI1F39",
+     "vencimento": "2039-01-03",
+     "diasUteis": 3095,
+     "taxa": 0.1412462831284027
+    },
+    {
+     "rotulo": "DI1F40",
+     "vencimento": "2040-01-02",
+     "diasUteis": 3346,
+     "taxa": 0.14277511186053804
+    },
+    {
+     "rotulo": "DI1F41",
+     "vencimento": "2041-01-02",
+     "diasUteis": 3596,
+     "taxa": 0.1432061210262594
+    }
+   ],
+   "rotuloY": "Taxa a termo entre vértices (% a.a.)"
+  },
+  {
+   "id": "fwd-real",
+   "familia": "termo",
+   "nome": "Forward do juro real",
+   "fonte": "ANBIMA",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "NTN-B 2027",
+     "vencimento": "2027-05-15",
+     "diasUteis": 181,
+     "taxa": 0.070024
+    },
+    {
+     "rotulo": "NTN-B 2028",
+     "vencimento": "2028-08-15",
+     "diasUteis": 496,
+     "taxa": 0.08723262003273602
+    },
+    {
+     "rotulo": "NTN-B 2029",
+     "vencimento": "2029-05-15",
+     "diasUteis": 680,
+     "taxa": 0.07685161462503975
+    },
+    {
+     "rotulo": "NTN-B 2030",
+     "vencimento": "2030-08-15",
+     "diasUteis": 994,
+     "taxa": 0.0821935353733072
+    },
+    {
+     "rotulo": "NTN-B 2031",
+     "vencimento": "2031-05-15",
+     "diasUteis": 1180,
+     "taxa": 0.07674800993311726
+    },
+    {
+     "rotulo": "NTN-B 2032",
+     "vencimento": "2032-08-15",
+     "diasUteis": 1498,
+     "taxa": 0.08143161585105219
+    },
+    {
+     "rotulo": "NTN-B 2033",
+     "vencimento": "2033-05-15",
+     "diasUteis": 1685,
+     "taxa": 0.07733318598461891
+    },
+    {
+     "rotulo": "NTN-B 2035",
+     "vencimento": "2035-05-15",
+     "diasUteis": 2184,
+     "taxa": 0.07473539168957188
+    },
+    {
+     "rotulo": "NTN-B 2037",
+     "vencimento": "2037-05-15",
+     "diasUteis": 2685,
+     "taxa": 0.06708211190840707
+    },
+    {
+     "rotulo": "NTN-B 2040",
+     "vencimento": "2040-08-15",
+     "diasUteis": 3503,
+     "taxa": 0.07139447976635882
+    },
+    {
+     "rotulo": "NTN-B 2045",
+     "vencimento": "2045-05-15",
+     "diasUteis": 4690,
+     "taxa": 0.06979710487889346
+    },
+    {
+     "rotulo": "NTN-B 2050",
+     "vencimento": "2050-08-15",
+     "diasUteis": 6005,
+     "taxa": 0.07237101851759786
+    },
+    {
+     "rotulo": "NTN-B 2055",
+     "vencimento": "2055-05-15",
+     "diasUteis": 7194,
+     "taxa": 0.06084242976080145
+    },
+    {
+     "rotulo": "NTN-B 2060",
+     "vencimento": "2060-08-15",
+     "diasUteis": 8511,
+     "taxa": 0.07308881576967163
+    }
+   ],
+   "rotuloY": "Taxa real a termo entre vértices (% a.a.)"
+  },
+  {
+   "id": "fwd-implicita",
+   "familia": "termo",
+   "nome": "Forward da inflação implícita",
+   "fonte": "ANBIMA",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "NTN-B 2027",
+     "vencimento": "2027-05-15",
+     "diasUteis": 181,
+     "taxa": 0.06318095779318633
+    },
+    {
+     "rotulo": "NTN-B 2028",
+     "vencimento": "2028-08-15",
+     "diasUteis": 496,
+     "taxa": 0.05040624683842987
+    },
+    {
+     "rotulo": "NTN-B 2029",
+     "vencimento": "2029-05-15",
+     "diasUteis": 680,
+     "taxa": 0.06586109697530795
+    },
+    {
+     "rotulo": "NTN-B 2030",
+     "vencimento": "2030-08-15",
+     "diasUteis": 994,
+     "taxa": 0.059357849386771466
+    },
+    {
+     "rotulo": "NTN-B 2031",
+     "vencimento": "2031-05-15",
+     "diasUteis": 1180,
+     "taxa": 0.06510322014212866
+    },
+    {
+     "rotulo": "NTN-B 2032",
+     "vencimento": "2032-08-15",
+     "diasUteis": 1498,
+     "taxa": 0.06167072705744858
+    },
+    {
+     "rotulo": "NTN-B 2033",
+     "vencimento": "2033-05-15",
+     "diasUteis": 1685,
+     "taxa": 0.0638931909400946
+    },
+    {
+     "rotulo": "NTN-B 2035",
+     "vencimento": "2035-05-15",
+     "diasUteis": 2184,
+     "taxa": 0.06527548033203279
+    },
+    {
+     "rotulo": "NTN-B 2037",
+     "vencimento": "2037-05-15",
+     "diasUteis": 2685,
+     "taxa": 0.07290127092787935
+    },
+    {
+     "rotulo": "NTN-B 2040",
+     "vencimento": "2040-08-15",
+     "diasUteis": 3503,
+     "taxa": 0.06633472809520158
+    },
+    {
+     "rotulo": "NTN-B 2045",
+     "vencimento": "2045-05-15",
+     "diasUteis": 4690,
+     "taxa": null
+    },
+    {
+     "rotulo": "NTN-B 2050",
+     "vencimento": "2050-08-15",
+     "diasUteis": 6005,
+     "taxa": null
+    },
+    {
+     "rotulo": "NTN-B 2055",
+     "vencimento": "2055-05-15",
+     "diasUteis": 7194,
+     "taxa": null
+    },
+    {
+     "rotulo": "NTN-B 2060",
+     "vencimento": "2060-08-15",
+     "diasUteis": 8511,
+     "taxa": null
+    }
+   ],
+   "rotuloY": "Inflação implícita a termo (% a.a.)"
+  },
+  {
+   "id": "be-ntnb-pre",
+   "familia": "implicita",
+   "nome": "Break-even NTN-B × PRE",
+   "fonte": "ANBIMA",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "mai/27",
+     "vencimento": "2027-05-15",
+     "diasUteis": 181,
+     "taxa": 0.06101566635414457
+    },
+    {
+     "rotulo": "ago/28",
+     "vencimento": "2028-08-15",
+     "diasUteis": 496,
+     "taxa": 0.05520079999510119
+    },
+    {
+     "rotulo": "mai/29",
+     "vencimento": "2029-05-15",
+     "diasUteis": 680,
+     "taxa": 0.05854472876637473
+    },
+    {
+     "rotulo": "ago/30",
+     "vencimento": "2030-08-15",
+     "diasUteis": 994,
+     "taxa": 0.05935945391756059
+    },
+    {
+     "rotulo": "mai/31",
+     "vencimento": "2031-05-15",
+     "diasUteis": 1180,
+     "taxa": 0.06051822944196239
+    },
+    {
+     "rotulo": "ago/32",
+     "vencimento": "2032-08-15",
+     "diasUteis": 1498,
+     "taxa": 0.06138505616361756
+    },
+    {
+     "rotulo": "mai/33",
+     "vencimento": "2033-05-15",
+     "diasUteis": 1685,
+     "taxa": 0.06216485488412715
+    },
+    {
+     "rotulo": "mai/35",
+     "vencimento": "2035-05-15",
+     "diasUteis": 2184,
+     "taxa": 0.0633242583164475
+    },
+    {
+     "rotulo": "mai/37",
+     "vencimento": "2037-05-15",
+     "diasUteis": 2685,
+     "taxa": null,
+     "nota": "fora do alcance da curva nominal"
+    },
+    {
+     "rotulo": "ago/40",
+     "vencimento": "2040-08-15",
+     "diasUteis": 3503,
+     "taxa": null,
+     "nota": "fora do alcance da curva nominal"
+    },
+    {
+     "rotulo": "mai/45",
+     "vencimento": "2045-05-15",
+     "diasUteis": 4690,
+     "taxa": null,
+     "nota": "fora do alcance da curva nominal"
+    },
+    {
+     "rotulo": "ago/50",
+     "vencimento": "2050-08-15",
+     "diasUteis": 6005,
+     "taxa": null,
+     "nota": "fora do alcance da curva nominal"
+    },
+    {
+     "rotulo": "mai/55",
+     "vencimento": "2055-05-15",
+     "diasUteis": 7194,
+     "taxa": null,
+     "nota": "fora do alcance da curva nominal"
+    },
+    {
+     "rotulo": "ago/60",
+     "vencimento": "2060-08-15",
+     "diasUteis": 8511,
+     "taxa": null,
+     "nota": "fora do alcance da curva nominal"
+    }
+   ],
+   "rotuloY": "Inflação implícita (% a.a.)"
+  },
+  {
+   "id": "be-ntnb-di",
+   "familia": "implicita",
+   "nome": "Break-even NTN-B × DI",
+   "fonte": "ANBIMA",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "mai/27",
+     "vencimento": "2027-05-15",
+     "diasUteis": 181,
+     "taxa": 0.06318095779318633
+    },
+    {
+     "rotulo": "ago/28",
+     "vencimento": "2028-08-15",
+     "diasUteis": 496,
+     "taxa": 0.055050101676814345
+    },
+    {
+     "rotulo": "mai/29",
+     "vencimento": "2029-05-15",
+     "diasUteis": 680,
+     "taxa": 0.05796456168558306
+    },
+    {
+     "rotulo": "ago/30",
+     "vencimento": "2030-08-15",
+     "diasUteis": 994,
+     "taxa": 0.05840449670392078
+    },
+    {
+     "rotulo": "mai/31",
+     "vencimento": "2031-05-15",
+     "diasUteis": 1180,
+     "taxa": 0.059457593333087866
+    },
+    {
+     "rotulo": "ago/32",
+     "vencimento": "2032-08-15",
+     "diasUteis": 1498,
+     "taxa": 0.059927018043875124
+    },
+    {
+     "rotulo": "mai/33",
+     "vencimento": "2033-05-15",
+     "diasUteis": 1685,
+     "taxa": 0.06036645043773814
+    },
+    {
+     "rotulo": "mai/35",
+     "vencimento": "2035-05-15",
+     "diasUteis": 2184,
+     "taxa": 0.0614860672367723
+    },
+    {
+     "rotulo": "mai/37",
+     "vencimento": "2037-05-15",
+     "diasUteis": 2685,
+     "taxa": 0.06360679916787992
+    },
+    {
+     "rotulo": "ago/40",
+     "vencimento": "2040-08-15",
+     "diasUteis": 3503,
+     "taxa": 0.06424318392275907
+    },
+    {
+     "rotulo": "mai/45",
+     "vencimento": "2045-05-15",
+     "diasUteis": 4690,
+     "taxa": null,
+     "nota": "fora do alcance da curva nominal"
+    },
+    {
+     "rotulo": "ago/50",
+     "vencimento": "2050-08-15",
+     "diasUteis": 6005,
+     "taxa": null,
+     "nota": "fora do alcance da curva nominal"
+    },
+    {
+     "rotulo": "mai/55",
+     "vencimento": "2055-05-15",
+     "diasUteis": 7194,
+     "taxa": null,
+     "nota": "fora do alcance da curva nominal"
+    },
+    {
+     "rotulo": "ago/60",
+     "vencimento": "2060-08-15",
+     "diasUteis": 8511,
+     "taxa": null,
+     "nota": "fora do alcance da curva nominal"
+    }
+   ],
+   "rotuloY": "Inflação implícita (% a.a.)"
+  },
+  {
+   "id": "spread-pre-di",
+   "familia": "implicita",
+   "nome": "Spread PRE − DI",
+   "fonte": "ANBIMA",
+   "unidade": "bps",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "LTN out/26",
+     "vencimento": "2026-10-01",
+     "diasUteis": 28,
+     "taxa": -8.789999999999909
+    },
+    {
+     "rotulo": "NTN-F jan/27",
+     "vencimento": "2027-01-01",
+     "diasUteis": 90,
+     "taxa": -24.379999999999956
+    },
+    {
+     "rotulo": "LTN abr/27",
+     "vencimento": "2027-04-01",
+     "diasUteis": 150,
+     "taxa": -17.920000000000158
+    },
+    {
+     "rotulo": "LTN jul/27",
+     "vencimento": "2027-07-01",
+     "diasUteis": 213,
+     "taxa": -28.00000000000025
+    },
+    {
+     "rotulo": "LTN out/27",
+     "vencimento": "2027-10-01",
+     "diasUteis": 278,
+     "taxa": -6.140000000000034
+    },
+    {
+     "rotulo": "LTN jan/28",
+     "vencimento": "2028-01-01",
+     "diasUteis": 341,
+     "taxa": 1.5000000000001124
+    },
+    {
+     "rotulo": "LTN abr/28",
+     "vencimento": "2028-04-01",
+     "diasUteis": 404,
+     "taxa": 1.6499999999999848
+    },
+    {
+     "rotulo": "LTN jul/28",
+     "vencimento": "2028-07-01",
+     "diasUteis": 465,
+     "taxa": -1.5000000000001124
+    },
+    {
+     "rotulo": "LTN out/28",
+     "vencimento": "2028-10-01",
+     "diasUteis": 529,
+     "taxa": 4.5600000000001195
+    },
+    {
+     "rotulo": "LTN jan/29",
+     "vencimento": "2029-01-01",
+     "diasUteis": 589,
+     "taxa": 5.420000000000147
+    },
+    {
+     "rotulo": "NTN-F jan/29",
+     "vencimento": "2029-01-01",
+     "diasUteis": 589,
+     "taxa": -12.2899999999998
+    },
+    {
+     "rotulo": "LTN jul/29",
+     "vencimento": "2029-07-01",
+     "diasUteis": 713,
+     "taxa": 6.589999999999929
+    },
+    {
+     "rotulo": "LTN jan/30",
+     "vencimento": "2030-01-01",
+     "diasUteis": 838,
+     "taxa": 7.570000000000077
+    },
+    {
+     "rotulo": "NTN-F jan/31",
+     "vencimento": "2031-01-01",
+     "diasUteis": 1090,
+     "taxa": 9.379999999999944
+    },
+    {
+     "rotulo": "LTN jan/32",
+     "vencimento": "2032-01-01",
+     "diasUteis": 1342,
+     "taxa": 9.279999999999845
+    },
+    {
+     "rotulo": "NTN-F jan/33",
+     "vencimento": "2033-01-01",
+     "diasUteis": 1594,
+     "taxa": 9.789999999999798
+    },
+    {
+     "rotulo": "NTN-F jan/35",
+     "vencimento": "2035-01-01",
+     "diasUteis": 2093,
+     "taxa": 11.619999999999964
+    },
+    {
+     "rotulo": "NTN-F jan/37",
+     "vencimento": "2037-01-01",
+     "diasUteis": 2595,
+     "taxa": 8.490000000000164
+    }
+   ],
+   "rotuloY": "Prêmio sobre o DI (bps)"
+  },
+  {
+   "id": "be-forward",
+   "familia": "implicita",
+   "nome": "Break-even forward",
+   "fonte": "ANBIMA",
+   "unidade": "taxa",
+   "convencao": "du252",
+   "vertices": [
+    {
+     "rotulo": "mai/27",
+     "vencimento": "2027-05-15",
+     "diasUteis": 181,
+     "taxa": 0.06101566635414457
+    },
+    {
+     "rotulo": "ago/28",
+     "vencimento": "2028-08-15",
+     "diasUteis": 496,
+     "taxa": 0.05187398728292103
+    },
+    {
+     "rotulo": "mai/29",
+     "vencimento": "2029-05-15",
+     "diasUteis": 680,
+     "taxa": 0.06761167641700361
+    },
+    {
+     "rotulo": "ago/30",
+     "vencimento": "2030-08-15",
+     "diasUteis": 994,
+     "taxa": 0.06112597690809696
+    },
+    {
+     "rotulo": "mai/31",
+     "vencimento": "2031-05-15",
+     "diasUteis": 1180,
+     "taxa": 0.0667323461925724
+    },
+    {
+     "rotulo": "ago/32",
+     "vencimento": "2032-08-15",
+     "diasUteis": 1498,
+     "taxa": 0.06460777992489808
+    },
+    {
+     "rotulo": "mai/33",
+     "vencimento": "2033-05-15",
+     "diasUteis": 1685,
+     "taxa": 0.06843229742685253
+    },
+    {
+     "rotulo": "mai/35",
+     "vencimento": "2035-05-15",
+     "diasUteis": 2184,
+     "taxa": 0.06724863788782742
+    }
+   ],
+   "rotuloY": "Inflação implícita a termo (% a.a.)"
+  }
+ ]
+}

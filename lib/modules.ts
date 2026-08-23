@@ -71,8 +71,27 @@ export const MODULES: ModuleMeta[] = [
     disponivel: true,
   },
   {
-    id: "modulo-5",
+    id: "mercado-hoje",
     numero: 5,
+    slug: "mercado-hoje",
+    nav: "Mercado Hoje",
+    titulo: "Mercado Hoje — Curvas, Taxas e Preços",
+    descricao:
+      "Sala de consulta ao vivo às curvas de juros, preços e inflação implícita do mercado brasileiro, com pautas guiadas de debate sobre o dado do dia.",
+    icon: "insights",
+    objetivos: [
+      "Selecionar a curva adequada à pergunta em pauta entre as quatro famílias disponíveis.",
+      "Ler o formato da ETTJ nominal e real do dia e traduzi-lo em hipótese sobre política monetária.",
+      "Distinguir taxa spot de taxa a termo no dado real, calculando os forwards 1a1a, 2a1a e 5a5a.",
+      "Decompor a diferença entre juro nominal e real em inflação implícita e confrontá-la com a meta.",
+      "Interpretar o cupom cambial (DDI sujo × FRC limpo) como custo de captação sintética em dólar.",
+    ],
+    totalSimulacoes: 6,
+    disponivel: true,
+  },
+  {
+    id: "estudos-de-caso",
+    numero: 6,
     slug: "estudos-de-caso",
     nav: "Estudos de Caso",
     titulo: "Estudos de Caso",

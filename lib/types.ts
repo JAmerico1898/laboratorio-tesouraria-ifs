@@ -1,4 +1,6 @@
-export type Level = "int" | "adv";
+import type { Familia, JanelaDu, MercadoSnapshot } from "./mercado/types";
+
+export type Level = "int" | "adv" | "sup";
 
 export type Tone = "pos" | "neg" | "neu";
 
@@ -271,4 +273,77 @@ export interface CaseMtmLft {
   checkpoints: MtmCheckpoint[];
   espelho: MtmEspelhoLinha[];
   reflexao: MtmReflexao[];
+}
+
+// ── Módulo 5 — Mercado Hoje (pautas de debate) ──────────────────────────────
+//
+// Natureza distinta dos Módulos 1–4: aqui não há alternativa certa e
+// alternativas erradas, e sim leituras concorrentes do mesmo dado. Uma delas
+// carrega `leituraCurso: true` — o padrão que `SvbOpcao` já usa no caso SVB.
+
+export interface PautaOpcao {
+  id: string; // "a" | "b" | "c" | "d"
+  texto: string;
+  leituraCurso: boolean; // a leitura que o curso sustenta — NÃO é "correct"
+  feedback: string;
+}
+
+export interface PautaEtapa {
+  id: string; // "etapa-1"
+  titulo: string;
+  enunciado: string;
+  opcoes: PautaOpcao[];
+  feedback: string;
+  pontos: number;
+  next: string; // id da etapa seguinte — encadeamento explícito ("" na última)
+  /**
+   * Trecho da curva que esta etapa discute. O painel abre recortado nele, para
+   * que os cartões e o gráfico digam o mesmo que as alternativas; o aluno pode
+   * abrir a curva inteira com um clique.
+   */
+  janela?: JanelaDu;
+  /** Rótulos de vértices citados no enunciado — marcados no gráfico. */
+  destaques?: string[];
+}
+
+export interface PautaPosicao {
+  id: "A" | "B" | "C";
+  rotulo: string;
+  decisao: string;
+  consequencias: { estado: string; efeito: string }[];
+  /** Contrafactual numérico, derivado do snapshot (nocional em `config.ts`). */
+  contrafactual: (s: MercadoSnapshot) => string;
+}
+
+export interface GabaritoNota {
+  etapaId: string;
+  answer: string;
+  rationale: string;
+  math: (s: MercadoSnapshot) => string; // função, nunca string literal
+}
+
+export interface PautaGabarito {
+  sintese: string;
+  notas: GabaritoNota[]; // uma por etapa, inclusive a Resolução
+  glossario: { termo: string; definicao: string }[];
+}
+
+export interface Pauta {
+  id: string; // "p5-1"
+  codigo: string; // "P5.1"
+  titulo: string;
+  nivel: Level;
+  duracaoMin: number;
+  familia: Familia;
+  curvaInicial: string; // id da curva pré-selecionada no painel
+  curvaComparacao?: string;
+  icon: string;
+  contexto: string; // HTML rico, mesmo padrão dos módulos 1–4
+  chips: Chip[];
+  etapas: PautaEtapa[]; // SEMPRE >= 4, a última é a Resolução
+  posicoes: PautaPosicao[];
+  /** Posição que o gabarito sustenta na Resolução. */
+  posicaoCurso: "A" | "B" | "C";
+  gabarito: PautaGabarito;
+  pontuacaoMax: number;
 }

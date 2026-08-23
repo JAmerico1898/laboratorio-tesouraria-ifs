@@ -31,3 +31,10 @@ next-env.d.ts
 .vercel
 
 .vercel
+
+# cobertura de testes
+/coverage
+
+# cache do Python das funcoes serverless
+__pycache__/
+*.pyc
