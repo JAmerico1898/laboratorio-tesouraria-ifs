@@ -1,4 +1,4 @@
-﻿import type { Scenario } from "@/lib/types";
+import type { Scenario } from "@/lib/types";
 
 export const s2_1: Scenario = {
   id: "s2-1",
