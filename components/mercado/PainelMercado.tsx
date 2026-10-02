@@ -7,6 +7,7 @@ import { recortarCurva } from "@/lib/mercado/metricas";
 import { dataBr } from "@/lib/mercado/template";
 import type { Curva, Familia, JanelaDu, MercadoSnapshot } from "@/lib/mercado/types";
 import { CartoesForward } from "./CartoesForward";
+import { Glossario } from "./Glossario";
 import { GraficoCurva } from "./GraficoCurva";
 import { Indicadores } from "./Indicadores";
 import { LeituraRapida } from "./LeituraRapida";
@@ -177,10 +178,13 @@ export function PainelMercado({
             />
           </label>
         )}
+        <div className="ml-auto">
+          <Glossario familia={familia} />
+        </div>
         <button
           type="button"
           onClick={() => setProjecao((v) => !v)}
-          className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-border-soft px-3 py-1.5 text-[12px] font-semibold text-muted hover:text-ink"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border-soft px-3 py-1.5 text-[12px] font-semibold text-muted hover:text-ink"
         >
           <Icon name={projecao ? "close_fullscreen" : "present_to_all"} size={16} />
           {projecao ? "Sair da projeção" : "Modo projeção"}
