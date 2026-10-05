@@ -5,7 +5,7 @@ export const MODULES: ModuleMeta[] = [
     id: "modulo-1",
     numero: 1,
     slug: "modulo-1",
-    nav: "Operações de Tesouraria",
+    nav: "Oper Tesouraria",
     titulo: "Principais operações de tesouraria",
     descricao:
       "Base de matemática financeira e leitura do mercado monetário: funding, gap pré×pós, precificação de crédito e defesa do juro real.",
@@ -71,8 +71,42 @@ export const MODULES: ModuleMeta[] = [
     disponivel: true,
   },
   {
-    id: "mercado-hoje",
+    id: "animacoes",
     numero: 5,
+    slug: "animacoes",
+    nav: "Animações",
+    titulo: "Animações Pedagógicas",
+    descricao:
+      "Animações interativas que mostram, passo a passo, os mecanismos de cada módulo — da transmissão da Selic à imunização.",
+    icon: "animation",
+    objetivos: [
+      "Visualizar a dinâmica dos conceitos antes de calculá-los.",
+      "Explorar o efeito de cada parâmetro mexendo diretamente nos controles da animação.",
+      "Revisar os mecanismos centrais de cada módulo em sequência.",
+    ],
+    totalSimulacoes: 12,
+    disponivel: true,
+  },
+  {
+    id: "simulacoes",
+    numero: 6,
+    slug: "simulacoes",
+    nav: "Simulações",
+    titulo: "Simulações em Excel",
+    descricao:
+      "Planilhas de simulação para baixar e calcular por conta própria, organizadas pelos quatro módulos.",
+    icon: "calculate",
+    objetivos: [
+      "Reproduzir em planilha os cálculos apresentados em cada módulo.",
+      "Testar cenários alterando as premissas de cada simulador.",
+      "Conferir os resultados das animações e dos cenários com números próprios.",
+    ],
+    totalSimulacoes: 15,
+    disponivel: true,
+  },
+  {
+    id: "mercado-hoje",
+    numero: 7,
     slug: "mercado-hoje",
     nav: "Mercado Hoje",
     titulo: "Mercado Hoje — Curvas, Taxas e Preços",
@@ -91,9 +125,9 @@ export const MODULES: ModuleMeta[] = [
   },
   {
     id: "estudos-de-caso",
-    numero: 6,
+    numero: 8,
     slug: "estudos-de-caso",
-    nav: "Estudos de Caso",
+    nav: "Casos",
     titulo: "Estudos de Caso",
     descricao: "Casos narrativos que integram os quatro módulos em decisões reais de tesouraria — do diagnóstico macro ao parecer ao ALCO.",
     icon: "menu_book",
@@ -111,4 +145,4 @@ export const MODULES: ModuleMeta[] = [
 export function getModule(slug: string): ModuleMeta | undefined {
   return MODULES.find((m) => m.slug === slug);
 }
-
+

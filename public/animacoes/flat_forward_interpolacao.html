@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interpolação Flat-Forward</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,600;0,700;1,600&family=Manrope:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8f6f2;
+  --bg2:#efeae3;
+  --bg-card:#ffffff;
+  --text:#211e1b;
+  --text-dim:#57514b;
+  --accent:#a3451f;      /* identidade: terracota = curva flat-forward */
+  --ok:#276b2b;
+  --bad:#b83227;
+  --ref:#1f5fa8;         /* interpolação linear (comparação) */
+  --warn:#8a5a00;        /* CDI / ponta curta */
+  --vert:#211e1b;        /* vértices DI1 */
+  --grid-dim:#e6e0d6;
+  --accent-bg:#f8ebe4;
+  --ok-bg:#e8f3e8;
+  --bad-bg:#fbeceb;
+  --warn-bg:#fbf1df;
+  --ref-bg:#e8eff9;
+  --accent-brd:#e8c6b5;
+  --ok-brd:#b9dbba;
+  --bad-brd:#efc2bd;
+  --warn-brd:#ecd29f;
+  --ref-brd:#bccfeb;
+  --serif:'Crimson Pro',Georgia,serif;
+  --sans:'Manrope',system-ui,sans-serif;
+  --mono:'DM Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 20px 40px}
+header .tag{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-brd);padding:3px 10px;border-radius:999px}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,4.6vw,48px);line-height:1.08;margin:12px 0 8px}
+h1 em{color:var(--accent);font-style:italic;font-weight:600}
+.lead{color:var(--text-dim);max-width:800px;margin:0 0 18px;font-size:17px}
+h2{font-family:var(--serif);font-size:27px;margin:2px 0 10px;line-height:1.15}
+h3{font-family:var(--serif);font-size:21px;margin:0 0 6px}
+nav.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px}
+nav.tabs button{font-family:var(--sans);font-weight:600;font-size:14px;border:1px solid var(--accent-brd);background:var(--bg-card);color:var(--text);padding:8px 16px;border-radius:999px;cursor:pointer}
+nav.tabs button:hover{background:var(--accent-bg)}
+nav.tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+section.tab{display:none;animation:fade .45s ease}
+section.tab.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--bg-card);border-radius:14px;box-shadow:0 1px 2px rgba(40,25,15,.06),0 4px 16px rgba(40,25,15,.05);padding:20px;margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.grid2>*{min-width:0}
+.formula{font-family:var(--serif);font-size:clamp(19px,2.6vw,27px);text-align:center;background:var(--bg2);border-radius:12px;padding:16px 10px;margin:8px 0 12px;overflow-x:auto}
+.formula .sm{display:block;font-family:var(--sans);font-size:14px;color:var(--text-dim);margin-top:6px}
+.pair .ok,.pair .bad{border-radius:12px;padding:14px 16px;border:1px solid}
+.pair .ok{background:var(--ok-bg);border-color:var(--ok-brd)}
+.pair .bad{background:var(--bad-bg);border-color:var(--bad-brd)}
+.pair .ok b:first-child{color:var(--ok)}.pair .bad b:first-child{color:var(--bad)}
+.box{border-radius:12px;padding:14px 16px;border:1px solid;margin-top:12px}
+.box p{margin:6px 0}
+.box.idea{background:var(--accent-bg);border-color:var(--accent-brd)}
+.box.warn{background:var(--warn-bg);border-color:var(--warn-brd)}
+.box.world{background:var(--ref-bg);border-color:var(--ref-brd)}
+.mono{font-family:var(--mono)}
+/* passo a passo */
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:10px}
+.step{border-radius:12px;border:1px solid var(--grid-dim);padding:12px 14px;background:var(--bg-card);opacity:.35;transition:opacity .4s,border-color .4s,transform .4s}
+.step.on{opacity:1;border-color:var(--accent-brd);transform:translateY(-2px)}
+.step.cur{border:2px solid var(--accent);box-shadow:0 4px 14px rgba(163,69,31,.14)}
+.step .n{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.step .t{font-weight:700;margin:2px 0 6px}
+.step .calc{font-family:var(--mono);font-size:13.5px;line-height:1.6;background:var(--bg2);border-radius:8px;padding:8px 10px;overflow-x:auto}
+.step .calc b{color:var(--accent)}
+.step p{font-size:14px;margin:6px 0 0;color:var(--text-dim)}
+.controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 18px;align-items:end}
+.ctl label{display:flex;justify-content:space-between;font-size:13px;font-weight:600;gap:6px}
+.ctl label .v{font-family:var(--mono);color:var(--accent)}
+.ctl input[type=range]{width:100%;accent-color:var(--accent)}
+.ctl .hint{font-size:12px;color:var(--text-dim);line-height:1.35;margin-top:2px}
+.ctl.cdi label .v{color:var(--warn)}
+.ctl.cdi input[type=range]{accent-color:var(--warn)}
+.ctl.alvo{grid-column:span 2}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+select{max-width:100%}
+select,button.act{font-family:var(--sans);font-size:14px;border-radius:10px;border:1px solid var(--accent-brd);background:var(--bg-card);color:var(--text);padding:7px 12px}
+button.act{cursor:pointer;font-weight:600}
+button.act.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+button.act.lin.on{background:var(--ref);border-color:var(--ref);color:#fff}
+button.act:disabled{opacity:.45;cursor:default}
+canvas{width:100%;max-width:100%;display:block;border-radius:10px;background:var(--bg-card)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0}
+.stat{background:var(--bg2);border-radius:12px;padding:12px 14px;min-width:0}
+.stat .k{font-size:12px;color:var(--text-dim);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.stat .n{font-family:var(--mono);font-size:23px;font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat .s{font-size:12px;color:var(--text-dim)}
+.what{background:var(--accent-bg);border:1px solid var(--accent-brd);border-radius:12px;padding:14px 16px}
+.what p{margin:6px 0}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--text-dim);margin-top:8px}
+.legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:5px;vertical-align:3px}
+.legend i.dot{width:10px;height:10px;border-radius:50%;vertical-align:-1px}
+.tblwrap{overflow-x:auto;margin-top:10px}
+table.fl{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:13px}
+table.fl th{font-family:var(--sans);font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);text-align:right;padding:6px 8px;border-bottom:2px solid var(--grid-dim)}
+table.fl td{text-align:right;padding:5px 8px;border-bottom:1px solid var(--grid-dim);white-space:nowrap}
+table.fl th:first-child,table.fl td:first-child{text-align:left}
+table.fl tr.tot td{font-weight:500;border-top:2px solid var(--grid-dim);border-bottom:none}
+table.fl td.d-pos{color:var(--bad)}table.fl td.d-neg{color:var(--ok)}
+table.fl .lin{color:var(--ref)}
+.scen{cursor:pointer;border:1px solid var(--grid-dim);transition:transform .2s,border-color .2s}
+.scen:hover{transform:translateY(-2px);border-color:var(--accent-brd)}
+.scen .trap{font-family:var(--mono);font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em}
+.scen .q{font-weight:600;margin-top:4px}
+.scen .ans{display:none;margin-top:10px;border-radius:10px;padding:10px 12px;font-size:14.5px}
+.scen.open .ans{display:block;animation:fade .4s}
+.scen .ans.ok{background:var(--ok-bg);border:1px solid var(--ok-brd)}
+.scen .ans.bad{background:var(--bad-bg);border:1px solid var(--bad-brd)}
+.scen .ans b:first-child{display:block;margin-bottom:2px}
+.scen .ans.ok b:first-child{color:var(--ok)}.scen .ans.bad b:first-child{color:var(--bad)}
+.scen .more{font-size:12px;color:var(--accent);font-weight:700;margin-top:8px}
+.quiz .qq{margin-bottom:18px}
+.quiz .opts{display:grid;gap:8px;margin-top:8px}
+.quiz .opt{text-align:left;font-family:var(--sans);font-size:15px;background:var(--bg-card);border:1px solid var(--grid-dim);border-radius:10px;padding:9px 12px;cursor:pointer;color:var(--text)}
+.quiz .opt:hover{border-color:var(--accent-brd);background:var(--accent-bg)}
+.quiz .opt.right{background:var(--ok-bg);border-color:var(--ok)}
+.quiz .opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.quiz .fb{display:none;margin-top:8px;font-size:14.5px;border-radius:10px;padding:10px 12px;background:var(--bg2)}
+.quiz .fb.show{display:block;animation:fade .4s}
+.score{font-family:var(--mono);color:var(--accent)}
+footer{margin-top:26px;padding-top:14px;border-top:1px solid var(--grid-dim);font-size:13px;color:var(--text-dim)}
+@media (max-width:900px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.grid2,.controls,.steps{grid-template-columns:minmax(0,1fr)}.ctl.alvo{grid-column:auto}.wrap{padding:20px 14px 32px}.stat .n{font-size:19px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="tag">Tesouraria · Curva de juros · Interpolação</span>
+  <h1>Flat-forward: a taxa <em>entre</em> os vértices</h1>
+  <p class="lead">O mercado só observa taxas em alguns prazos (os vértices do DI1). Para apreçar um fluxo que cai entre eles, o padrão brasileiro supõe que a <b>taxa a termo é constante</b> entre dois vértices consecutivos — e interpola os <b>fatores</b>, não as taxas.</p>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="on" data-tab="t1">① Conceito</button>
+  <button data-tab="t2">② Montar a curva</button>
+  <button data-tab="t3">③ Apreçar um título</button>
+  <button data-tab="t4">④ Cenários</button>
+  <button data-tab="t5">⑤ Teste</button>
+</nav>
+
+<!-- ============ ABA 1: CONCEITO ============ -->
+<section class="tab on" id="t1">
+  <div class="card">
+    <h2>A fórmula</h2>
+    <div class="formula">f(du) = f<sub>1</sub> × ( f<sub>2</sub> / f<sub>1</sub> )<sup>(du − du<sub>1</sub>) / (du<sub>2</sub> − du<sub>1</sub>)</sup>
+      <span class="sm">com f<sub>k</sub> = (1 + r<sub>k</sub>)<sup>du<sub>k</sub>/252</sup> &nbsp;·&nbsp; taxa interpolada: r(du) = f(du)<sup>252/du</sup> − 1 &nbsp;·&nbsp; du<sub>1</sub> ≤ du ≤ du<sub>2</sub>, em <b>dias úteis</b></span></div>
+    <p>Lendo a fórmula: o fator acumulado até o vértice 1 cresce, dali em diante, à <b>taxa a termo</b> que liga os dois vértices — <span class="mono">(f<sub>2</sub>/f<sub>1</sub>)</span> — elevada à fração do trecho já percorrida. Por isso o nome: a taxa a termo é <b>plana</b> (<i>flat</i>) dentro de cada trecho.</p>
+    <div class="grid2 pair">
+      <div class="ok"><b>✓ Certo</b><br>Converter cada vértice em <b>fator</b> (DU/252, exponencial), interpolar o fator geometricamente e só no fim voltar para taxa. Nos vértices, a curva reproduz exatamente as taxas de mercado.</div>
+      <div class="bad"><b>✗ Armadilha</b><br>Fazer a média ponderada das <b>taxas</b> (interpolação linear) ou contar <b>dias corridos</b>. Nos vértices tudo bate — o erro aparece justamente nos prazos intermediários, onde caem os cupons.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Passo a passo: uma taxa para 400 DU</h2>
+    <p style="margin-top:0;color:var(--text-dim)">Vértices: <span class="mono">252 DU → 12,80%</span> e <span class="mono">504 DU → 12,90%</span> a.a. Queremos a taxa e o PU de uma LTN (face R$ 1.000) com <b>400 DU</b>.</p>
+    <div class="row" style="margin-top:4px">
+      <button class="act" id="stPrev">◀ Voltar</button>
+      <button class="act pri" id="stNext">▶ Próximo passo</button>
+      <button class="act" id="stAll">Mostrar tudo</button>
+      <span class="mono" id="stLbl" style="font-size:13px;color:var(--text-dim)"></span>
+    </div>
+    <div class="steps" id="steps">
+      <div class="step"><div class="n">Passo 1</div><div class="t">Taxas → fatores</div>
+        <div class="calc">f<sub>252</sub> = 1,1280<sup>252/252</sup> = <b>1,128000</b><br>f<sub>504</sub> = 1,1290<sup>504/252</sup> = <b>1,274641</b></div>
+        <p>Cada taxa vira o fator acumulado até o seu vértice.</p></div>
+      <div class="step"><div class="n">Passo 2</div><div class="t">Fator a termo do trecho</div>
+        <div class="calc">f<sub>504</sub> / f<sub>252</sub> = <b>1,130001</b><br>em 252 DU → a termo <b>13,0001%</b> a.a.</div>
+        <p>É o que a curva "rende" entre 252 e 504 DU. O flat-forward a supõe constante.</p></div>
+      <div class="step"><div class="n">Passo 3</div><div class="t">Fração do trecho</div>
+        <div class="calc">(400 − 252) / (504 − 252) = 148/252 = <b>0,587302</b><br>f<sub>400</sub> = 1,128 × 1,130001<sup>0,587302</sup> = <b>1,211943</b></div>
+        <p>Andamos 58,7% do trecho, então aplicamos 58,7% do fator a termo.</p></div>
+      <div class="step"><div class="n">Passo 4</div><div class="t">Fator → taxa e PU</div>
+        <div class="calc">r<sub>400</sub> = 1,211943<sup>252/400</sup> − 1 = <b>12,8740%</b><br>PU = 1.000 / 1,211943 = <b>R$ 825,12</b></div>
+        <p>A interpolação linear daria 12,8587% e PU R$ 825,30: R$ 0,18 por título.</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Convenções desta animação</h2>
+    <div class="box warn"><p>⚠️ <b>Pontas da curva.</b> <b>Curta:</b> o CDI entra como vértice de <b>1 DU</b>, e prazos antes do primeiro DI1 são interpolados entre ele e o primeiro vértice. <b>Longa:</b> depois do último vértice, repete-se a <b>última taxa a termo</b> — a taxa spot continua se movendo. Manter constante a taxa spot do último vértice é outra convenção, e dá preços diferentes.</p></div>
+    <div class="box idea"><p>💡 <b>Dias úteis.</b> Tudo aqui está em DU (base 252), contados com o calendário de feriados nacionais da ANBIMA. Os mesmos 400 DU equivalem a cerca de 580 dias corridos: usar DC com uma taxa DU/252 subapreça o título em ~8%.</p></div>
+    <div class="box world"><p>🌎 <b>Janela para o mundo real.</b> Curva pré da ANBIMA (ETTJ) em <b>02/10/2026</b>: 21 DU <b>13,44%</b> · 126 DU <b>13,31%</b> · 252 DU <b>13,38%</b> · 504 DU <b>13,71%</b> · 1.260 DU <b>14,26%</b> · 2.520 DU <b>14,36%</b>. A Selic estava em <b>13,75%</b> (corte de 0,25 p.p. em 16/09/2026). A curva é ligeiramente "em colher" na parte curta — exatamente onde o método de interpolação mais pesa. Ela está disponível como cenário pronto na aba ②.</p></div>
+  </div>
+</section>
+
+<!-- ============ ABA 2: MONTAR A CURVA ============ -->
+<section class="tab" id="t2">
+  <div class="card">
+    <h2>Monte a curva e escolha um prazo</h2>
+    <div class="controls" id="vertCtl"></div>
+    <div class="row">
+      <label for="preset" style="font-size:14px;font-weight:600">Curva pronta:</label>
+      <select id="preset">
+        <option value="colher">Fictícia — "colher" (cai e depois sobe)</option>
+        <option value="anbima">ANBIMA 02/10/2026 (vértices 63 a 1.260 DU)</option>
+        <option value="positiva">Positivamente inclinada</option>
+        <option value="invertida">Invertida (corte de juros à frente)</option>
+        <option value="plana">Plana</option>
+      </select>
+      <button class="act lin" id="bLin2" aria-pressed="false">Comparar com linear</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">Taxa flat-forward</div><div class="n" id="s2r" style="color:var(--accent)"></div><div class="s" id="s2rS"></div></div>
+      <div class="stat"><div class="k">PU da LTN</div><div class="n" id="s2pu"></div><div class="s">face R$ 1.000</div></div>
+      <div class="stat"><div class="k">A termo do trecho</div><div class="n" id="s2f"></div><div class="s" id="s2fS"></div></div>
+      <div class="stat"><div class="k">Linear − flat-forward</div><div class="n" id="s2d" style="color:var(--ref)"></div><div class="s" id="s2dS"></div></div>
+    </div>
+    <div class="grid2">
+      <div><canvas id="cSpot" height="290" aria-label="Curva spot interpolada"></canvas>
+        <div class="legend"><span><i class="dot" style="background:var(--vert)"></i>vértice DI1</span><span><i class="dot" style="background:var(--warn)"></i>CDI (1 DU)</span><span><i style="background:var(--accent)"></i>flat-forward</span><span class="lin-only"><i style="background:var(--ref)"></i>linear</span></div></div>
+      <div><canvas id="cFwd" height="290" aria-label="Taxa a termo implícita"></canvas>
+        <div class="legend"><span><i style="background:var(--accent)"></i>a termo flat-forward (degraus)</span><span class="lin-only"><i style="background:var(--ref)"></i>a termo diária do linear</span></div></div>
+    </div>
+    <div class="what" style="margin-top:14px"><h3>🔍 O que está acontecendo</h3><div id="what2"></div></div>
+  </div>
+</section>
+
+<!-- ============ ABA 3: APREÇAR ============ -->
+<section class="tab" id="t3">
+  <div class="card">
+    <h2>Apreçar uma NTN-F fluxo a fluxo</h2>
+    <p style="margin-top:0;color:var(--text-dim)">Usa a curva da aba ② (<span class="mono" id="t3curve"></span>). NTN-F com cupom de 10% a.a. pago semestralmente (R$ 48,81 por semestre) e face R$ 1.000. Para simplificar, os cupons caem a cada 126 DU contados para trás a partir do vencimento. Cada fluxo é descontado pela taxa interpolada no seu próprio prazo.</p>
+    <div class="controls">
+      <div class="ctl alvo"><label>Vencimento <span class="v" id="vVenc"></span></label><input type="range" id="sVenc" min="126" max="1764" step="1" value="1000"><div class="hint">em dias úteis; os fluxos que caem nos vértices ficam marcados com ●</div></div>
+      <div class="ctl"><button class="act lin" id="bLin3" aria-pressed="false">Comparar com linear</button></div>
+      <div class="ctl"><button class="act" id="bVert">Vencimento 1.260 DU</button></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">PU flat-forward</div><div class="n" id="s3pu" style="color:var(--accent)"></div><div class="s" id="s3puS"></div></div>
+      <div class="stat"><div class="k">PU linear</div><div class="n" id="s3pl" style="color:var(--ref)"></div><div class="s" id="s3plS"></div></div>
+      <div class="stat"><div class="k">Diferença por título</div><div class="n" id="s3d"></div><div class="s">linear − flat-forward</div></div>
+      <div class="stat"><div class="k">Em R$ 100 milhões</div><div class="n" id="s3m"></div><div class="s" id="s3mS"></div></div>
+    </div>
+    <canvas id="cFlux" height="250" aria-label="Fluxos da NTN-F sobre a curva"></canvas>
+    <div class="legend"><span><i style="background:var(--accent)"></i>taxa flat-forward</span><span class="lin-only"><i style="background:var(--ref)"></i>taxa linear</span><span><i class="dot" style="background:var(--vert)"></i>vértice</span><span>barras: valor presente de cada fluxo</span></div>
+    <div class="tblwrap"><table class="fl" id="tFlux"></table></div>
+    <div class="what" style="margin-top:14px"><h3>🔍 O que está acontecendo</h3><div id="what3"></div></div>
+  </div>
+</section>
+
+<!-- ============ ABA 4: CENÁRIOS ============ -->
+<section class="tab" id="t4">
+  <h2>Seis situações de mesa — clique para ver o veredito</h2>
+  <div class="grid2" id="scenGrid"></div>
+</section>
+
+<!-- ============ ABA 5: TESTE ============ -->
+<section class="tab" id="t5">
+  <div class="card quiz"><h2>Teste rápido <span class="score" id="score"></span></h2><div id="quiz"></div></div>
+</section>
+
+<footer>Operações de Tesouraria em Instituições Financeiras — FGV · Prof. José Américo · Curvas fictícias com ordens de grandeza realistas; NTN-F com datas de cupom simplificadas. Dado real: ETTJ pré ANBIMA (02/10/2026).</footer>
+</div>
+
+<script>
+/* ===================== utilidades ===================== */
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue('--' + n).trim();
+const fmt = (x, d = 2) => x.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const pct = (x, d = 2) => fmt(x * 100, d) + '%';
+const bp = x => (x >= 0 ? '+' : '−') + fmt(Math.abs(x * 1e4), 1) + ' bp';
+const brl = (x, d = 2) => (x < 0 ? '−' : '') + 'R$ ' + fmt(Math.abs(x), d);
+const sbrl = (x, d = 2) => (x >= 0 ? '+' : '−') + 'R$ ' + fmt(Math.abs(x), d);
+
+/* ===================== modelo (conferido em Python) ===================== */
+// fator acumulado de uma taxa anual em DU/252, capitalização exponencial
+const fator = (r, du) => Math.pow(1 + r, du / 252);
+// V = [[1, CDI], [du1, r1], ...] ordenado; devolve a taxa flat-forward em du
+function ffTaxa(du, V) {
+  if (du <= V[0][0]) return V[0][1];
+  for (let k = 0; k < V.length - 1; k++) {
+    const [d1, r1] = V[k], [d2, r2] = V[k + 1];
+    if (du <= d2) {
+      const f1 = fator(r1, d1), f2 = fator(r2, d2);
+      const f = f1 * Math.pow(f2 / f1, (du - d1) / (d2 - d1)); // fator interpolado geometricamente
+      return Math.pow(f, 252 / du) - 1;
+    }
+  }
+  // depois do último vértice: repete a última taxa a termo
+  const n = V.length, [d1, r1] = V[n - 2], [d2, r2] = V[n - 1];
+  const fwd = Math.pow(fator(r2, d2) / fator(r1, d1), 252 / (d2 - d1)) - 1;
+  const f = fator(r2, d2) * Math.pow(1 + fwd, (du - d2) / 252);
+  return Math.pow(f, 252 / du) - 1;
+}
+// interpolação linear das TAXAS (a armadilha); na ponta longa mantém a última taxa
+function linTaxa(du, V) {
+  if (du <= V[0][0]) return V[0][1];
+  for (let k = 0; k < V.length - 1; k++) {
+    const [d1, r1] = V[k], [d2, r2] = V[k + 1];
+    if (du <= d2) return r1 + (r2 - r1) * (du - d1) / (d2 - d1);
+  }
+  return V[V.length - 1][1];
+}
+// taxa a termo entre o vértice k e k+1 (a.a.)
+function termo(V, k) { const [d1, r1] = V[k], [d2, r2] = V[k + 1]; return Math.pow(fator(r2, d2) / fator(r1, d1), 252 / (d2 - d1)) - 1; }
+// em que trecho cai du: -1 antes do CDI (não ocorre), k = entre V[k] e V[k+1], n-1 = além do último
+function trecho(du, V) { for (let k = 0; k < V.length - 1; k++) if (du <= V[k + 1][0]) return k; return V.length - 1; }
+// a termo diária implícita numa função de taxa (para mostrar o "serrote" do linear)
+const fwdDia = (fn, du, V) => Math.pow(fator(fn(du + 1, V), du + 1) / fator(fn(du, V), du), 252) - 1;
+// NTN-F: cupom semestral de 10% a.a.; fluxos a cada 126 DU contados a partir do vencimento
+const CUPOM = 1000 * (Math.sqrt(1.10) - 1);
+function fluxosNTNF(venc) { const L = []; for (let d = venc; d > 0; d -= 126) L.unshift({ du: d, v: CUPOM + (d === venc ? 1000 : 0) }); return L; }
+function puNTNF(venc, fn, V) { return fluxosNTNF(venc).reduce((s, x) => s + x.v / fator(fn(x.du, V), x.du), 0); }
+
+/* ===================== estado da curva ===================== */
+const DUS = [63, 126, 252, 504, 756, 1260];     // vértices DI1 (DU)
+const presets = {
+  colher:    { cdi: 13.65, r: [13.40, 13.10, 12.80, 12.90, 13.20, 13.50] },
+  anbima:    { cdi: 13.65, r: [13.3565, 13.3089, 13.3811, 13.7085, 13.9820, 14.2600] },
+  positiva:  { cdi: 11.15, r: [11.40, 11.70, 12.20, 12.90, 13.40, 13.90] },
+  invertida: { cdi: 14.90, r: [14.70, 14.30, 13.60, 12.80, 12.40, 12.10] },
+  plana:     { cdi: 13.00, r: [13.00, 13.00, 13.00, 13.00, 13.00, 13.00] }
+};
+const S = { lin: false, alvo: 400 };
+// sliders: CDI + 6 vértices + prazo-alvo
+(function montarControles() {
+  const box = $('vertCtl');
+  let h = `<div class="ctl cdi"><label>CDI · 1 DU <span class="v" id="vCdi"></span></label><input type="range" id="sCdi" min="8" max="17" step="0.05" value="13.65"><div class="hint">vértice zero da curva</div></div>`;
+  DUS.forEach((d, k) => { h += `<div class="ctl"><label>DI1 · ${fmt(d, 0)} DU <span class="v" id="vV${k}"></span></label><input type="range" id="sV${k}" min="8" max="17" step="0.05" value="${presets.colher.r[k]}"></div>`; });
+  h += `<div class="ctl alvo"><label>Prazo-alvo <span class="v" id="vAlvo"></span></label><input type="range" id="sAlvo" min="1" max="1800" step="1" value="400"><div class="hint">depois de 1.260 DU: extrapolação pela última a termo</div></div>`;
+  box.innerHTML = h;
+})();
+function curva() {
+  const V = [[1, +$('sCdi').value / 100]];
+  DUS.forEach((d, k) => V.push([d, +$('sV' + k).value / 100]));
+  return V;
+}
+function rotulos() {
+  $('vCdi').textContent = pct(+$('sCdi').value / 100);
+  DUS.forEach((d, k) => $('vV' + k).textContent = pct(+$('sV' + k).value / 100));
+  S.alvo = +$('sAlvo').value; $('vAlvo').textContent = fmt(S.alvo, 0) + ' DU';
+}
+
+/* ===================== canvas (altura-base guardada uma vez) ===================== */
+function prep(cv) {
+  const dpr = window.devicePixelRatio || 1;
+  if (!cv.dataset.h) cv.dataset.h = cv.getAttribute('height');   // nunca reler cv.height (já multiplicado por dpr)
+  const h = +cv.dataset.h;
+  cv.style.height = h + 'px';
+  cv.width = Math.round(cv.clientWidth * dpr); cv.height = Math.round(h * dpr);
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, W: cv.clientWidth, H: h };
+}
+function txt(ctx, s, x, y, color, align = 'left', font = '11px "DM Mono", monospace') { ctx.fillStyle = color; ctx.font = font; ctx.textAlign = align; ctx.fillText(s, x, y); }
+function niceStep(range, n = 5) { const raw = range / n, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p; return (m < 1.5 ? 1 : m < 3 ? 2 : m < 7 ? 5 : 10) * p; }
+// eixos genéricos: devolve funções de escala
+function eixos(ctx, W, H, m, xr, yr, titulo, yfmt) {
+  const X = v => m.l + (v - xr[0]) / (xr[1] - xr[0]) * (W - m.l - m.r);
+  const Y = v => H - m.b - (v - yr[0]) / (yr[1] - yr[0]) * (H - m.t - m.b);
+  ctx.strokeStyle = css('grid-dim'); ctx.lineWidth = 1;
+  const sy = niceStep(yr[1] - yr[0], 5);
+  for (let g = Math.ceil(yr[0] / sy) * sy; g <= yr[1] + 1e-12; g += sy) { const y = Y(g); ctx.beginPath(); ctx.moveTo(m.l, y); ctx.lineTo(W - m.r, y); ctx.stroke(); txt(ctx, yfmt(g, sy), m.l - 6, y + 4, css('text-dim'), 'right'); }
+  const sx = niceStep(xr[1] - xr[0], Math.max(3, Math.floor((W - m.l - m.r) / 75)));
+  for (let g = Math.ceil(xr[0] / sx) * sx; g <= xr[1]; g += sx) { const x = X(g); ctx.beginPath(); ctx.moveTo(x, m.t); ctx.lineTo(x, H - m.b); ctx.stroke(); txt(ctx, fmt(g, 0), x, H - m.b + 15, css('text-dim'), 'center'); }
+  txt(ctx, 'DU', W - m.r, H - 4, css('text-dim'), 'right');
+  txt(ctx, titulo, 8, 16, css('text'), 'left', '700 13px Manrope, sans-serif');
+  return { X, Y };
+}
+const yPct = (g, s) => fmt(g * 100, s * 100 < 0.1 ? 2 : 1) + '%';
+function linha(ctx, pts, col, w = 2.2, dash = []) { ctx.setLineDash(dash); ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke(); ctx.setLineDash([]); }
+function ponto(ctx, x, y, col, r = 4.5, ring = true) { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.fill(); if (ring) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke(); } }
+const XMAX = 1800;
+// faixa da extrapolação (depois do último vértice)
+function sombraExtrap(ctx, X, m, H, W, V) { const x0 = X(V[V.length - 1][0]); ctx.fillStyle = css('bg2'); ctx.fillRect(x0, m.t, W - m.r - x0, H - m.t - m.b); txt(ctx, 'extrapolação', (x0 + W - m.r) / 2, m.t + 14, css('text-dim'), 'center'); }
+
+/* ===================== ABA 2 ===================== */
+function drawSpot(V) {
+  const { ctx, W, H } = prep($('cSpot')), m = { l: 52, r: 14, t: 30, b: 34 };
+  const ys = []; for (let d = 1; d <= XMAX; d += 6) { ys.push(ffTaxa(d, V)); if (S.lin) ys.push(linTaxa(d, V)); }
+  let lo = Math.min(...ys), hi = Math.max(...ys), pad = Math.max(0.002, (hi - lo) * 0.15); lo -= pad; hi += pad;
+  const { X, Y } = eixos(ctx, W, H, m, [0, XMAX], [lo, hi], 'Taxa spot (% a.a.) × prazo', yPct);
+  sombraExtrap(ctx, X, m, H, W, V);
+  const pf = [], pl = []; for (let d = 1; d <= XMAX; d += 2) { pf.push([X(d), Y(ffTaxa(d, V))]); if (S.lin) pl.push([X(d), Y(linTaxa(d, V))]); }
+  if (S.lin) linha(ctx, pl, css('ref'), 2, [6, 4]);
+  linha(ctx, pf, css('accent'), 2.6);
+  V.forEach(([d, r], k) => ponto(ctx, X(d), Y(r), k ? css('vert') : css('warn'), 5));
+  // prazo-alvo
+  const rA = ffTaxa(S.alvo, V), xA = X(S.alvo);
+  ctx.setLineDash([3, 3]); ctx.strokeStyle = css('accent'); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(xA, m.t); ctx.lineTo(xA, H - m.b); ctx.stroke(); ctx.setLineDash([]);
+  ponto(ctx, xA, Y(rA), css('accent'), 6.5);
+  const s = fmt(S.alvo, 0) + ' DU · ' + pct(rA, 4); ctx.font = '500 11px "DM Mono", monospace'; const w = ctx.measureText(s).width;
+  const left = xA + 10 + w > W - m.r, yL = Math.max(m.t + 30, Y(rA) - 22), x0 = left ? xA - 10 - w : xA + 10;
+  ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.fillRect(x0 - 4, yL - 12, w + 8, 17);
+  ctx.strokeStyle = css('accent-brd'); ctx.lineWidth = 1; ctx.strokeRect(x0 - 4, yL - 12, w + 8, 17);
+  txt(ctx, s, x0, yL, css('accent'), 'left', '500 11px "DM Mono", monospace');
+}
+function drawFwd(V) {
+  const { ctx, W, H } = prep($('cFwd')), m = { l: 52, r: 14, t: 30, b: 34 };
+  const n = V.length, fw = []; for (let k = 0; k < n - 1; k++) fw.push(termo(V, k));
+  const ys = [...fw, ...V.map(v => v[1])], linPts = [];
+  if (S.lin) for (let d = 1; d < XMAX; d++) { const f = fwdDia(linTaxa, d, V); linPts.push([d, f]); ys.push(f); }
+  let lo = Math.min(...ys), hi = Math.max(...ys), pad = Math.max(0.002, (hi - lo) * 0.12); lo -= pad; hi += pad;
+  const { X, Y } = eixos(ctx, W, H, m, [0, XMAX], [lo, hi], 'Taxa a termo (% a.a.) × prazo', yPct);
+  sombraExtrap(ctx, X, m, H, W, V);
+  if (S.lin) linha(ctx, linPts.map(p => [X(p[0]), Y(p[1])]), css('ref'), 1.6);
+  // degraus do flat-forward: um nível por trecho; o último se estende na extrapolação
+  const kA = trecho(S.alvo, V);
+  for (let k = 0; k < n - 1; k++) {
+    const x1 = X(V[k][0]), x2 = k === n - 2 ? X(XMAX) : X(V[k + 1][0]), y = Y(fw[k]);
+    const ativo = k === kA || (kA === n - 1 && k === n - 2);
+    ctx.fillStyle = ativo ? 'rgba(163,69,31,.10)' : 'rgba(0,0,0,0)'; ctx.fillRect(x1, y, x2 - x1, H - m.b - y);
+    linha(ctx, [[x1, y], [x2, y]], css('accent'), ativo ? 3.6 : 2.6);
+    if (k < n - 2) linha(ctx, [[x2, y], [x2, Y(fw[k + 1])]], css('accent'), 1, [2, 3]);
+  }
+  V.slice(1).forEach(([d]) => { ctx.fillStyle = css('vert'); ctx.fillRect(X(d) - 1, H - m.b - 6, 2, 6); });
+  // rótulo do trecho ativo
+  const ka = Math.min(kA, n - 2), yy = Y(fw[ka]), xm = (X(V[ka][0]) + (ka === n - 2 ? X(XMAX) : X(V[ka + 1][0]))) / 2;
+  txt(ctx, pct(fw[ka]), Math.min(Math.max(xm, m.l + 30), W - m.r - 30), yy - 8, css('accent'), 'center', '500 11px "DM Mono", monospace');
+}
+function render2() {
+  rotulos(); const V = curva(), n = V.length, a = S.alvo;
+  const r = ffTaxa(a, V), rl = linTaxa(a, V), pu = 1000 / fator(r, a), pl = 1000 / fator(rl, a), k = trecho(a, V);
+  const fw = termo(V, Math.min(k, n - 2));
+  $('s2r').textContent = pct(r, 4);
+  $('s2rS').textContent = k === n - 1 ? 'extrapolada' : `entre ${fmt(V[k][0], 0)} e ${fmt(V[k + 1][0], 0)} DU`;
+  $('s2pu').textContent = brl(pu);
+  $('s2f').textContent = pct(fw, 3);
+  $('s2fS').textContent = k === n - 1 ? `última a termo (${fmt(V[n - 2][0], 0)}–${fmt(V[n - 1][0], 0)} DU)` : `constante de ${fmt(V[k][0], 0)} a ${fmt(V[k + 1][0], 0)} DU`;
+  if (S.lin) { $('s2d').textContent = bp(rl - r); $('s2dS').textContent = 'PU ' + sbrl(pl - pu) + ' por título'; }
+  else { $('s2d').textContent = '—'; $('s2dS').textContent = 'ligue "Comparar com linear"'; }
+  drawSpot(V); drawFwd(V);
+  // texto condicionado aos números
+  const w = [], noVert = V.some(v => v[0] === a);
+  if (noVert) w.push(`<p><b>${fmt(a, 0)} DU é um vértice</b>: a curva devolve exatamente a taxa de mercado (${pct(r, 4)}). Qualquer método de interpolação concorda aqui — a diferença só aparece <b>entre</b> vértices.</p>`);
+  else if (k === n - 1) w.push(`<p>O prazo está <b>além do último vértice</b> (${fmt(V[n - 1][0], 0)} DU). A convenção repete a última a termo (${pct(fw, 3)}), então a taxa spot continua andando em direção a ela: ${pct(V[n - 1][1])} no vértice → ${pct(r, 4)} em ${fmt(a, 0)} DU.</p>`);
+  else {
+    const fr = (a - V[k][0]) / (V[k + 1][0] - V[k][0]);
+    w.push(`<p>${fmt(a, 0)} DU fica <b>${fmt(fr * 100, 1)}% do caminho</b> entre ${fmt(V[k][0], 0)} e ${fmt(V[k + 1][0], 0)} DU${k === 0 ? ' — o trecho que começa no <b>CDI</b>' : ''}. O fator cresce à a termo constante de <b>${pct(fw, 3)}</b> nesse trecho: f = ${fmt(fator(V[k][1], V[k][0]), 6)} × ${fmt(Math.pow(fator(V[k + 1][1], V[k + 1][0]) / fator(V[k][1], V[k][0]), 1), 6)}<sup>${fmt(fr, 4)}</sup> = ${fmt(fator(r, a), 6)}.</p>`);
+  }
+  const jumps = []; for (let j = 0; j < n - 2; j++) jumps.push(Math.abs(termo(V, j + 1) - termo(V, j)));
+  const mj = Math.max(...jumps);
+  w.push(mj > 0.003 ? `<p>Repare nos <b>degraus</b> da a termo: o maior salto entre trechos é de ${fmt(mj * 100, 2)} p.p. É o preço da simplicidade — a a termo é descontínua nos vértices, mas nunca inventa movimentos dentro do trecho.</p>`
+                    : `<p>A a termo quase não muda entre trechos (curva quase plana): os degraus são pequenos e os métodos ficam próximos.</p>`);
+  if (S.lin && !noVert) { const big = Math.abs(rl - r) >= 0.00005; w.push(`<p>O linear dá ${pct(rl, 4)} (${bp(rl - r)}) e PU ${sbrl(pl - pu)} por título. ${big ? 'Observe no gráfico da direita o <b>serrote</b>: a a termo implícita do linear oscila dentro de cada trecho, sem nenhuma razão econômica.' : 'Neste ponto a diferença é desprezível, mas veja o serrote da a termo do linear no gráfico da direita.'}</p>`); }
+  $('what2').innerHTML = w.join('');
+  $('t3curve').textContent = 'CDI ' + pct(V[0][1]) + ' · 252 DU ' + pct(V[3][1]) + ' · 1.260 DU ' + pct(V[6][1]);
+}
+
+/* ===================== ABA 3 ===================== */
+function render3() {
+  const V = curva(), venc = +$('sVenc').value; $('vVenc').textContent = fmt(venc, 0) + ' DU';
+  const F = fluxosNTNF(venc), vset = new Set(V.map(v => v[0]));
+  let pf = 0, pl = 0, nv = 0;
+  const rows = F.map(x => { const r = ffTaxa(x.du, V), rl = linTaxa(x.du, V), fa = fator(r, x.du), vp = x.v / fa, vpl = x.v / fator(rl, x.du); pf += vp; pl += vpl; if (vset.has(x.du)) nv++; return { ...x, r, rl, fa, vp, vpl }; });
+  $('s3pu').textContent = brl(pf); $('s3puS').textContent = `${F.length} fluxo${F.length > 1 ? 's' : ''} · ${nv} em vértice`;
+  const q = 1e8 / pf;
+  if (S.lin) { $('s3pl').textContent = brl(pl); $('s3plS').textContent = 'mesmos vértices'; $('s3d').textContent = sbrl(pl - pf, 4); $('s3m').textContent = sbrl((pl - pf) * q, 0); $('s3mS').textContent = fmt(q, 0) + ' títulos'; }
+  else { ['s3pl', 's3d', 's3m'].forEach(id => $(id).textContent = '—'); $('s3plS').textContent = 'ligue "Comparar com linear"'; $('s3mS').textContent = fmt(q, 0) + ' títulos'; }
+  // tabela fluxo a fluxo
+  let t = `<tr><th>Fluxo</th><th>DU</th><th>Valor (R$)</th><th>Taxa FF</th><th>Fator</th><th>VP FF (R$)</th>${S.lin ? '<th class="lin">Taxa linear</th><th class="lin">VP linear</th><th>Dif.</th>' : ''}</tr>`;
+  rows.forEach((x, i) => { const d = x.vpl - x.vp;
+    t += `<tr><td>${i + 1 === rows.length ? 'Cupom + face' : 'Cupom ' + (i + 1)}${vset.has(x.du) ? ' ●' : ''}</td><td>${fmt(x.du, 0)}</td><td>${fmt(x.v)}</td><td>${pct(x.r, 4)}</td><td>${fmt(x.fa, 6)}</td><td>${fmt(x.vp, 4)}</td>${S.lin ? `<td class="lin">${pct(x.rl, 4)}</td><td class="lin">${fmt(x.vpl, 4)}</td><td class="${Math.abs(d) < 5e-5 ? '' : d > 0 ? 'd-pos' : 'd-neg'}">${Math.abs(d) < 5e-5 ? '0,0000' : (d > 0 ? '+' : '−') + fmt(Math.abs(d), 4)}</td>` : ''}</tr>`; });
+  t += `<tr class="tot"><td>PU</td><td></td><td>${fmt(F.reduce((s, x) => s + x.v, 0))}</td><td></td><td></td><td>${fmt(pf, 4)}</td>${S.lin ? `<td></td><td class="lin">${fmt(pl, 4)}</td><td>${(pl - pf >= 0 ? '+' : '−') + fmt(Math.abs(pl - pf), 4)}</td>` : ''}</tr>`;
+  $('tFlux').innerHTML = t;
+  drawFlux(V, rows, venc);
+  // texto condicionado
+  const w = [], dd = pl - pf;
+  w.push(`<p>Dos ${F.length} fluxos, <b>${nv}</b> cai${nv === 1 ? '' : 'em'} exatamente em vértice${nv === 1 ? '' : 's'}; os outros ${F.length - nv} dependem da interpolação. Cada um é descontado pela taxa do <b>seu</b> prazo — não pela taxa do vencimento.</p>`);
+  if (S.lin) {
+    if (nv === F.length) w.push(`<p>Todos os fluxos caem em vértices: linear e flat-forward dão o <b>mesmo PU</b>. É o único caso em que "o método não importa".</p>`);
+    else if (Math.abs(dd) < 0.0005) w.push(`<p>Neste vencimento os erros do linear quase se cancelam (diferença de ${sbrl(dd, 4)}). Mude o vencimento ou a curva: o cancelamento é coincidência.</p>`);
+    else w.push(`<p>O linear ${dd > 0 ? '<b>superestima</b>' : '<b>subestima</b>'} o PU em ${brl(Math.abs(dd), 4)} por título — ${brl(Math.abs(dd * q), 0)} numa posição de R$ 100 milhões, sem que nenhuma taxa de vértice tenha mudado. Numa marcação a mercado, isso é P&L que não existe.</p>`);
+  } else w.push(`<p>Ligue <b>Comparar com linear</b> para ver quanto o PU mudaria só pela troca do método de interpolação.</p>`);
+  $('what3').innerHTML = w.join('');
+}
+function drawFlux(V, rows, venc) {
+  const { ctx, W, H } = prep($('cFlux')), m = { l: 52, r: 52, t: 30, b: 34 };
+  const xmax = Math.max(venc + 60, 300);
+  const ys = []; for (let d = 1; d <= xmax; d += 4) { ys.push(ffTaxa(d, V)); if (S.lin) ys.push(linTaxa(d, V)); }
+  let lo = Math.min(...ys), hi = Math.max(...ys), pad = Math.max(0.002, (hi - lo) * 0.25); lo -= pad; hi += pad;
+  const { X, Y } = eixos(ctx, W, H, m, [0, xmax], [lo, hi], 'Fluxos da NTN-F sobre a curva', yPct);
+  // barras de VP (escala própria, eixo à direita)
+  const vmax = Math.max(...rows.map(r => r.vp)), bw = Math.max(6, Math.min(22, (W - m.l - m.r) / (xmax / 126) * 0.35));
+  const HB = v => (v / vmax) * (H - m.t - m.b) * 0.92;
+  rows.forEach(r => { ctx.fillStyle = 'rgba(163,69,31,.22)'; ctx.fillRect(X(r.du) - bw / 2, H - m.b - HB(r.vp), bw, HB(r.vp)); ctx.strokeStyle = css('accent'); ctx.lineWidth = 1; ctx.strokeRect(X(r.du) - bw / 2, H - m.b - HB(r.vp), bw, HB(r.vp)); });
+  txt(ctx, 'VP (R$)', W - 6, m.t - 6, css('text-dim'), 'right');
+  [0.5, 1].forEach(f => txt(ctx, fmt(vmax * f, 0), W - m.r + 6, H - m.b - HB(vmax * f) + 4, css('text-dim'), 'left'));
+  const pf = [], pl = []; for (let d = 1; d <= xmax; d += 2) { pf.push([X(d), Y(ffTaxa(d, V))]); if (S.lin) pl.push([X(d), Y(linTaxa(d, V))]); }
+  if (S.lin) linha(ctx, pl, css('ref'), 2, [6, 4]);
+  linha(ctx, pf, css('accent'), 2.4);
+  V.forEach(([d, r], k) => { if (d <= xmax) ponto(ctx, X(d), Y(r), k ? css('vert') : css('warn'), 4.5); });
+  rows.forEach(r => ponto(ctx, X(r.du), Y(r.r), css('accent'), 3.2, false));
+}
+
+/* ===================== eventos ===================== */
+function aplicarPreset(p) { $('sCdi').value = p.cdi; p.r.forEach((v, k) => $('sV' + k).value = v); }
+$('vertCtl').addEventListener('input', () => { render2(); render3(); });
+$('preset').addEventListener('change', e => { aplicarPreset(presets[e.target.value]); render2(); render3(); });
+$('sVenc').addEventListener('input', render3);
+$('bVert').addEventListener('click', () => { $('sVenc').value = 1260; render3(); }); // 1260, 1134, ... 504, 378, 252, 126: vários caem em vértices
+function setLin(on) {
+  S.lin = on; ['bLin2', 'bLin3'].forEach(id => { $(id).classList.toggle('on', on); $(id).setAttribute('aria-pressed', on); $(id).textContent = on ? '✓ Comparando com linear' : 'Comparar com linear'; });
+  document.querySelectorAll('.lin-only').forEach(e => e.style.display = on ? '' : 'none');
+  render2(); render3();
+}
+$('bLin2').addEventListener('click', () => setLin(!S.lin));
+$('bLin3').addEventListener('click', () => setLin(!S.lin));
+
+/* ===================== passo a passo (aba 1) ===================== */
+let passo = 1; const NP = 4;
+function showSteps() {
+  document.querySelectorAll('#steps .step').forEach((el, i) => { el.classList.toggle('on', i < passo); el.classList.toggle('cur', i === passo - 1 && passo <= NP); });
+  $('stLbl').textContent = `passo ${Math.min(passo, NP)} de ${NP}`;
+  $('stPrev').disabled = passo <= 1; $('stNext').disabled = passo >= NP;
+}
+$('stNext').addEventListener('click', () => { passo = Math.min(NP, passo + 1); showSteps(); });
+$('stPrev').addEventListener('click', () => { passo = Math.max(1, passo - 1); showSteps(); });
+$('stAll').addEventListener('click', () => { passo = NP; showSteps(); });
+showSteps();
+
+/* ===================== ABA 4: CENÁRIOS ===================== */
+const cenarios = [
+  { trap: 'Interpolar taxa linear', s: 'Planilha de marcação', q: 'Para um CDB pré de 400 DU, a planilha faz a média ponderada das taxas de 252 DU (12,80%) e 504 DU (12,90%) e obtém 12,8587%.', ok: false,
+    a: 'A interpolação deve ser feita nos fatores: o flat-forward dá 12,8740%. A média de taxas trata uma grandeza exponencial como se fosse linear e cria uma a termo em serrote dentro do trecho. Aqui são 1,5 bp, que em carteiras grandes vira P&L de marcação.' },
+  { trap: 'DC no lugar de DU', s: 'Sistema legado', q: 'Um sistema calcula o fator de um título pré com a taxa DU/252 da curva, mas usa no expoente os 580 dias corridos até o vencimento, em vez dos 400 dias úteis.', ok: false,
+    a: 'A taxa da curva só vale com o expoente na mesma base: DU/252. Com 580/252, o fator explode e o PU cai de R$ 825 para R$ 757. Com 580/360 também erra, porque a taxa foi cotada em outra base. A contagem é feita em DU, com os feriados da ANBIMA.' },
+  { trap: 'Extrapolação na ponta curta', s: 'Operação de 10 DU', q: 'Para apreçar uma compromissada pré de 10 DU, o operador usa a taxa do primeiro vértice do DI1 (63 DU), "porque é o vértice mais próximo".', ok: false,
+    a: 'Antes do primeiro DI1 o vértice de referência é o CDI (1 DU), e a taxa de 10 DU é interpolada por flat-forward entre CDI e 63 DU. Com Copom no meio do caminho, a diferença pode ser relevante.' },
+  { trap: 'Extrapolação na ponta longa', s: 'Swap de 8 anos', q: 'A curva só tem vértices até 1.260 DU. Para um fluxo em 1.800 DU, a analista repete a última taxa a termo (entre 756 e 1.260 DU) e documenta a convenção.', ok: true,
+    a: 'É a convenção mais usada no flat-forward: estende a última a termo e deixa a taxa spot convergir para ela. Manter a taxa spot constante também é possível, mas dá outro preço, por isso a convenção precisa estar explícita e ser a mesma da contraparte ou do manual de marcação.' },
+  { trap: '"Nos vértices é igual"', s: 'Comitê de risco', q: '"Testamos linear e flat-forward e as taxas bateram nos vértices; logo, trocar o método não muda a marcação da carteira de NTN-F."', ok: false,
+    a: 'Os cupons de uma NTN-F caem quase sempre entre vértices. Nos vértices os métodos concordam por construção; fora deles, não. Na aba ③, uma NTN-F de 1.000 DU difere ~R$ 0,90 por título, cerca de R$ 99 mil em R$ 100 milhões.' },
+  { trap: 'Uso correto', s: 'Middle office', q: 'O middle office monta a curva com o CDI como vértice de 1 DU e os ajustes do DI1, converte tudo em fatores DU/252, interpola por flat-forward e desconta cada cupom pela taxa do seu prazo.', ok: true,
+    a: 'Procedimento padrão do mercado brasileiro (e da ANBIMA para títulos públicos): fatores exponenciais em DU/252, a termo constante entre vértices e cada fluxo descontado no seu próprio prazo.' }
+];
+$('scenGrid').innerHTML = cenarios.map((c, k) => `
+  <div class="card scen" data-k="${k}" tabindex="0" role="button" aria-expanded="false">
+    <div class="trap">${c.s}</div><div class="q">${c.q}</div>
+    <div class="more">Clique para ver o veredito →</div>
+    <div class="ans ${c.ok ? 'ok' : 'bad'}"><b>${c.ok ? '✓ Faz sentido' : '✗ Problema'} — ${c.trap}</b>${c.a}</div>
+  </div>`).join('');
+document.querySelectorAll('.scen').forEach(el => {
+  const tog = () => { el.classList.toggle('open'); const o = el.classList.contains('open'); el.setAttribute('aria-expanded', o); el.querySelector('.more').textContent = o ? 'Clique para recolher' : 'Clique para ver o veredito →'; };
+  el.addEventListener('click', tog); el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tog(); } });
+});
+
+/* ===================== ABA 5: TESTE ===================== */
+const quiz = [
+  { q: 'Vértices: 252 DU a 12,80% e 504 DU a 12,90% a.a. (DU/252). Qual o fator flat-forward para 400 DU?', o: ['1,128 × (1,274641/1,128)^(148/252)', '1,128587^(400/252), com a taxa obtida pela média ponderada das taxas', '1,128 × 1,1290^(148/252)', '(1,128 + 1,274641)/2'], c: 0,
+    f: 'O flat-forward interpola o fator geometricamente usando a a termo do trecho, (f504/f252), elevada à fração percorrida, 148/252. A segunda opção é a interpolação linear da taxa. A terceira usa a taxa spot de 504 DU no lugar da a termo. A quarta faz média aritmética de fatores.' },
+  { q: 'Na interpolação flat-forward, o que é constante entre dois vértices consecutivos?', o: ['A taxa a termo', 'A taxa spot', 'A inclinação da curva spot', 'O PU'], c: 0,
+    f: 'O nome vem daí: a a termo é "plana" dentro do trecho. A taxa spot varia continuamente entre os vértices, convergindo na média para a a termo. Inclinação constante da spot é exatamente a interpolação linear.' },
+  { q: 'Para um fluxo de 15 DU, com o primeiro DI1 em 63 DU, qual a referência na ponta curta?', o: ['Interpolar entre o CDI (1 DU) e o vértice de 63 DU', 'Usar a taxa do vértice de 63 DU', 'Usar a Selic meta', 'Extrapolar a a termo entre 63 e 126 DU para trás'], c: 0,
+    f: 'O CDI funciona como vértice zero da curva, e prazos curtos são interpolados entre ele e o primeiro DI1. Usar a taxa de 63 DU ignora a trajetória esperada de juros no período. A Selic meta não é a taxa do CDI. Extrapolar a termo para trás ignora o dado observado mais curto.' },
+  { q: 'Uma curva é montada com taxas DU/252. Um analista calcula o fator com dias corridos/360 no expoente. O erro é:', o: ['Misturar bases: a taxa só vale com o expoente na base em que foi cotada (DU/252)', 'Nenhum, porque 360 dias corridos ≈ 252 dias úteis', 'Só um problema de arredondamento', 'Relevante só fora dos vértices'], c: 0,
+    f: 'A taxa e o expoente formam um par: taxa DU/252 exige DU/252. 360 DC não equivale a 252 DU todo ano, porque feriados e fins de semana variam. O erro acontece em qualquer prazo, inclusive nos vértices, e pode ser grande.' },
+  { q: 'Linear e flat-forward reproduzem as mesmas taxas nos vértices. Para uma carteira de NTN-F, então:', o: ['O PU difere, porque os cupons caem entre vértices', 'O PU é idêntico, porque os vértices são iguais', 'O PU só difere se a curva for invertida', 'O PU difere apenas no fluxo final'], c: 0,
+    f: 'Cada cupom é descontado pela taxa do seu próprio prazo, que em geral cai entre vértices, onde os métodos discordam. A inclinação muda o tamanho e o sinal da diferença, não a existência dela. O fluxo final também pode cair fora de vértice.' }
+];
+let answered = 0, right = 0;
+function rng(s) { return () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function shuffleIdx(n, s) { const u = rng(s), a = [...Array(n).keys()]; for (let i = n - 1; i > 0; i--) { const j = Math.floor(u() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+$('quiz').innerHTML = quiz.map((x, k) => { const ord = shuffleIdx(4, 41 + k * 17);
+  return `<div class="qq" data-k="${k}"><b>${k + 1}.</b> ${x.q}<div class="opts">${ord.map(j => `<button class="opt" data-j="${j}">${x.o[j]}</button>`).join('')}</div><div class="fb"></div></div>`; }).join('');
+document.querySelectorAll('.qq').forEach(el => { const k = +el.dataset.k;
+  el.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => {
+    if (el.dataset.done) return; el.dataset.done = 1; answered++;
+    const ok = +b.dataset.j === quiz[k].c; if (ok) right++;
+    el.querySelectorAll('.opt').forEach(o => { if (+o.dataset.j === quiz[k].c) o.classList.add('right'); }); if (!ok) b.classList.add('wrong');
+    const fb = el.querySelector('.fb'); fb.innerHTML = (ok ? '<b style="color:var(--ok)">Isso mesmo.</b> ' : '<b style="color:var(--bad)">Não é essa.</b> ') + quiz[k].f; fb.classList.add('show');
+    $('score').textContent = `· ${right}/${answered}` + (answered === quiz.length ? ' — fim' : '');
+  })); });
+
+/* ===================== abas e redimensionamento ===================== */
+function renderVisible() { const on = document.querySelector('section.tab.on').id; if (on === 't2') render2(); if (on === 't3') render3(); }
+document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('nav.tabs button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('section.tab').forEach(s => s.classList.toggle('on', s.id === b.dataset.tab));
+  renderVisible();
+}));
+let rT; window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(renderVisible, 120); });
+setLin(false);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(renderVisible);
+</script>
+</body>
+</html>

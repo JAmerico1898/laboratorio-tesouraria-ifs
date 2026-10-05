@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forward 1y1y e Focus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,600;0,8..60,700;1,8..60,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f6f3;
+  --bg2:#edebe6;
+  --bg-card:#ffffff;
+  --text:#1b1d24;
+  --text-dim:#51545f;
+  --accent:#1d4e89;      /* identidade: cobalto = mercado / forward 1y1y */
+  --focus:#0d6b72;       /* petróleo = Focus / CDI esperado */
+  --spot:#5b5f6b;        /* cinza = taxa spot de 2 anos */
+  --ok:#276b2b;
+  --bad:#b83227;
+  --warn:#8a5a00;
+  --grid-dim:#e4e1da;
+  --accent-bg:#e8eef7;
+  --focus-bg:#e3f1f2;
+  --ok-bg:#e8f3e8;
+  --bad-bg:#fbeceb;
+  --warn-bg:#fbf1df;
+  --accent-brd:#c3d2e8;
+  --focus-brd:#b5d9dc;
+  --ok-brd:#b9dbba;
+  --bad-brd:#efc2bd;
+  --warn-brd:#ecd29f;
+  --serif:'Source Serif 4',Georgia,serif;
+  --sans:'Plus Jakarta Sans',system-ui,sans-serif;
+  --mono:'Space Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 20px 40px}
+header .tag{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-brd);padding:3px 10px;border-radius:999px}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(28px,4.4vw,44px);line-height:1.1;margin:12px 0 8px}
+h1 em{color:var(--accent);font-style:italic;font-weight:600}
+.lead{color:var(--text-dim);max-width:820px;margin:0 0 18px;font-size:17px}
+h2{font-family:var(--serif);font-size:24px;margin:2px 0 10px;line-height:1.2}
+h3{font-family:var(--serif);font-size:18px;margin:0 0 6px}
+nav.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px}
+nav.tabs button{font-family:var(--sans);font-weight:600;font-size:14px;border:1px solid var(--accent-brd);background:var(--bg-card);color:var(--text);padding:8px 16px;border-radius:999px;cursor:pointer}
+nav.tabs button:hover{background:var(--accent-bg)}
+nav.tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+section.tab{display:none;animation:fade .45s ease}
+section.tab.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--bg-card);border-radius:14px;box-shadow:0 1px 2px rgba(20,20,40,.06),0 4px 16px rgba(20,20,40,.05);padding:20px;margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.grid2>*,.grid3>*{min-width:0}
+.formula{font-family:var(--serif);font-size:clamp(17px,2.4vw,24px);text-align:center;background:var(--bg2);border-radius:12px;padding:16px 10px;margin:8px 0 12px;overflow-x:auto}
+.formula .sm{display:block;font-family:var(--sans);font-size:14px;color:var(--text-dim);margin-top:6px}
+.step{border-radius:12px;padding:14px 16px;border:1px solid var(--grid-dim);background:var(--bg-card);position:relative}
+.step .num{font-family:var(--mono);font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em}
+.step .big{font-family:var(--mono);font-size:30px;font-weight:700;margin:4px 0 2px}
+.step.mk{border-color:var(--accent-brd);background:var(--accent-bg)}.step.mk .big{color:var(--accent)}
+.step.fc{border-color:var(--focus-brd);background:var(--focus-bg)}.step.fc .big{color:var(--focus)}
+.step.pr .big{color:var(--text)}
+.step p{margin:4px 0 0;font-size:14.5px}
+.pair .ok,.pair .bad{border-radius:12px;padding:14px 16px;border:1px solid}
+.pair .ok{background:var(--ok-bg);border-color:var(--ok-brd)}
+.pair .bad{background:var(--bad-bg);border-color:var(--bad-brd)}
+.pair .ok b:first-child{color:var(--ok)}.pair .bad b:first-child{color:var(--bad)}
+.box{border-radius:12px;padding:14px 16px;border:1px solid;margin-top:12px}
+.box p{margin:6px 0}
+.box.idea{background:var(--accent-bg);border-color:var(--accent-brd)}
+.box.warn{background:var(--warn-bg);border-color:var(--warn-brd)}
+.box.world{background:var(--focus-bg);border-color:var(--focus-brd)}
+.mono{font-family:var(--mono)}
+.c-mk{color:var(--accent);font-weight:700}.c-fc{color:var(--focus);font-weight:700}.c-bad{color:var(--bad);font-weight:700}
+.tblwrap{overflow-x:auto;margin-top:10px}
+table.t{border-collapse:collapse;width:100%;font-size:14px}
+table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);text-align:left;padding:7px 8px;border-bottom:2px solid var(--grid-dim)}
+table.t td{padding:7px 8px;border-bottom:1px solid var(--grid-dim);white-space:nowrap}
+table.t td.n{font-family:var(--mono);text-align:right}
+table.t th.n{text-align:right}
+table.t tr.tot td{font-weight:700;border-top:2px solid var(--grid-dim);border-bottom:none}
+details.dv{margin-top:12px;background:var(--bg2);border-radius:10px;padding:8px 14px}
+details.dv summary{cursor:pointer;font-weight:600;font-size:14px}
+.controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 18px;align-items:end}
+.ctl label{display:flex;justify-content:space-between;font-size:13px;font-weight:600;gap:6px}
+.ctl label .v{font-family:var(--mono);color:var(--accent)}
+.ctl input[type=range]{width:100%;accent-color:var(--accent)}
+.ctl .hint{font-size:12px;color:var(--text-dim);line-height:1.35;margin-top:2px}
+.ctl.fc label .v{color:var(--focus)}.ctl.fc input{accent-color:var(--focus)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.row .lbl{font-size:13px;font-weight:600;color:var(--text-dim)}
+select{max-width:100%}
+select,button.act{font-family:var(--sans);font-size:14px;border-radius:10px;border:1px solid var(--accent-brd);background:var(--bg-card);color:var(--text);padding:7px 12px}
+button.act{cursor:pointer;font-weight:600}
+.seg{display:inline-flex;border:1px solid var(--accent-brd);border-radius:10px;overflow:hidden}
+.seg button{border:none;border-radius:0;font-family:var(--sans);font-size:14px;font-weight:600;padding:7px 12px;background:var(--bg-card);color:var(--text);cursor:pointer}
+.seg button.on{background:var(--accent);color:#fff}
+.seg button.on.err{background:var(--bad)}
+canvas{width:100%;max-width:100%;display:block;border-radius:10px;background:var(--bg-card)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0}
+.stat{background:var(--bg2);border-radius:12px;padding:12px 14px;min-width:0}
+.stat .k{font-size:12px;color:var(--text-dim);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.stat .n{font-family:var(--mono);font-size:22px;font-weight:700;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat .s{font-size:12px;color:var(--text-dim)}
+.stat.mk .n{color:var(--accent)}.stat.fc .n{color:var(--focus)}.stat.bd .n{color:var(--bad)}
+.what{background:var(--accent-bg);border:1px solid var(--accent-brd);border-radius:12px;padding:14px 16px}
+.what p{margin:6px 0}
+.what.alert{background:var(--bad-bg);border-color:var(--bad-brd)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--text-dim);margin-top:8px}
+.legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:5px;vertical-align:3px}
+.legend i.dash{background:repeating-linear-gradient(90deg,var(--spot) 0 4px,transparent 4px 7px)!important}
+.legend i.dot{width:10px;height:10px;border-radius:50%;vertical-align:-1px}
+.legend i.blk{width:12px;height:12px;border-radius:3px;vertical-align:-1px}
+.scen{cursor:pointer;border:1px solid var(--grid-dim);transition:transform .2s,border-color .2s}
+.scen:hover{transform:translateY(-2px);border-color:var(--accent-brd)}
+.scen .trap{font-family:var(--mono);font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em}
+.scen .q{font-weight:600;margin-top:4px}
+.scen .ans{display:none;margin-top:10px;border-radius:10px;padding:10px 12px;font-size:14.5px}
+.scen.open .ans{display:block;animation:fade .4s}
+.scen .ans.ok{background:var(--ok-bg);border:1px solid var(--ok-brd)}
+.scen .ans.bad{background:var(--bad-bg);border:1px solid var(--bad-brd)}
+.scen .ans b:first-child{display:block;margin-bottom:2px}
+.scen .ans.ok b:first-child{color:var(--ok)}.scen .ans.bad b:first-child{color:var(--bad)}
+.scen .more{font-size:12px;color:var(--accent);font-weight:700;margin-top:8px}
+.quiz .qq{margin-bottom:18px}
+.quiz .opts{display:grid;gap:8px;margin-top:8px}
+.quiz .opt{text-align:left;font-family:var(--sans);font-size:15px;background:var(--bg-card);border:1px solid var(--grid-dim);border-radius:10px;padding:9px 12px;cursor:pointer;color:var(--text)}
+.quiz .opt:hover{border-color:var(--accent-brd);background:var(--accent-bg)}
+.quiz .opt.right{background:var(--ok-bg);border-color:var(--ok)}
+.quiz .opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.quiz .fb{display:none;margin-top:8px;font-size:14.5px;border-radius:10px;padding:10px 12px;background:var(--bg2)}
+.quiz .fb.show{display:block;animation:fade .4s}
+.score{font-family:var(--mono);color:var(--accent)}
+footer{margin-top:26px;padding-top:14px;border-top:1px solid var(--grid-dim);font-size:13px;color:var(--text-dim)}
+@media (max-width:900px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid3{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){.grid2,.controls{grid-template-columns:minmax(0,1fr)}.wrap{padding:20px 14px 32px}.stat .n{font-size:16px;white-space:normal;overflow:visible}.step .big{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="tag">Tesouraria · Curva de juros · Forward 1y1y</span>
+  <h1>Forward 1y1y: o que o mercado <em>cobra</em> além do Focus</h1>
+  <p class="lead">A curva DI de 1 e 2 anos esconde uma terceira taxa: a de <b>um ano daqui a um ano</b>. Comparada ao CDI médio que os economistas esperam para aquele mesmo ano, ela vira a melhor régua de <b>prêmio</b> da tela.</p>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="on" data-tab="t1">① Conceito</button>
+  <button data-tab="t2">② Simulação</button>
+  <button data-tab="t3">③ Cenários</button>
+  <button data-tab="t4">④ Teste</button>
+</nav>
+
+<!-- ============ ABA 1: CONCEITO ============ -->
+<section class="tab on" id="t1">
+  <div class="card">
+    <h2>A taxa escondida entre dois vértices</h2>
+    <div class="formula">(1 + r<sub>1</sub>) × (1 + f<sub>1y1y</sub>) = (1 + r<sub>2</sub>)<sup>2</sup> &nbsp;⇒&nbsp; f<sub>1y1y</sub> = (1 + r<sub>2</sub>)<sup>2</sup> / (1 + r<sub>1</sub>) − 1
+      <span class="sm">r<sub>1</sub>: taxa DI do vértice de 252 DU · r<sub>2</sub>: taxa DI do vértice de 504 DU · DU/252, capitalização exponencial · f: taxa efetiva do 2º ano</span></div>
+    <p>Aplicar 2 anos direto a r<sub>2</sub> ou aplicar 1 ano a r<sub>1</sub> e <b>rolar</b> por mais um ano tem de render o mesmo — senão haveria arbitragem. A taxa de rolagem que iguala os dois caminhos é o <span class="c-mk">forward 1y1y</span>: o preço que o mercado cobra <i>hoje</i> pelo CDI do segundo ano.</p>
+    <p>Do outro lado está o <span class="c-fc">Focus</span>: a mediana do que os economistas <i>esperam</i> para a Selic. A diferença entre preço e expectativa, no mesmo período, é o <b>prêmio implícito</b>.</p>
+  </div>
+
+  <div class="card">
+    <h2>Medindo o prêmio em três passos</h2>
+    <div class="grid3">
+      <div class="step mk"><div class="num">① Extrair o 1y1y</div><div class="big">12,40%</div><p>Curva DI: r<sub>1</sub> = 13,00% e r<sub>2</sub> = 12,70% ⇒ 1,127² / 1,13 − 1.</p></div>
+      <div class="step fc"><div class="num">② Ler o Focus</div><div class="big">11,75%</div><p>CDI médio esperado para o <b>segundo ano</b>, a partir da mediana da Selic do Focus/BCB.</p></div>
+      <div class="step pr"><div class="num">③ Calcular o prêmio</div><div class="big">65 bps</div><p>12,40% − 11,75%: a diferença entre o que o mercado cobra e o que a mediana espera.</p></div>
+    </div>
+    <div class="box idea" style="margin-top:14px"><p>💡 <b>O que os 65 bps são.</b> Um <i>pedágio mensurável</i>: quanto o mercado exige, acima do caminho esperado dos juros, para travar o ano 2 hoje. Ele remunera a incerteza sobre esse caminho (prêmio de termo e de risco). É um <b>preço</b>, não um erro: ninguém garante que o CDI vá seguir a mediana.</p></div>
+  </div>
+
+  <div class="card">
+    <h2>De onde sai o "CDI médio do ano 2"</h2>
+    <p>O Focus não publica o CDI médio pronto: publica a <b>mediana da Selic</b> (por reunião do Copom e no fim de cada ano). O CDI fica perto da Selic, cerca de <b>0,10 p.p. abaixo</b>. A conta é a <b>média composta do CDI ao longo de todo o ano 2</b>:</p>
+    <div class="tblwrap"><table class="t">
+      <tr><th>Ano 2</th><th class="n">Selic (Focus)</th><th class="n">CDI ≈ Selic − 0,10</th><th class="n">Fator do trimestre</th></tr>
+      <tr><td>1º trimestre</td><td class="n">12,40%</td><td class="n">12,30%</td><td class="n">1,12300<sup>0,25</sup></td></tr>
+      <tr><td>2º trimestre</td><td class="n">12,03%</td><td class="n">11,93%</td><td class="n">1,11933<sup>0,25</sup></td></tr>
+      <tr><td>3º trimestre</td><td class="n">11,67%</td><td class="n">11,57%</td><td class="n">1,11567<sup>0,25</sup></td></tr>
+      <tr><td>4º trimestre (fim do ano 2)</td><td class="n">11,30%</td><td class="n">11,20%</td><td class="n">1,11200<sup>0,25</sup></td></tr>
+      <tr class="tot"><td>CDI médio do ano 2 = (produto dos fatores) − 1</td><td class="n"></td><td class="n" style="color:var(--focus)">11,75%</td><td class="n"></td></tr>
+    </table></div>
+    <details class="dv"><summary>Por que a média composta, e não a aritmética?</summary>
+      <p>Porque o forward também é composto: ele diz quanto R$ 1 cresce no ano 2 (1 + f). O comparável é quanto R$ 1 cresceria rolando o CDI esperado: o produto dos fatores trimestrais. Na prática a média aritmética das taxas fica a poucos centésimos da composta. O que realmente muda o resultado é trocar a <b>média do período</b> pela <b>ponta</b>.</p>
+    </details>
+    <div class="grid2 pair" style="margin-top:14px">
+      <div class="ok"><b>✓ Certo</b><br>Comparar <b>médias do mesmo período</b>: forward 12,40% contra o CDI médio esperado no ano 2, 11,75% ⇒ prêmio de <b>65 bps</b>.</div>
+      <div class="bad"><b>✗ Armadilha</b><br>Comparar com a <b>ponta</b>: "a Selic do Focus no fim do ano 2 é 11,30%, logo o prêmio é 110 bps". Num ciclo de cortes a ponta é a Selic <i>mais baixa</i> do ano, e o prêmio sai inflado em 45 bps.</div>
+    </div>
+    <div class="box warn"><p>⚠️ <b>Cuidados.</b> O Focus é uma <b>mediana declarada</b> e costuma atrasar nas viradas de ciclo: parte do "prêmio" pode ser só a pesquisa demorando a reagir. Compare <b>médias do período</b>, não pontas. E acompanhe a <b>série histórica</b> do prêmio, não só o nível isolado de um dia.</p></div>
+  </div>
+
+  <div class="card">
+    <h2>🌎 Janela para o mundo real</h2>
+    <div class="box world" style="margin-top:0">
+      <p>Pela curva pré da ANBIMA de <b>02/10/2026</b>, o vértice de 252 DU estava em <b>13,38%</b> e o de 504 DU em <b>13,71%</b> ⇒ forward 1y1y = 1,1371² / 1,1338 − 1 = <b class="c-mk">14,04%</b>.</p>
+      <p>O Boletim Focus de <b>28/09/2026</b> tinha mediana da Selic de 13,50% no fim de 2026, <b>12,00%</b> no fim de 2027 e <b>10,50%</b> no fim de 2028. O "ano 2" vai de out/2027 a out/2028. Interpolando a mediana mês a mês (aproximação didática: o ideal é usar a mediana por reunião do Copom), a Selic sai de ~12,25% para ~10,75%, e o CDI médio do período fica em ≈ <b class="c-fc">11,40%</b>.</p>
+      <p>Prêmio 1y1y ≈ 14,04% − 11,40% ≈ <b>264 bps</b>. Pela ponta, o resultado depende da ponta escolhida: contra a Selic de fim de 2027 (12,00%) daria 204 bps, e contra a de fim de 2028 (10,50%), 354 bps. A escolha errada mexe <b>150 bps</b> na resposta.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABA 2: SIMULAÇÃO ============ -->
+<section class="tab" id="t2">
+  <div class="card">
+    <h2>Mexa na curva e no Focus</h2>
+    <div class="controls">
+      <div class="ctl"><label><span>r<sub>1</sub> · DI 252 DU</span> <span class="v" id="vR1"></span></label><input type="range" id="sR1" min="8" max="16" step="0.05" value="13"><div class="hint">taxa de 1 ano</div></div>
+      <div class="ctl"><label><span>r<sub>2</sub> · DI 504 DU</span> <span class="v" id="vR2"></span></label><input type="range" id="sR2" min="8" max="16" step="0.05" value="12.7"><div class="hint">taxa de 2 anos (ao ano)</div></div>
+      <div class="ctl fc"><label><span>Selic Focus · início ano 2</span> <span class="v" id="vSa"></span></label><input type="range" id="sSa" min="7" max="17" step="0.05" value="12.4"><div class="hint">mediana no 1º trimestre do ano 2</div></div>
+      <div class="ctl fc"><label><span>Selic Focus · fim ano 2</span> <span class="v" id="vSb"></span></label><input type="range" id="sSb" min="7" max="17" step="0.05" value="11.3"><div class="hint">mediana no 4º trimestre (a "ponta")</div></div>
+    </div>
+    <div class="row">
+      <span class="lbl">Caso:</span>
+      <select id="sPre">
+        <option value="0">Slide da aula (65 bps)</option>
+        <option value="1">Início de ciclo de alta (curva íngreme)</option>
+        <option value="2">Mercado vê mais cortes que o Focus</option>
+        <option value="3">Mundo real · ANBIMA 02/10 + Focus 28/09/2026</option>
+      </select>
+      <span class="lbl" style="margin-left:6px">Forward por:</span>
+      <div class="seg"><button id="bComp" class="on">fórmula composta</button><button id="bLin" class="err">atalho 2·r₂ − r₁</button></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat mk"><div class="k">Forward 1y1y</div><div class="n" id="stF"></div><div class="s" id="stFs"></div></div>
+      <div class="stat fc"><div class="k">CDI médio ano 2 (Focus)</div><div class="n" id="stC"></div><div class="s">média composta, CDI = Selic − 0,10</div></div>
+      <div class="stat"><div class="k">Prêmio 1y1y − Focus</div><div class="n" id="stP"></div><div class="s" id="stPs"></div></div>
+      <div class="stat bd"><div class="k">"Prêmio" pela ponta</div><div class="n" id="stK"></div><div class="s" id="stKs"></div></div>
+    </div>
+
+    <canvas id="cv1" height="330" aria-label="Taxas por ano: r1, forward, r2, caminho do CDI do Focus e prêmio"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i>curva DI: r₁ no ano 1, forward no ano 2</span>
+      <span><i class="dash"></i>r₂ (taxa de 2 anos)</span>
+      <span><i style="background:var(--focus)"></i>CDI esperado por trimestre (Focus)</span>
+      <span><i class="blk" style="background:var(--accent-bg);border:1px solid var(--accent-brd)"></i>prêmio</span>
+      <span><i class="dot" style="background:var(--bad)"></i>Selic na ponta (comparação errada)</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Dois caminhos que rendem igual, e o terceiro que fica para trás</h3>
+    <p style="margin:0 0 8px;color:var(--text-dim);font-size:14.5px">Diferença, em R$, para quem aplica R$ 1 milhão por 2 anos direto a r₂ (linha zero). Rolar ao forward empata no fim; rolar ao CDI do Focus fica atrás pelo prêmio.</p>
+    <div class="row" style="margin-top:0;margin-bottom:8px">
+      <button class="act" id="bPlay">▶ animar</button><button class="act" id="bPause">⏸</button><button class="act" id="bReset">↺</button>
+    </div>
+    <canvas id="cv2" height="270" aria-label="Diferença acumulada em reais entre estratégias de aplicação"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--spot)"></i>aplicar 2 anos a r₂ (referência)</span>
+      <span><i style="background:var(--accent)"></i>1 ano a r₁ + rolar ao forward</span>
+      <span><i style="background:var(--focus)"></i>1 ano a r₁ + rolar ao CDI do Focus</span>
+    </div>
+  </div>
+
+  <div class="what" id="what"></div>
+</section>
+
+<!-- ============ ABA 3: CENÁRIOS ============ -->
+<section class="tab" id="t3">
+  <div class="card" style="padding-bottom:6px"><h2>Seis situações de mesa</h2><p style="margin-top:0;color:var(--text-dim)">Clique em cada cartão para ver se a leitura está certa.</p></div>
+  <div class="grid2" id="scenGrid"></div>
+</section>
+
+<!-- ============ ABA 4: TESTE ============ -->
+<section class="tab" id="t4">
+  <div class="card quiz">
+    <h2>Teste rápido <span class="score" id="score"></span></h2>
+    <div id="quiz"></div>
+  </div>
+</section>
+
+<footer>Operações de Tesouraria em Instituições Financeiras — FGV · Prof. José Américo · Curvas fictícias com ordens de grandeza realistas; vértices fixos de 252/504 DU; CDI ≈ Selic − 0,10 p.p.; Selic do Focus em quatro degraus trimestrais. Dados reais: ETTJ pré ANBIMA (02/10/2026) e Boletim Focus (28/09/2026).</footer>
+</div>
+
+<script>
+// ================== núcleo de cálculo (conferido em Python e Node) ==================
+const SPREAD = 0.001;                                             // CDI ≈ Selic − 0,10 p.p.
+function fwd(r1, r2) { return (1 + r2) ** 2 / (1 + r1) - 1; }    // forward 1y1y composto
+function fwdLin(r1, r2) { return 2 * r2 - r1; }                   // atalho linear (aproximação)
+// Selic do Focus no ano 2: quatro degraus trimestrais, igualmente espaçados do início (sa) ao fim (sb)
+function escada(sa, sb) { const s = []; for (let q = 0; q < 4; q++) s.push(sa + (sb - sa) * q / 3); return s; }
+// CDI médio do ano 2 = média composta dos CDIs trimestrais
+function cdiMedio(sel) { let f = 1; sel.forEach(s => f *= (1 + s - SPREAD) ** 0.25); return f - 1; }
+
+// ================== utilidades ==================
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue('--' + n).trim();
+const pct = (x, d = 2) => (x * 100).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }) + '%';
+const bps = x => { const v = Math.round(x * 1e4); return (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toLocaleString('pt-BR') + ' bps'; };
+const bpsAbs = x => Math.abs(Math.round(x * 1e4)).toLocaleString('pt-BR') + ' bps';
+const brl = x => (x < 0 ? '−' : '') + 'R$ ' + Math.abs(Math.round(x)).toLocaleString('pt-BR');
+
+// ================== estado ==================
+const PRESETS = [
+  { r1: 13.00, r2: 12.70, sa: 12.40, sb: 11.30 },   // slide
+  { r1: 10.00, r2: 13.50, sa: 13.00, sb: 16.00 },   // início de ciclo de alta
+  { r1: 13.00, r2: 12.50, sa: 12.60, sb: 12.00 },   // prêmio negativo
+  { r1: 13.38, r2: 13.71, sa: 12.10, sb: 10.90 },   // mundo real (aprox.)
+];
+let metodo = 'comp';
+function ler() {
+  const r1 = +$('sR1').value / 100, r2 = +$('sR2').value / 100, sa = +$('sSa').value / 100, sb = +$('sSb').value / 100;
+  const fC = fwd(r1, r2), fL = fwdLin(r1, r2), f = metodo === 'comp' ? fC : fL;
+  const sel = escada(sa, sb), c = cdiMedio(sel);
+  return { r1, r2, sa, sb, fC, fL, f, sel, c, p: f - c, pC: fC - c, ponta: f - sb };
+}
+
+// ================== canvas ==================
+function prep(cv) {
+  // altura fixa (lida uma vez do atributo e guardada em data-h); largura = do contêiner
+  if (!cv.dataset.h) cv.dataset.h = cv.getAttribute('height');
+  const dpr = window.devicePixelRatio || 1, H = +cv.dataset.h;
+  const W = cv.clientWidth || cv.parentElement.clientWidth;
+  cv.style.height = H + 'px';
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  return { ctx, W, H };
+}
+function txt(ctx, s, x, y, color, align = 'left', font = '11px "Space Mono", monospace') { ctx.fillStyle = color; ctx.font = font; ctx.textAlign = align; ctx.fillText(s, x, y); }
+function niceStep(range, n = 5) { const raw = range / n, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p; return (m < 1.5 ? 1 : m < 3 ? 2 : m < 7 ? 5 : 10) * p; }
+function linha(ctx, pts, col, w = 2.2, dash = []) { ctx.setLineDash(dash); ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke(); ctx.setLineDash([]); }
+function ponto(ctx, x, y, col, r = 5) { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke(); }
+// rótulo com fundo branco (para não se perder sobre as linhas)
+function etiqueta(ctx, s, x, y, col, align = 'left', W = 9999) {
+  ctx.font = '11px "Space Mono", monospace';
+  const w = ctx.measureText(s).width + 8;
+  let x0 = align === 'right' ? x - w : align === 'center' ? x - w / 2 : x;
+  x0 = Math.max(2, Math.min(x0, W - w - 2));
+  ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.fillRect(x0, y - 11, w, 15);
+  txt(ctx, s, x0 + 4, y, col);
+}
+// eixos e grade; devolve as funções de escala
+function grade(ctx, W, H, m, xr, yr, yfmt, xticks, title) {
+  const X = v => m.l + (v - xr[0]) / (xr[1] - xr[0]) * (W - m.l - m.r);
+  const Y = v => H - m.b - (v - yr[0]) / (yr[1] - yr[0]) * (H - m.t - m.b);
+  const st = niceStep(yr[1] - yr[0], 5);
+  ctx.lineWidth = 1;
+  for (let v = Math.ceil(yr[0] / st) * st; v <= yr[1] + 1e-12; v += st) {
+    ctx.strokeStyle = css('grid-dim'); ctx.beginPath(); ctx.moveTo(m.l, Y(v)); ctx.lineTo(W - m.r, Y(v)); ctx.stroke();
+    txt(ctx, yfmt(v), m.l - 6, Y(v) + 4, css('text-dim'), 'right');
+  }
+  xticks.forEach(([v, s], i) => { ctx.strokeStyle = css('grid-dim'); ctx.beginPath(); ctx.moveTo(X(v), m.t); ctx.lineTo(X(v), H - m.b); ctx.stroke(); txt(ctx, s, X(v), H - m.b + 16, css('text-dim'), i === 0 ? 'left' : i === xticks.length - 1 ? 'right' : 'center'); });
+  ctx.strokeStyle = css('text-dim'); ctx.beginPath(); ctx.moveTo(m.l, m.t); ctx.lineTo(m.l, H - m.b); ctx.lineTo(W - m.r, H - m.b); ctx.stroke();
+  txt(ctx, title, m.l + 4, m.t - 8, css('text'), 'left', '600 13px "Plus Jakarta Sans", sans-serif');
+  return { X, Y };
+}
+
+// ---- Gráfico 1: a curva por dentro ----
+function draw1(S) {
+  const { ctx, W, H } = prep($('cv1'));
+  const small = W < 520;
+  const m = { l: 56, r: small ? 12 : 20, t: 30, b: 30 };
+  const cdis = S.sel.map(s => s - SPREAD);
+  const vals = [S.r1, S.r2, S.f, S.c, S.sb, ...cdis, ...S.sel];
+  let lo = Math.min(...vals), hi = Math.max(...vals);
+  const pad = Math.max(0.004, (hi - lo) * 0.18);
+  lo -= pad; hi += pad;
+  const { X, Y } = grade(ctx, W, H, m, [0, 2], [lo, hi], v => pct(v, 1), [[0, 'hoje'], [1, small ? '1 ano' : '1 ano (252 DU)'], [2, small ? '2 anos' : '2 anos (504 DU)']], 'A curva por dentro: taxa de cada ano');
+  // prêmio: faixa entre forward e CDI médio no ano 2
+  const pos = S.p >= 0;
+  ctx.fillStyle = pos ? css('accent-bg') : css('bad-bg');
+  ctx.fillRect(X(1), Math.min(Y(S.f), Y(S.c)), X(2) - X(1), Math.abs(Y(S.f) - Y(S.c)));
+  // r2: tracejado sobre os dois anos
+  linha(ctx, [[X(0), Y(S.r2)], [X(2), Y(S.r2)]], css('spot'), 1.6, [6, 4]);
+  // CDI esperado por trimestre (degraus) e média
+  const pts = [];
+  cdis.forEach((v, q) => { pts.push([X(1 + q / 4), Y(v)]); pts.push([X(1 + (q + 1) / 4), Y(v)]); });
+  linha(ctx, pts, css('focus'), 2);
+  linha(ctx, [[X(1), Y(S.c)], [X(2), Y(S.c)]], css('focus'), 1.6, [3, 3]);
+  // curva DI: r1 no ano 1 e forward no ano 2
+  linha(ctx, [[X(0), Y(S.r1)], [X(1), Y(S.r1)]], css('accent'), 3.2);
+  linha(ctx, [[X(1), Y(S.r1)], [X(1), Y(S.f)]], css('accent'), 1.2, [2, 3]);
+  linha(ctx, [[X(1), Y(S.f)], [X(2), Y(S.f)]], css('accent'), 3.2);
+  // ponta: Selic no fim do ano 2
+  ponto(ctx, X(2), Y(S.sb), css('bad'));
+  // rótulos (posição evita colisão: acima/abaixo conforme a ordem)
+  const up = (a, b) => (a >= b ? -8 : 16);
+  etiqueta(ctx, 'r₁ ' + pct(S.r1), X(0) + 6, Y(S.r1) + up(S.r1, S.r2), css('accent'), 'left', W);
+  etiqueta(ctx, 'r₂ ' + pct(S.r2), X(0.55), Y(S.r2) + up(S.r2, S.r1), css('spot'), 'center', W);
+  etiqueta(ctx, (metodo === 'comp' ? 'forward ' : 'atalho ') + pct(S.f), X(1) + 6, Y(S.f) + (S.f >= S.c ? -8 : 16), css('accent'), 'left', W);
+  etiqueta(ctx, 'CDI médio ' + pct(S.c), X(1) + 6, Y(S.c) + (S.f >= S.c ? 16 : -8), css('focus'), 'left', W);
+  etiqueta(ctx, 'ponta ' + pct(S.sb), X(2) - 8, Y(S.sb) + (S.sb >= S.c ? -9 : 18), css('bad'), 'right', W);
+  // colchete do prêmio
+  const xb = X(1.5), y1 = Y(S.f), y2 = Y(S.c);
+  if (Math.abs(y1 - y2) > 14) {
+    ctx.strokeStyle = pos ? css('accent') : css('bad'); ctx.lineWidth = 1.3;
+    ctx.beginPath(); ctx.moveTo(xb, y1); ctx.lineTo(xb, y2); ctx.stroke();
+  }
+  etiqueta(ctx, 'prêmio ' + bps(S.p), xb + 6, (y1 + y2) / 2 + 4, pos ? css('accent') : css('bad'), 'left', W);
+}
+
+// ---- Gráfico 2: dois caminhos (animado) ----
+let anim = { t: 2, on: false, last: 0 };
+function valores(S, t) {   // valor de R$ 1 em t anos para cada estratégia
+  const dir = (1 + S.r2) ** t;
+  const a = t <= 1 ? (1 + S.r1) ** t : (1 + S.r1) * (1 + S.f) ** (t - 1);
+  let b;
+  if (t <= 1) b = (1 + S.r1) ** t;
+  else {
+    b = 1 + S.r1; let rest = t - 1;
+    for (let q = 0; q < 4 && rest > 1e-12; q++) { const d = Math.min(0.25, rest); b *= (1 + S.sel[q] - SPREAD) ** d; rest -= d; }
+  }
+  return { dir, a, b };
+}
+function draw2(S) {
+  const { ctx, W, H } = prep($('cv2'));
+  const small = W < 520;
+  const m = { l: 74, r: small ? 12 : 20, t: 26, b: 28 };
+  const N = 1e6, n = 96;
+  const A = [], B = [];
+  let lo = 0, hi = 0;
+  for (let i = 0; i <= n; i++) { const t = 2 * i / n, v = valores(S, t); A.push([t, N * (v.a - v.dir)]); B.push([t, N * (v.b - v.dir)]); }
+  [...A, ...B].forEach(p => { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); });
+  const pad = Math.max(500, (hi - lo) * 0.15); lo -= pad; hi += pad;
+  const kfmt = v => (Math.abs(v) >= 1000 ? (v / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mil' : Math.round(v).toLocaleString('pt-BR'));
+  const { X, Y } = grade(ctx, W, H, m, [0, 2], [lo, hi], kfmt, [[0, 'hoje'], [1, '1 ano'], [2, '2 anos']], small ? 'R$ vs aplicar 2 anos direto' : 'R$ à frente (+) ou atrás (−) de aplicar 2 anos direto');
+  linha(ctx, [[X(0), Y(0)], [X(2), Y(0)]], css('spot'), 1.6);
+  const cut = pts => pts.filter(p => p[0] <= anim.t + 1e-9).map(p => [X(p[0]), Y(p[1])]);
+  const a = cut(A), b = cut(B);
+  linha(ctx, b, css('focus'), 2.6);
+  linha(ctx, a, css('accent'), 2.6);
+  if (a.length) { const la = a[a.length - 1], lb = b[b.length - 1]; ponto(ctx, la[0], la[1], css('accent'), 4); ponto(ctx, lb[0], lb[1], css('focus'), 4); }
+  if (anim.t >= 2 - 1e-9) {
+    const eb = B[B.length - 1][1], ea = A[A.length - 1][1];
+    etiqueta(ctx, 'forward: ' + brl(ea), X(2) - 6, Y(ea) + (eb < ea ? -8 : 16), css('accent'), 'right', W);
+    etiqueta(ctx, 'Focus: ' + brl(eb), X(2) - 6, Y(eb) + (eb < ea ? 16 : -8), css('focus'), 'right', W);
+    const a1 = A[n / 2][1];
+    if (!small && Math.abs(Y(a1) - Y(0)) > 16) etiqueta(ctx, 'em 1 ano: ' + brl(a1), X(1), Y(a1) + (a1 > 0 ? -8 : 16), css('text-dim'), 'center', W);
+  }
+}
+function loop(ts) {
+  if (!anim.on) return;
+  const dt = anim.last ? (ts - anim.last) / 1000 : 0; anim.last = ts;
+  anim.t = Math.min(2, anim.t + dt * 0.5);   // 4 s para os 2 anos
+  draw2(ler());
+  if (anim.t >= 2) { anim.on = false; return; }
+  requestAnimationFrame(loop);
+}
+
+// ================== texto e estatísticas ==================
+function render() {
+  const S = ler();
+  $('vR1').textContent = pct(S.r1); $('vR2').textContent = pct(S.r2); $('vSa').textContent = pct(S.sa); $('vSb').textContent = pct(S.sb);
+  $('stF').textContent = pct(S.f);
+  const eLin = S.fC - S.fL;
+  $('stFs').textContent = metodo === 'comp' ? 'atalho linear daria ' + pct(S.fL) : 'composto é ' + pct(S.fC) + ' (erro ' + bpsAbs(eLin) + ')';
+  $('stC').textContent = pct(S.c);
+  $('stP').textContent = bps(S.p);
+  $('stPs').textContent = S.p > 0.001 ? 'mercado cobra acima do Focus' : S.p < -0.001 ? 'mercado abaixo do Focus' : 'praticamente sem prêmio';
+  $('stK').textContent = bps(S.ponta);
+  const dK = S.ponta - S.p;
+  $('stKs').textContent = Math.abs(dK) < 0.00005 ? 'coincide com o correto' : (dK > 0 ? 'exagera ' : 'subestima ') + bpsAbs(dK) + ' (errado)';
+
+  const P = [];
+  // 1) forma da curva
+  if (S.r2 > S.r1 + 0.0002) P.push(`<p>A curva está <b>positivamente inclinada</b> (r₂ ${pct(S.r2)} &gt; r₁ ${pct(S.r1)}), então o forward do 2º ano (${pct(S.fC)}) fica <b>acima das duas</b> taxas spot: r₂ é a média geométrica de r₁ e do forward.</p>`);
+  else if (S.r2 < S.r1 - 0.0002) P.push(`<p>A curva está <b>invertida</b> (r₂ ${pct(S.r2)} &lt; r₁ ${pct(S.r1)}), então o forward do 2º ano (${pct(S.fC)}) fica <b>abaixo das duas</b> taxas spot: o mercado precifica juros menores no ano 2. Curva invertida <i>não</i> implica prêmio negativo: o que decide é a comparação com o Focus.</p>`);
+  else P.push(`<p>A curva está <b>praticamente plana</b>: forward (${pct(S.fC)}) ≈ r₁ ≈ r₂.</p>`);
+  // 2) prêmio
+  if (S.pC > 0.001) P.push(`<p>O mercado cobra <b>${pct(S.fC)}</b> pelo ano 2, contra um CDI médio esperado de <b>${pct(S.c)}</b>: prêmio de <b>${bps(S.pC)}</b>. É o pedágio para travar a taxa hoje. Quem recebe pré nesse trecho só embolsa esse prêmio se o CDI vier perto do Focus.</p>`);
+  else if (S.pC < -0.001) P.push(`<p>O forward (${pct(S.fC)}) está <b>abaixo</b> do CDI médio esperado pelo Focus (${pct(S.c)}): prêmio de <b>${bps(S.pC)}</b>. O mercado precifica uma Selic mais baixa que a mediana, ou o Focus ainda não reagiu a uma virada.</p>`);
+  else P.push(`<p>Forward (${pct(S.fC)}) e CDI médio do Focus (${pct(S.c)}) praticamente coincidem: prêmio de ${bps(S.pC)}.</p>`);
+  // 3) ponta
+  const dKc = (S.fC - S.sb) - S.pC;
+  if (Math.abs(S.sb - S.sa) < 0.0003) P.push(`<p>Com a Selic do Focus estável no ano 2, comparar com a ponta erra pouco (${bpsAbs(dKc)}, basicamente a diferença entre Selic e CDI).</p>`);
+  else P.push(`<p>Comparar com a <b>ponta</b> (Selic de ${pct(S.sb)} no fim do ano 2) daria ${bps(S.fC - S.sb)}, e <b>${dKc > 0 ? 'exageraria' : 'subestimaria'} o prêmio em ${bpsAbs(dKc)}</b>, porque a Selic ${S.sb < S.sa ? 'cai' : 'sobe'} ao longo do ano e a ponta é o seu ponto ${S.sb < S.sa ? 'mais baixo' : 'mais alto'}.</p>`);
+  // 4) atalho linear
+  if (metodo === 'lin') P.push(`<p>⚠️ Você está vendo o <b>atalho 2·r₂ − r₁ = ${pct(S.fL)}</b>. A fórmula composta dá ${pct(S.fC)}: o atalho erra <b>${bpsAbs(eLin)}</b>${Math.abs(eLin) >= 0.0003 ? ', o que pesa numa grandeza medida em bps' : '. Aqui o erro é pequeno porque a curva está pouco inclinada; numa curva íngreme ele cresce'}.</p>`);
+  else if (Math.abs(eLin) >= 0.0003) P.push(`<p>Atenção: com esta inclinação, o atalho linear 2·r₂ − r₁ (${pct(S.fL)}) já erraria <b>${bpsAbs(eLin)}</b>.</p>`);
+  // 5) em reais
+  const v = valores({ ...S, f: S.fC }, 2), gap = 1e6 * (v.b - v.dir);
+  P.push(`<p>Em reais: para cada R$ 1 milhão, aplicar 1 ano e rolar ao CDI do Focus termina <b>${brl(Math.abs(gap))}</b> ${gap < 0 ? 'atrás' : 'à frente'} de aplicar 2 anos direto. É o prêmio, capitalizado pelo ano 1.</p>`);
+  $('what').innerHTML = '<p><b>🔍 O que está acontecendo</b></p>' + P.join('');
+  $('what').classList.toggle('alert', metodo === 'lin');
+  if ($('t2').classList.contains('on')) { draw1(S); draw2(S); }
+}
+
+// ================== cenários ==================
+const SCEN = [
+  { trap: 'Ponta × média', s: 'Research de banco', q: 'O analista pega o 1y1y de 12,40% e compara com a Selic do Focus no fim do ano 2 (11,30%): "o mercado embute 110 bps de prêmio".', ok: false,
+    a: 'Compare médias do mesmo período. O CDI médio esperado no ano 2 é 11,75%, e o prêmio é 65 bps. Num ciclo de cortes a ponta é a Selic mais baixa do ano, e usá-la inflou o prêmio em 45 bps.' },
+  { trap: 'Ponta × média', s: 'Mesa de juros', q: 'Início de ciclo de alta: o Focus vê a Selic subindo de 13% para 16% no ano 2, e o 1y1y está em 17,11%. "Contra os 16% da ponta, o prêmio é só 111 bps — curva barata."', ok: false,
+    a: 'Na alta, o erro inverte de sinal. O CDI médio esperado é ≈ 14,39%, e o prêmio é ≈ 272 bps. A ponta é a Selic mais alta do ano e esconde mais da metade do prêmio.' },
+  { trap: 'Atalho linear', s: 'Planilha do estagiário', q: 'Curva íngreme: r₁ = 10,00% e r₂ = 13,50%. Ele calcula o forward como 2 × 13,50% − 10,00% = 17,00%.', ok: false,
+    a: 'Pela fórmula composta, 1,135² / 1,10 − 1 = 17,11%. O atalho erra 11 bps, uma fração relevante de um prêmio que se mede em dezenas de bps. Com curva plana o atalho quase acerta, e é isso que engana.' },
+  { trap: 'Prêmio = arbitragem', s: 'Comitê de ALM', q: '"O 1y1y está 65 bps acima do Focus. Vamos receber pré nesse trecho: é lucro garantido, o mercado está errado."', ok: false,
+    a: 'Não é arbitragem. O prêmio remunera o risco de o CDI não seguir a mediana. Se a Selic cair menos que o esperado, a posição perde. Em média, quem carrega o risco recebe o prêmio, mas sem garantia nenhuma, e o próprio Focus erra.' },
+  { trap: 'Uso correto', s: 'Gestor de renda fixa', q: 'Ele acompanha a série semanal do prêmio 1y1y − Focus. Em dois meses o prêmio subiu de 40 para 120 bps, com o Focus parado. Conclusão: a curva passou a cobrar mais pela incerteza.', ok: true,
+    a: 'Leitura correta, porque olha a variação e não um nível isolado. A ressalva do slide vale: o Focus atrasa nas viradas. Se a pesquisa ainda não incorporou uma mudança de cenário, parte do salto é "atraso do Focus", não prêmio.' },
+  { trap: 'Uso correto', s: 'Tesouraria de banco médio', q: 'O 1y1y está em 12,00% e o CDI médio do Focus para o ano 2 em 12,20%: prêmio de −20 bps. A tesoureira conclui que o mercado precifica mais cortes que a mediana.', ok: true,
+    a: 'Certo. Prêmio negativo não é erro de conta: o preço está abaixo da expectativa declarada, seja porque o mercado vê mais cortes, seja porque o Focus está defasado. Note que a curva aqui é invertida, mas isso por si só não decide o sinal do prêmio.' },
+];
+function renderScen() {
+  $('scenGrid').innerHTML = SCEN.map((c, i) => `<div class="card scen" data-i="${i}"><div class="trap">${c.trap} · ${c.s}</div><div class="q">${c.q}</div><div class="more">clique para revelar ↓</div><div class="ans ${c.ok ? 'ok' : 'bad'}"><b>${c.ok ? '✓ Leitura correta' : '✗ Problema'}</b>${c.a}</div></div>`).join('');
+  document.querySelectorAll('.scen').forEach(el => el.addEventListener('click', () => { el.classList.add('open'); el.querySelector('.more').style.display = 'none'; }));
+}
+
+// ================== teste ==================
+const QUIZ = [
+  { q: 'Curva DI: 252 DU a 11,00% e 504 DU a 12,00%. Qual o forward 1y1y?', o: ['13,01%', '13,00%', '12,00%', '11,50%'], c: 0,
+    e: '1,12² / 1,11 − 1 = 1,2544 / 1,11 − 1 = 13,01%. 13,00% é o atalho linear 2·r₂ − r₁; 12,00% é a taxa de 2 anos (o forward fica acima dela numa curva positiva); 11,50% é a média simples das duas spots.' },
+  { q: 'Para medir o prêmio 1y1y, com qual número do Focus o forward deve ser comparado?', o: ['O CDI médio esperado ao longo do ano 2', 'A Selic esperada no fim do ano 2', 'A Selic esperada no fim do ano 1', 'O IPCA esperado para o ano 2'], c: 0,
+    e: 'O forward é a taxa de um ano inteiro (o ano 2), então o comparável é a média do CDI esperado nesse mesmo ano. Selic de fim de ano é uma ponta, e o IPCA é outra variável (aquilo é inflação implícita, não prêmio de juros).' },
+  { q: 'O Focus vê cortes ao longo do ano 2. Comparar o forward com a Selic do fim do ano 2, em vez do CDI médio, faz o prêmio:', o: ['Parecer maior do que é', 'Parecer menor do que é', 'Ficar igual: dá no mesmo', 'Ficar sempre negativo'], c: 0,
+    e: 'Em ciclo de cortes, a Selic do fim do ano é a mais baixa do período. Subtraí-la do forward infla o prêmio (no slide, 110 bps em vez de 65). Em ciclo de alta acontece o contrário.' },
+  { q: 'Forward 1y1y de 12,40% e CDI médio do Focus de 11,75%. Os 65 bps de diferença significam que:', o: ['O mercado cobra 65 bps acima do caminho esperado pela mediana, como remuneração pela incerteza', 'Há arbitragem garantida de 65 bps para quem receber pré no trecho', 'O Focus está errado e o CDI vai ficar em 12,40%', 'O Copom deve subir a Selic em 65 bps'], c: 0,
+    e: 'É um preço pelo risco (prêmio de termo/risco), não um erro de alguém nem um lucro garantido. Se a Selic cair menos que o esperado, quem recebeu pré perde.' },
+  { q: 'O prêmio 1y1y − Focus está em −20 bps. A leitura mais adequada é:', o: ['O mercado precifica Selic abaixo da mediana do Focus, ou o Focus está atrasado numa virada', 'Houve erro de conta, porque prêmio não pode ser negativo', 'A curva está invertida, e curva invertida sempre implica prêmio negativo', 'O CDI médio está acima da Selic média'], c: 0,
+    e: 'Prêmio negativo é possível: o preço ficou abaixo da expectativa declarada. A inclinação da curva não decide o sinal, e sim a comparação com o Focus. O CDI fica abaixo da Selic, não acima.' },
+];
+function rng(s) { return () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function shuffleIdx(n, s) { const u = rng(s), a = [...Array(n).keys()]; for (let i = n - 1; i > 0; i--) { const j = Math.floor(u() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+let acertos = 0, respondidas = 0;
+function renderQuiz() {
+  $('quiz').innerHTML = QUIZ.map((Q, i) => { const ord = shuffleIdx(4, 11 + 7 * i); return `<div class="qq" data-i="${i}"><b>${i + 1}. ${Q.q}</b><div class="opts">${ord.map(k => `<button class="opt" data-k="${k}">${Q.o[k]}</button>`).join('')}</div><div class="fb"></div></div>`; }).join('');
+  document.querySelectorAll('.qq').forEach(div => {
+    const Q = QUIZ[+div.dataset.i];
+    div.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => {
+      if (div.dataset.done) return; div.dataset.done = 1; respondidas++;
+      const k = +b.dataset.k, ok = k === Q.c; if (ok) acertos++;
+      div.querySelectorAll('.opt').forEach(x => { if (+x.dataset.k === Q.c) x.classList.add('right'); });
+      if (!ok) b.classList.add('wrong');
+      const fb = div.querySelector('.fb'); fb.innerHTML = (ok ? '<b style="color:var(--ok)">✓ Isso.</b> ' : '<b style="color:var(--bad)">✗ Não é essa.</b> ') + Q.e; fb.classList.add('show');
+      $('score').textContent = `· ${acertos}/${respondidas}`;
+    }));
+  });
+}
+
+// ================== eventos ==================
+document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('nav.tabs button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('section.tab').forEach(s => s.classList.toggle('on', s.id === b.dataset.tab));
+  render();
+}));
+['sR1', 'sR2', 'sSa', 'sSb'].forEach(id => $(id).addEventListener('input', () => { anim.on = false; anim.t = 2; render(); }));
+$('sPre').addEventListener('change', e => { const P = PRESETS[+e.target.value]; $('sR1').value = P.r1; $('sR2').value = P.r2; $('sSa').value = P.sa; $('sSb').value = P.sb; anim.on = false; anim.t = 2; render(); });
+$('bComp').addEventListener('click', () => { metodo = 'comp'; $('bComp').classList.add('on'); $('bLin').classList.remove('on'); render(); });
+$('bLin').addEventListener('click', () => { metodo = 'lin'; $('bLin').classList.add('on'); $('bComp').classList.remove('on'); render(); });
+$('bPlay').addEventListener('click', () => { if (anim.t >= 2) anim.t = 0; anim.on = true; anim.last = 0; requestAnimationFrame(loop); });
+$('bPause').addEventListener('click', () => { anim.on = false; });
+$('bReset').addEventListener('click', () => { anim.on = false; anim.t = 0; draw2(ler()); });
+let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(render, 120); });
+
+renderScen(); renderQuiz(); render();
+if (document.fonts) document.fonts.ready.then(render);
+</script>
+</body>
+</html>

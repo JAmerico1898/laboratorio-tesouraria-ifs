@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inflação Implícita</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,500;0,700;1,600&family=Public+Sans:wght@400;500;600;700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8f6f3;
+  --bg2:#efebe6;
+  --bg-card:#ffffff;
+  --text:#1f1d24;
+  --text-dim:#55515d;
+  --accent:#8e2a50;      /* identidade: vinho-rosado */
+  --ok:#276b2b;
+  --bad:#b83227;
+  --ref:#1f5fa8;
+  --warn:#9a5a00;
+  --exp:#1d3466;         /* expectativa de inflação (azul-marinho) */
+  --prem:#b0346c;        /* prêmio de risco inflacionário (rosa) */
+  --liq:#2b6b56;         /* distorção de liquidez (verde-petróleo) */
+  --ltn:#1f5fa8;         /* título prefixado */
+  --ntnb:#9a5a00;        /* título indexado ao IPCA */
+  --grid-dim:#e6e1d9;
+  --accent-bg:#f6e8ee;
+  --ok-bg:#e8f3e8;
+  --bad-bg:#fbeceb;
+  --warn-bg:#fdf3e2;
+  --ref-bg:#e8eff9;
+  --accent-brd:#e2c3d0;
+  --ok-brd:#b9dbba;
+  --bad-brd:#efc2bd;
+  --warn-brd:#f0d3a3;
+  --ref-brd:#bccfeb;
+  --serif:'Spectral',Georgia,serif;
+  --sans:'Public Sans',system-ui,sans-serif;
+  --mono:'Source Code Pro',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 20px 40px}
+header .tag{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-brd);padding:3px 10px;border-radius:999px}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(28px,4.4vw,44px);line-height:1.12;margin:12px 0 8px}
+h1 em{color:var(--accent);font-style:italic;font-weight:600}
+.lead{color:var(--text-dim);max-width:780px;margin:0 0 18px;font-size:17px}
+h2{font-family:var(--serif);font-size:24px;margin:4px 0 10px}
+h3{font-family:var(--serif);font-size:19px;margin:0 0 8px}
+nav.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px}
+nav.tabs button{font-family:var(--sans);font-weight:600;font-size:14px;border:1px solid var(--accent-brd);background:var(--bg-card);color:var(--text);padding:8px 16px;border-radius:999px;cursor:pointer;transition:background .2s}
+nav.tabs button:hover{background:var(--accent-bg)}
+nav.tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+section.tab{display:none;animation:fade .45s ease}
+section.tab.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--bg-card);border-radius:14px;box-shadow:0 1px 2px rgba(30,20,30,.06),0 4px 16px rgba(30,20,30,.05);padding:20px;margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.grid2>*{min-width:0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.formula{font-family:var(--serif);font-size:clamp(19px,2.6vw,26px);text-align:center;background:var(--bg2);border-radius:12px;padding:16px 10px;margin:8px 0 12px}
+.formula .sm{display:block;font-family:var(--sans);font-size:14px;color:var(--text-dim);margin-top:6px}
+.c-exp{color:var(--exp);font-weight:700}.c-prem{color:var(--prem);font-weight:700}.c-liq{color:var(--liq);font-weight:700}
+.pair .ok,.pair .bad{border-radius:12px;padding:14px 16px;border:1px solid}
+.pair .ok{background:var(--ok-bg);border-color:var(--ok-brd)}
+.pair .bad{background:var(--bad-bg);border-color:var(--bad-brd)}
+.pair .ok b:first-child{color:var(--ok)}.pair .bad b:first-child{color:var(--bad)}
+.box{border-radius:12px;padding:14px 16px;border:1px solid;margin-top:12px}
+.box.idea{background:var(--accent-bg);border-color:var(--accent-brd)}
+.box.warn{background:var(--warn-bg);border-color:var(--warn-brd)}
+.box.world{background:var(--ref-bg);border-color:var(--ref-brd)}
+.box p{margin:6px 0}
+details{margin-top:12px;background:var(--bg2);border-radius:10px;padding:10px 14px}
+details summary{cursor:pointer;font-weight:600}
+.mono{font-family:var(--mono)}
+table.mini{border-collapse:collapse;font-family:var(--mono);font-size:13px;width:100%;margin-top:6px}
+table.mini td,table.mini th{padding:4px 6px;border-bottom:1px solid var(--grid-dim);text-align:right}
+table.mini th:first-child,table.mini td:first-child{text-align:left}
+.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 18px;align-items:end}
+.ctl label{display:flex;justify-content:space-between;font-size:13px;font-weight:600;gap:6px}
+.ctl label .v{font-family:var(--mono);color:var(--accent)}
+.ctl input[type=range]{width:100%;accent-color:var(--accent)}
+.ctl .hint{font-size:12px;color:var(--text-dim);line-height:1.35;margin-top:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+select{max-width:100%}
+select,button.act{font-family:var(--sans);font-size:14px;border-radius:10px;border:1px solid var(--accent-brd);background:var(--bg-card);color:var(--text);padding:7px 12px}
+button.act{cursor:pointer;font-weight:600}
+button.act.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+button.act:hover{filter:brightness(.96)}
+canvas{width:100%;max-width:100%;display:block;border-radius:10px;background:var(--bg-card)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.stat{background:var(--bg2);border-radius:12px;padding:12px 14px}
+.stat .k{font-size:12px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.stat .n{font-family:var(--mono);font-size:24px;font-weight:600;margin-top:2px}
+.stat .s{font-size:12px;color:var(--text-dim)}
+.what{background:var(--accent-bg);border:1px solid var(--accent-brd);border-radius:12px;padding:14px 16px}
+.what h3{margin-bottom:4px}
+.what p{margin:6px 0}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--text-dim);margin-top:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.scen{cursor:pointer;border:1px solid var(--grid-dim);transition:transform .2s,border-color .2s}
+.scen:hover{transform:translateY(-2px);border-color:var(--accent-brd)}
+.scen .q{font-weight:600;margin-top:4px}
+.scen .ans{display:none;margin-top:10px;border-radius:10px;padding:10px 12px;font-size:14.5px}
+.scen.open .ans{display:block;animation:fade .4s}
+.scen .ans.ok{background:var(--ok-bg);border:1px solid var(--ok-brd)}
+.scen .ans.bad{background:var(--bad-bg);border:1px solid var(--bad-brd)}
+.scen .ans b:first-child{display:block;margin-bottom:2px}
+.scen .ans.ok b:first-child{color:var(--ok)}.scen .ans.bad b:first-child{color:var(--bad)}
+.scen .more{font-size:12px;color:var(--accent);font-weight:600;margin-top:8px}
+.trap{font-family:var(--mono);font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em}
+.quiz .qq{margin-bottom:18px}
+.quiz .opts{display:grid;gap:8px;margin-top:8px}
+.quiz .opt{text-align:left;font-family:var(--sans);font-size:15px;background:var(--bg-card);border:1px solid var(--grid-dim);border-radius:10px;padding:9px 12px;cursor:pointer;color:var(--text)}
+.quiz .opt:hover{border-color:var(--accent-brd);background:var(--accent-bg)}
+.quiz .opt.right{background:var(--ok-bg);border-color:var(--ok)}
+.quiz .opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.quiz .fb{display:none;margin-top:8px;font-size:14.5px;border-radius:10px;padding:10px 12px;background:var(--bg2)}
+.quiz .fb.show{display:block;animation:fade .4s}
+.score{font-family:var(--mono);font-weight:600;color:var(--accent)}
+footer{margin-top:26px;padding-top:14px;border-top:1px solid var(--grid-dim);font-size:13px;color:var(--text-dim)}
+@media (max-width:900px){.controls{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.grid3{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.grid2,.grid3,.controls{grid-template-columns:1fr}.wrap{padding:20px 14px 32px}.stat .n{font-size:20px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="tag">Tesouraria · Curva de juros · Bloco 4</span>
+  <h1>Inflação implícita <em>não é</em> expectativa pura</h1>
+  <p class="lead">O <i>breakeven</i> que sai da LTN/NTN-F contra a NTN-B mistura três coisas: o que o mercado espera de IPCA, o prêmio por carregar o risco de inflação e as diferenças de liquidez entre os títulos. Desconfie do número de tela.</p>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="on" data-tab="t1">① Conceito</button>
+  <button data-tab="t2">② Montar o breakeven</button>
+  <button data-tab="t3">③ Quem ganha?</button>
+  <button data-tab="t4">④ Cenários</button>
+  <button data-tab="t5">⑤ Teste</button>
+</nav>
+
+<!-- ============ ABA 1: CONCEITO ============ -->
+<section class="tab on" id="t1">
+  <div class="card">
+    <h2>Como calcular — Fisher, não subtração</h2>
+    <div class="formula">(1 + <i>i</i><sub>pré</sub>) = (1 + <i>r</i><sub>real</sub>) × (1 + π<sup>BE</sup>)
+      <span class="sm">⇒ π<sup>BE</sup> = (1 + <i>i</i>) / (1 + <i>r</i>) − 1 · taxas anuais, base DU/252, <b>mesmo prazo</b> nos dois títulos</span></div>
+    <p>O <b>breakeven</b> (inflação implícita) é a inflação que deixa o investidor <b>indiferente</b> entre o prefixado (LTN/NTN-F) e o indexado (NTN-B). Se o IPCA realizado ficar acima dele, a NTN-B ganha; abaixo, ganha o prefixado.</p>
+    <p>A conta é multiplicativa. A subtração <span class="mono">i − r</span> erra por um termo que é exatamente <b><span class="mono">r × π<sup>BE</sup></span></b>: com juro real de 7% e inflação de 6%, são <b>0,42 p.p.</b> — maior que muitos <i>spreads</i> de operação. Com juros baixos (EUA), o erro some; no Brasil, não.</p>
+    <div class="grid2 pair">
+      <div class="ok"><b>✓ Certo</b><br>Pré 2 anos 13,71% e real 7,37% → 1,1371/1,0737 − 1 = <b>5,91%</b>. Comparo com o Focus do <i>mesmo horizonte</i> e chamo a diferença de <b>prêmio + distorções de liquidez</b>.</div>
+      <div class="bad"><b>✗ Armadilha</b><br>"13,71 − 7,37 = 6,34%, então o mercado espera 6,34% de IPCA." Dois erros: subtração (0,43 p.p. a mais) e leitura do breakeven como expectativa pura.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>O que tem dentro do breakeven</h2>
+    <div class="formula">(1 + π<sup>BE</sup>) ≈ (1 + <span class="c-exp">E[π]</span>) × (1 + <span class="c-prem">φ</span>) × (1 + <span class="c-liq">ℓ</span>)
+      <span class="sm"><span class="c-exp">expectativa de inflação</span> · <span class="c-prem">prêmio de risco inflacionário</span> · <span class="c-liq">distorção de liquidez (pode ser + ou −)</span></span></div>
+    <div class="grid3">
+      <div><h3 class="c-exp">Expectativa</h3>O IPCA médio que o mercado de fato espera para o prazo. A melhor <i>proxy</i> pública é o Focus (pesquisa com analistas) — que também tem seus vieses.</div>
+      <div><h3 class="c-prem">Prêmio de risco (φ)</h3>Quem fica no prefixado carrega a incerteza do IPCA e cobra por isso: exige taxa pré maior, o que <b>infla</b> o breakeven. Cresce com o prazo e com a incerteza.</div>
+      <div><h3 class="c-liq">Liquidez (ℓ)</h3>O título menos líquido paga um adicional. Se for o <b>prefixado</b>, a taxa pré sobe e o breakeven <b>sobe</b>; se for a <b>NTN-B</b>, a taxa real sobe e o breakeven <b>cai</b>.</div>
+    </div>
+    <div class="box idea"><p>💡 <b>Consequência prática.</b> Breakeven − Focus (mesmo horizonte) ≈ φ + ℓ. Não dá para separar os dois só com esses números: é preciso um modelo (ex.: estrutura a termo afim) ou hipóteses sobre a liquidez.</p></div>
+    <div class="box warn"><p>⚠️ <b>Convenção desta animação.</b> Os títulos são tratados como <b>zero-cupom do mesmo prazo</b> (LTN × NTN-B Principal), como na ETTJ da ANBIMA. Com NTN-F e NTN-B — que pagam cupom — o mesmo vencimento não basta: as <i>durations</i> diferem, e o certo é casar a duration ou usar as curvas zero.</p></div>
+    <div class="box world"><p>🌎 <b>Janela para o mundo real.</b> ETTJ ANBIMA de <b>02/10/2026</b>, vértice 504 DU (≈ 2 anos): pré <b>13,71%</b>, real (IPCA) <b>7,37%</b>, inflação implícita <b>5,91%</b> a.a.</p>
+      <p>Focus de <b>14/09/2026</b> (mediana): IPCA <b>4,30%</b> em 2027 e <b>3,80%</b> em 2028. O horizonte de 2 anos a partir de outubro não coincide com anos-calendário, mas a ordem de grandeza da diferença é de <b>mais de 1,5 p.p.</b> — isso é φ + ℓ (e defasagem de datas), não "o mercado espera quase 6%".</p></div>
+    <details><summary>Derivação do erro da subtração (opcional)</summary>
+      <p>(1 + i) = (1 + r)(1 + π) = 1 + r + π + r·π &nbsp;⇒&nbsp; i − r = π + r·π.</p>
+      <p>Logo a subtração superestima o breakeven em exatamente <span class="mono">r·π</span>. Em taxas contínuas (ln) a conta é aditiva: ln(1+i) − ln(1+r) = ln(1+π).</p>
+      <table class="mini"><tr><th>Juro real</th><th>π = 3%</th><th>π = 6%</th><th>π = 8%</th></tr>
+        <tr><td>2%</td><td>0,06</td><td>0,12</td><td>0,16</td></tr>
+        <tr><td>7%</td><td>0,21</td><td>0,42</td><td>0,56</td></tr>
+        <tr><td>10%</td><td>0,30</td><td>0,60</td><td>0,80</td></tr></table>
+      <p style="font-size:13px;color:var(--text-dim)">Erro da subtração em p.p.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ============ ABA 2: MONTAR O BREAKEVEN ============ -->
+<section class="tab" id="t2">
+  <div class="card">
+    <h2>Monte o breakeven peça por peça</h2>
+    <p style="margin-top:0;color:var(--text-dim)">Você define o "mundo verdadeiro" (expectativa, prêmio, liquidez, juro real). A tela mostra as taxas que o mercado <b>observaria</b> e o que um analista desavisado concluiria delas.</p>
+    <div class="controls">
+      <div class="ctl"><label>Expectativa (Focus) <span class="v" id="vPe"></span></label><input type="range" id="sPe" min="2" max="8" step="0.05" value="4.2"><div class="hint">IPCA médio esperado no prazo</div></div>
+      <div class="ctl"><label>Prêmio de risco φ <span class="v" id="vPhi"></span></label><input type="range" id="sPhi" min="0" max="2" step="0.05" value="1.1"><div class="hint">compensação pela incerteza do IPCA</div></div>
+      <div class="ctl"><label>Liquidez ℓ <span class="v" id="vLiq"></span></label><input type="range" id="sLiq" min="-1.5" max="1.5" step="0.05" value="0.55"><div class="hint">+ pré menos líquido · − NTN-B menos líquida</div></div>
+      <div class="ctl"><label>Juro real <span class="v" id="vR"></span></label><input type="range" id="sR" min="1" max="10" step="0.05" value="7.35"><div class="hint">juro real "limpo" de liquidez</div></div>
+    </div>
+    <div class="row">
+      <label for="preset" style="font-size:14px;font-weight:600">Cenário pronto:</label>
+      <select id="preset">
+        <option value="br">Brasil 2 anos — decomposição ilustrativa (ANBIMA 02/10/2026)</option>
+        <option value="pura">Expectativa pura (sem prêmios)</option>
+        <option value="ntnb">NTN-B ilíquida (estresse no indexado)</option>
+        <option value="eua">Juros baixos (tipo EUA)</option>
+        <option value="incerto">Inflação muito incerta</option>
+      </select>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">Taxa pré (LTN)</div><div class="n" id="stI"></div><div class="s">observada no mercado</div></div>
+      <div class="stat"><div class="k">Taxa real (NTN-B)</div><div class="n" id="stRb"></div><div class="s">observada no mercado</div></div>
+      <div class="stat"><div class="k">Breakeven (Fisher)</div><div class="n" id="stBe" style="color:var(--accent)"></div><div class="s" id="stBeS"></div></div>
+      <div class="stat"><div class="k">Erro da subtração</div><div class="n" id="stErr" style="color:var(--bad)"></div><div class="s" id="stErrS"></div></div>
+    </div>
+    <canvas id="cBar" height="250" aria-label="Barra com a decomposição do breakeven"></canvas>
+    <div class="legend"><span><i style="background:var(--exp)"></i>Expectativa</span><span><i style="background:var(--prem)"></i>Prêmio de risco</span><span><i style="background:var(--liq)"></i>Liquidez</span><span>▼ Focus · ◆ Breakeven (Fisher) · ┆ Subtração simples</span></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><canvas id="cErr" height="260" aria-label="Erro da subtração em função do juro real"></canvas>
+      <p style="font-size:13px;color:var(--text-dim);margin:8px 0 0">O erro da subtração é <span class="mono">r × π</span>: cresce com o <b>nível</b> das taxas. O ponto é o seu cenário; a linha tracejada é um mundo de inflação de 2%.</p></div>
+    <div class="card what"><h3>🔍 O que está acontecendo</h3><div id="what2"></div></div>
+  </div>
+</section>
+
+<!-- ============ ABA 3: QUEM GANHA ============ -->
+<section class="tab" id="t3">
+  <div class="card">
+    <h2>Quem ganha: LTN ou NTN-B?</h2>
+    <p style="margin-top:0;color:var(--text-dim)">Usa as taxas montadas na aba ② (<span class="mono" id="t3rates"></span>). Sorteamos o IPCA realizado: um choque persistente de "regime" por trajetória (desvio σ) mais ruído mensal. A NTN-B vence se o IPCA realizado anualizado superar o breakeven.</p>
+    <div class="controls">
+      <div class="ctl"><label>Incerteza do IPCA σ <span class="v" id="vSig"></span></label><input type="range" id="sSig" min="0.25" max="3" step="0.05" value="1.2"><div class="hint">desvio-padrão do IPCA anualizado</div></div>
+      <div class="ctl"><label>Prazo <span class="v" id="vT"></span></label><input type="range" id="sT" min="1" max="5" step="1" value="2"><div class="hint">anos (12 meses = 252 DU)</div></div>
+      <div class="ctl"><button class="act pri" id="bPlay">▶ Animar 1 trajetória</button></div>
+      <div class="ctl"><button class="act" id="bNew">↻ Sortear 2.000 trajetórias</button></div>
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <div><canvas id="cPath" height="270" aria-label="Valor de R$ 1.000 na LTN e na NTN-B ao longo do tempo"></canvas>
+        <div class="legend"><span><i style="background:var(--ltn)"></i>LTN (pré)</span><span><i style="background:var(--ntnb)"></i>NTN-B (real + IPCA)</span></div></div>
+      <div><canvas id="cHist" height="270" aria-label="Distribuição do IPCA realizado"></canvas>
+        <div class="legend"><span><i style="background:var(--ltn)"></i>LTN vence</span><span><i style="background:var(--ntnb)"></i>NTN-B vence</span><span>▼ Focus · ◆ Breakeven</span></div></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">LTN vence</div><div class="n" id="stW1" style="color:var(--ltn)"></div><div class="s">das 2.000 trajetórias</div></div>
+      <div class="stat"><div class="k">NTN-B vence</div><div class="n" id="stW2" style="color:var(--ntnb)"></div><div class="s">das 2.000 trajetórias</div></div>
+      <div class="stat"><div class="k">IPCA realizado médio</div><div class="n" id="stMean"></div><div class="s" id="stMeanS"></div></div>
+      <div class="stat"><div class="k">LTN − NTN-B (média)</div><div class="n" id="stAdv"></div><div class="s">R$ por R$ 1.000 no vencimento</div></div>
+    </div>
+    <div class="what"><h3>🔍 O que está acontecendo</h3><div id="what3"></div></div>
+  </div>
+</section>
+
+<!-- ============ ABA 4: CENÁRIOS ============ -->
+<section class="tab" id="t4">
+  <h2>Seis situações de mesa — clique para ver o veredito</h2>
+  <div class="grid2" id="scenGrid"></div>
+</section>
+
+<!-- ============ ABA 5: TESTE ============ -->
+<section class="tab" id="t5">
+  <div class="card quiz">
+    <h2>Teste rápido <span class="score" id="score"></span></h2>
+    <div id="quiz"></div>
+  </div>
+</section>
+
+<footer>Operações de Tesouraria em Instituições Financeiras — FGV · Prof. José Américo · Modelo estilizado com parâmetros ilustrativos. Dados reais: ETTJ ANBIMA (02/10/2026) e Boletim Focus (14/09/2026).</footer>
+</div>
+
+<script>
+/* ===================== utilidades ===================== */
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue('--' + n).trim();
+// número no formato brasileiro
+const fmt = (x, d = 2) => x.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const pct = (x, d = 2) => fmt(x * 100, d) + '%';
+const pp = (x, d = 2) => (x >= 0 ? '+' : '−') + fmt(Math.abs(x * 100), d) + ' p.p.';
+
+/* ===================== modelo (conferido em Python) =====================
+   Entradas em fração a.a.:
+   pe  = expectativa de inflação; phi = prêmio de risco inflacionário
+   liq = distorção de liquidez (+ prefixado ilíquido; − NTN-B ilíquida)
+   r   = juro real "limpo"                                                  */
+function taxas(pe, phi, liq, r) {
+  const i = (1 + r) * (1 + pe) * (1 + phi) * (1 + Math.max(liq, 0)) - 1; // pré observada
+  const rb = (1 + r) * (1 + Math.max(-liq, 0)) - 1;                      // real observada
+  const bei = (1 + i) / (1 + rb) - 1;                                    // Fisher exato
+  const arit = i - rb;                                                   // subtração simples
+  const segE = pe;                                                       // parcela expectativa
+  const segP = (1 + pe) * (1 + phi) - 1 - pe;                            // parcela prêmio
+  const segL = bei - ((1 + pe) * (1 + phi) - 1);                         // parcela liquidez (pode ser < 0)
+  return { i, rb, bei, arit, erro: arit - bei, segE, segP, segL };
+}
+
+/* ===================== canvas com devicePixelRatio ===================== */
+function prep(cv) {
+  const dpr = window.devicePixelRatio || 1;
+  // altura-base guardada UMA vez: cv.height é reescrito abaixo (× dpr) e não pode ser relido
+  if (!cv.dataset.h) cv.dataset.h = cv.getAttribute('height');
+  const h = +cv.dataset.h;
+  cv.style.height = h + 'px';
+  cv.width = Math.round(cv.clientWidth * dpr);
+  cv.height = Math.round(h * dpr);
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, W: cv.clientWidth, H: h };
+}
+function txt(ctx, s, x, y, color, align = 'left', font = '11px "Source Code Pro", monospace') {
+  ctx.fillStyle = color; ctx.font = font; ctx.textAlign = align; ctx.fillText(s, x, y);
+}
+function niceStep(range, n = 5) {
+  const raw = range / n, p = Math.pow(10, Math.floor(Math.log10(raw)));
+  const m = raw / p; return (m < 1.5 ? 1 : m < 3 ? 2 : m < 7 ? 5 : 10) * p;
+}
+
+/* ===================== ABA 2 ===================== */
+const S = { pe: 0.042, phi: 0.011, liq: 0.0055, r: 0.0735 };
+const presets = {
+  br:      { pe: 4.2,  phi: 1.1,  liq: 0.55,  r: 7.35 },
+  pura:    { pe: 4.2,  phi: 0,    liq: 0,     r: 7.35 },
+  ntnb:    { pe: 4.2,  phi: 1.1,  liq: -1.0,  r: 7.35 },
+  eua:     { pe: 2.3,  phi: 0.2,  liq: -0.2,  r: 1.8 },
+  incerto: { pe: 5.0,  phi: 1.9,  liq: 0.3,   r: 8.0 }
+};
+function readSliders() {
+  S.pe = +$('sPe').value / 100; S.phi = +$('sPhi').value / 100;
+  S.liq = +$('sLiq').value / 100; S.r = +$('sR').value / 100;
+  $('vPe').textContent = pct(S.pe); $('vPhi').textContent = pct(S.phi);
+  $('vLiq').textContent = (S.liq > 0 ? '+' : '') + pct(S.liq); $('vR').textContent = pct(S.r);
+}
+
+function drawBar(t) {
+  const cv = $('cBar'); const { ctx, W, H } = prep(cv);
+  const mL = 18, mR = 18, top = 86, bh = 58;
+  const xmax = Math.ceil((Math.max(t.arit, t.segE + t.segP + Math.max(t.segL, 0)) * 100 + 0.6));
+  const X = v => mL + (v * 100 / xmax) * (W - mL - mR);
+  // grade e eixo
+  const step = niceStep(xmax, Math.max(3, Math.min(8, Math.floor(W / 90))));
+  ctx.strokeStyle = css('grid-dim'); ctx.lineWidth = 1;
+  for (let g = 0; g <= xmax + 1e-9; g += step) {
+    const x = X(g / 100); ctx.beginPath(); ctx.moveTo(x, top - 10); ctx.lineTo(x, top + bh + 10); ctx.stroke();
+    txt(ctx, fmt(g, step < 1 ? 1 : 0) + '%', x, top + bh + 26, css('text-dim'), 'center');
+  }
+  txt(ctx, 'Decomposição do breakeven (% a.a.)', mL, 14, css('text'), 'left', '600 13px "Public Sans", sans-serif');
+  // segmentos
+  const e = t.segE, p = t.segP, l = t.segL;
+  const seg = (a, b, col) => { ctx.fillStyle = col; ctx.fillRect(X(a), top, X(b) - X(a), bh); };
+  seg(0, e, css('exp'));
+  seg(e, e + p, css('prem'));
+  if (l >= 0) seg(e + p, e + p + l, css('liq'));
+  else { // liquidez negativa: hachura "devolvendo" parte da barra
+    const a = e + p + l, b = e + p;
+    ctx.save(); ctx.beginPath(); ctx.rect(X(a), top, X(b) - X(a), bh); ctx.clip();
+    ctx.fillStyle = 'rgba(255,255,255,.72)'; ctx.fillRect(X(a), top, X(b) - X(a), bh);
+    ctx.strokeStyle = css('liq'); ctx.lineWidth = 2;
+    for (let k = -bh; k < X(b) - X(a) + bh; k += 8) { ctx.beginPath(); ctx.moveTo(X(a) + k, top + bh); ctx.lineTo(X(a) + k + bh, top); ctx.stroke(); }
+    ctx.restore();
+    ctx.strokeStyle = css('liq'); ctx.lineWidth = 2; ctx.strokeRect(X(a), top, X(b) - X(a), bh);
+  }
+  // rótulos dentro dos segmentos (só se couber)
+  const inner = (a, b, s) => { if (X(b) - X(a) > 46) txt(ctx, s, (X(a) + X(b)) / 2, top + bh / 2 + 4, '#fff', 'center', '600 12px "Source Code Pro", monospace'); };
+  inner(0, e, pct(e));
+  if (l >= 0) { inner(e, e + p, '+' + fmt(p * 100)); if (l > 0) inner(e + p, e + p + l, '+' + fmt(l * 100)); }
+  else { const s = 'liquidez ' + fmt(l * 100) + ' p.p. (devolve)'; ctx.font = '600 11px "Source Code Pro", monospace'; const w = ctx.measureText(s).width;
+    txt(ctx, s, Math.min(Math.max((X(e + p + l) + X(e + p)) / 2 - w / 2, 2), W - w - 2), top + bh + 44, css('liq'), 'left', '600 11px "Source Code Pro", monospace'); }
+  // marcadores
+  const mark = (v, col, label, shape, y) => {
+    const x = X(v); ctx.fillStyle = col; ctx.beginPath();
+    if (shape === 'tri') { ctx.moveTo(x - 6, y - 10); ctx.lineTo(x + 6, y - 10); ctx.lineTo(x, y); }
+    else { ctx.moveTo(x, y - 12); ctx.lineTo(x + 6, y - 6); ctx.lineTo(x, y); ctx.lineTo(x - 6, y - 6); }
+    ctx.fill();
+    return x;
+  };
+  // Focus em cima, à esquerda; breakeven e subtração com rótulos que não se sobrepõem
+  const xf = mark(t.segE, css('exp'), '', 'tri', top - 4);
+  const xb = mark(t.bei, css('accent'), '', 'dia', top - 4);
+  ctx.setLineDash([4, 3]); ctx.strokeStyle = css('bad'); ctx.lineWidth = 2;
+  const xa = X(t.arit); ctx.beginPath(); ctx.moveTo(xa, top - 18); ctx.lineTo(xa, top + bh + 8); ctx.stroke(); ctx.setLineDash([]);
+  // rótulos dos marcadores em duas linhas para evitar colisão
+  const lab = [
+    { x: xf, s: 'Focus ' + pct(t.segE), c: css('exp') },
+    { x: xb, s: 'BE ' + pct(t.bei), c: css('accent') },
+    { x: xa, s: 'i − r ' + pct(t.arit), c: css('bad') }
+  ].sort((a, b) => a.x - b.x);
+  const rows = [46, 62, 30]; let lastEnd = [-1e9, -1e9, -1e9];
+  ctx.font = '600 11px "Source Code Pro", monospace';
+  lab.forEach(o => {
+    const w = ctx.measureText(o.s).width;
+    let x0 = Math.min(Math.max(o.x - w / 2, 2), W - w - 2);
+    let r = 0; while (r < 2 && x0 < lastEnd[r] + 6) r++;
+    lastEnd[r] = x0 + w; txt(ctx, o.s, x0, rows[r], o.c, 'left', '600 11px "Source Code Pro", monospace');
+  });
+  // prêmio total (BE − Focus)
+  const gap = t.bei - t.segE;
+  const f1 = 'BE − Focus = ' + pp(gap), f2 = '(prêmio ' + pp(t.segP) + ' · liquidez ' + pp(t.segL) + ')';
+  if (W > 560) txt(ctx, f1 + '  ' + f2, mL, H - 8, css('text-dim'), 'left', '12px "Source Code Pro", monospace');
+  else { txt(ctx, f1, mL, H - 24, css('text-dim'), 'left', '12px "Source Code Pro", monospace'); txt(ctx, f2, mL, H - 8, css('text-dim'), 'left', '12px "Source Code Pro", monospace'); }
+}
+
+function drawErr(t) {
+  const cv = $('cErr'); const { ctx, W, H } = prep(cv);
+  const mL = 46, mR = 14, mT = 30, mB = 36;
+  const rMax = 0.12, eMax = Math.max(0.006, Math.ceil(rMax * Math.max(t.bei, 0.02) * 1000 + 1) / 1000);
+  const X = v => mL + v / rMax * (W - mL - mR), Y = v => H - mB - v / eMax * (H - mT - mB);
+  ctx.strokeStyle = css('grid-dim'); ctx.lineWidth = 1;
+  for (let g = 0; g <= 12; g += 2) { const x = X(g / 100); ctx.beginPath(); ctx.moveTo(x, mT); ctx.lineTo(x, H - mB); ctx.stroke(); txt(ctx, g + '%', x, H - mB + 15, css('text-dim'), 'center'); }
+  const st = niceStep(eMax * 100, 4);
+  for (let g = 0; g <= eMax * 100 + 1e-9; g += st) { const y = Y(g / 100); ctx.beginPath(); ctx.moveTo(mL, y); ctx.lineTo(W - mR, y); ctx.stroke(); txt(ctx, fmt(g, 1), mL - 6, y + 4, css('text-dim'), 'right'); }
+  txt(ctx, 'Erro de i − r (p.p.) × juro real', mL, 16, css('text'), 'left', '600 13px "Public Sans", sans-serif');
+  txt(ctx, 'juro real', W - mR, H - 6, css('text-dim'), 'right');
+  // curva do cenário (erro = r × BE) e de referência (BE = 2%)
+  const line = (b, col, dash) => { ctx.setLineDash(dash); ctx.strokeStyle = col; ctx.lineWidth = 2.2; ctx.beginPath();
+    for (let k = 0; k <= 60; k++) { const r = rMax * k / 60; const y = Y(r * b); k ? ctx.lineTo(X(r), y) : ctx.moveTo(X(r), y); } ctx.stroke(); ctx.setLineDash([]); };
+  line(0.02, css('ref'), [5, 4]);
+  line(t.bei, css('accent'), []);
+  const rr = t.rb; ctx.fillStyle = css('bad'); ctx.beginPath(); ctx.arc(X(Math.min(rr, rMax)), Y(t.erro), 5.5, 0, 2 * Math.PI); ctx.fill();
+  txt(ctx, fmt(t.erro * 100) + ' p.p.', Math.min(X(Math.min(rr, rMax)) + 8, W - 70), Y(t.erro) - 8, css('bad'), 'left', '600 11px "Source Code Pro", monospace');
+}
+
+function render2() {
+  readSliders();
+  const t = taxas(S.pe, S.phi, S.liq, S.r);
+  $('stI').textContent = pct(t.i); $('stRb').textContent = pct(t.rb);
+  $('stBe').textContent = pct(t.bei); $('stBeS').textContent = 'Focus ' + pct(S.pe) + ' · dif. ' + pp(t.bei - S.pe);
+  $('stErr').textContent = pp(t.erro); $('stErrS').textContent = 'i − r = ' + pct(t.arit);
+  drawBar(t); drawErr(t);
+  // texto condicionado aos números
+  const gap = t.bei - S.pe, w = [];
+  if (Math.abs(gap) < 0.0005) w.push('<p>O breakeven praticamente <b>coincide com o Focus</b>: sem prêmio nem distorção de liquidez, aqui sim a inflação implícita é expectativa pura. Isso é o caso de livro-texto — raro na prática.</p>');
+  else if (gap > 0) w.push(`<p>O breakeven (<b>${pct(t.bei)}</b>) está <b>${fmt(gap * 100)} p.p. acima</b> do Focus. Quem lesse o número de tela como expectativa superestimaria a inflação esperada nessa magnitude.</p>`);
+  else w.push(`<p>O breakeven (<b>${pct(t.bei)}</b>) está <b>${fmt(-gap * 100)} p.p. abaixo</b> do Focus: a distorção de liquidez contra a NTN-B mais que compensou o prêmio de risco. Ler o número como expectativa levaria a <b>subestimar</b> a inflação.</p>`);
+  if (S.liq < -1e-9) w.push(`<p>A NTN-B está menos líquida: o mercado exige <b>${pct(t.rb)}</b> de juro real, acima do juro real "limpo" de ${pct(S.r)}. Taxa real maior ⇒ breakeven <b>menor</b> (${pp(t.segL)}).</p>`);
+  else if (S.liq > 1e-9) w.push(`<p>O prefixado está menos líquido: o adicional entra na taxa pré e <b>soma</b> ${pp(t.segL)} ao breakeven.</p>`);
+  if (S.phi > 0) w.push(`<p>O prêmio de risco de ${pct(S.phi)} acrescenta <b>${pp(t.segP)}</b> (um pouco mais que φ, porque a composição é multiplicativa).</p>`);
+  const big = Math.abs(t.erro) >= 0.0025;
+  w.push(`<p>A subtração simples dá <b>${pct(t.arit)}</b>, um erro de <b>${fmt(t.erro * 100)} p.p.</b> ${big ? '— relevante para decisão de mesa.' : '— pequeno neste nível de taxas.'}</p>`);
+  $('what2').innerHTML = w.join('');
+  $('t3rates').textContent = 'pré ' + pct(t.i) + ' · real ' + pct(t.rb) + ' · BE ' + pct(t.bei) + ' · Focus ' + pct(S.pe);
+  return t;
+}
+['sPe', 'sPhi', 'sLiq', 'sR'].forEach(id => $(id).addEventListener('input', () => { render2(); sim3(); }));
+$('preset').addEventListener('change', e => {
+  const p = presets[e.target.value];
+  $('sPe').value = p.pe; $('sPhi').value = p.phi; $('sLiq').value = p.liq; $('sR').value = p.r;
+  render2(); sim3();
+});
+
+/* ===================== ABA 3 ===================== */
+// gerador pseudoaleatório com semente (mulberry32) + Box-Muller
+function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function normal(u) { let a = 0, b = 0; while (a === 0) a = u(); while (b === 0) b = u(); return Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * b); }
+const NOISE_M = 0.0015; // ruído mensal do IPCA (0,15% a.m.)
+// uma trajetória mensal de IPCA: choque persistente u (regime) + ruído mensal
+function trajetoria(pe, sig, T, u) {
+  const choque = sig * normal(u), base = Math.pow(1 + Math.max(pe + choque, -0.5), 1 / 12) - 1;
+  const idx = [1]; for (let m = 1; m <= 12 * T; m++) idx.push(idx[m - 1] * (1 + base + NOISE_M * normal(u)));
+  return idx; // índice acumulado do IPCA, mês a mês
+}
+let seed = 20261003, MC = null, anim = null;
+function sim3() {
+  const sig = +$('sSig').value / 100, T = +$('sT').value;
+  $('vSig').textContent = pct(sig); $('vT').textContent = T + (T > 1 ? ' anos' : ' ano');
+  const t = taxas(S.pe, S.phi, S.liq, S.r), u = rng(seed), N = 2000;
+  const ann = new Float64Array(N); let w1 = 0, adv = 0, sum = 0;
+  for (let k = 0; k < N; k++) {
+    const idx = trajetoria(S.pe, sig, T, u), I = idx[idx.length - 1];
+    ann[k] = Math.pow(I, 1 / T) - 1; sum += ann[k];
+    const vF = 1000 * Math.pow(1 + t.i, T), vB = 1000 * Math.pow(1 + t.rb, T) * I;
+    if (vF > vB) w1++; adv += vF - vB;
+  }
+  MC = { ann, t, sig, T, w1: w1 / N, mean: sum / N, adv: adv / N };
+  $('stW1').textContent = fmt(MC.w1 * 100, 1) + '%'; $('stW2').textContent = fmt((1 - MC.w1) * 100, 1) + '%';
+  $('stMean').textContent = pct(MC.mean); $('stMeanS').textContent = 'Focus ' + pct(S.pe) + ' · BE ' + pct(t.bei);
+  $('stAdv').textContent = (MC.adv >= 0 ? '+' : '−') + 'R$ ' + fmt(Math.abs(MC.adv));
+  drawHist(); if (!anim) drawPath(null, 0);
+  // texto condicionado
+  const w = [], d = t.bei - S.pe;
+  if (Math.abs(MC.w1 - 0.5) < 0.04) w.push(`<p>Breakeven e expectativa estão próximos: cada título vence em cerca de metade das trajetórias (${fmt(MC.w1 * 100, 0)}% × ${fmt((1 - MC.w1) * 100, 0)}%). Nenhum dos dois é "melhor" — é uma aposta sobre o IPCA.</p>`);
+  else if (MC.w1 > 0.5) w.push(`<p>A LTN vence em <b>${fmt(MC.w1 * 100, 0)}%</b> das trajetórias e rende em média <b>R$ ${fmt(MC.adv)}</b> a mais por R$ 1.000. Não é "dinheiro grátis": é o <b>pagamento</b> que o prefixado recebe por carregar o risco de inflação${S.liq > 0 ? ' e por aceitar um papel menos líquido' : ''}. Nas trajetórias ruins (IPCA alto), ela perde.</p>`);
+  else w.push(`<p>A NTN-B vence em <b>${fmt((1 - MC.w1) * 100, 0)}%</b> das trajetórias: o breakeven está <b>abaixo</b> da expectativa (${pp(d)}), porque a NTN-B ilíquida está pagando juro real extra.</p>`);
+  w.push(`<p>Com σ = ${pct(sig)}, o IPCA realizado anualizado varia entre ~${pct(Math.max(S.pe - 2 * sig, -0.5), 1)} e ~${pct(S.pe + 2 * sig, 1)} (±2σ). ${sig >= 1.5 / 100 ? 'Incerteza alta: é nesse ambiente que o mercado cobra prêmio de risco maior para ficar no prefixado.' : 'Quanto maior σ, maior tende a ser o prêmio que o mercado cobra para ficar no prefixado — e mais trajetórias caem do lado da NTN-B.'}</p>`);
+  w.push(`<p>Por isso, para estimar a <b>expectativa</b> a partir do breakeven, subtraia o prêmio e a liquidez — ou compare com o Focus do mesmo horizonte.</p>`);
+  $('what3').innerHTML = w.join('');
+}
+function drawHist() {
+  const cv = $('cHist'); const { ctx, W, H } = prep(cv); if (!MC) return;
+  const mL = 36, mR = 12, mT = 44, mB = 34, { ann, t } = MC;
+  const lo = Math.min(S.pe - 3.2 * MC.sig, t.bei - 0.01), hi = Math.max(S.pe + 3.2 * MC.sig, t.bei + 0.01);
+  const nb = 36, bw = (hi - lo) / nb, cnt = new Array(nb).fill(0);
+  for (const a of ann) { const b = Math.floor((a - lo) / bw); if (b >= 0 && b < nb) cnt[b]++; }
+  const cmax = Math.max(1, ...cnt);
+  const X = v => mL + (v - lo) / (hi - lo) * (W - mL - mR), Y = c => H - mB - c / cmax * (H - mT - mB);
+  txt(ctx, 'IPCA realizado anualizado (2.000 trajetórias)', mL - 30, 16, css('text'), 'left', '600 13px "Public Sans", sans-serif');
+  ctx.strokeStyle = css('grid-dim'); ctx.lineWidth = 1;
+  const st = niceStep((hi - lo) * 100, Math.max(3, Math.floor(W / 80)));
+  for (let g = Math.ceil(lo * 100 / st) * st; g <= hi * 100; g += st) { const x = X(g / 100); ctx.beginPath(); ctx.moveTo(x, mT); ctx.lineTo(x, H - mB); ctx.stroke(); txt(ctx, fmt(g, st < 1 ? 1 : 0) + '%', x, H - mB + 15, css('text-dim'), 'center'); }
+  for (let b = 0; b < nb; b++) {
+    const a = lo + b * bw, mid = a + bw / 2;
+    ctx.fillStyle = mid < t.bei ? css('ltn') : css('ntnb');
+    ctx.fillRect(X(a) + 1, Y(cnt[b]), Math.max(1, X(a + bw) - X(a) - 2), H - mB - Y(cnt[b]));
+  }
+  // linhas Focus e BE com rótulos
+  const vl = (v, col, s, y, dash) => { const x = X(v); ctx.setLineDash(dash); ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, mT - 8); ctx.lineTo(x, H - mB); ctx.stroke(); ctx.setLineDash([]);
+    ctx.font = '600 11px "Source Code Pro", monospace'; const w = ctx.measureText(s).width; txt(ctx, s, Math.min(Math.max(x - w / 2, 2), W - w - 2), y, col, 'left', '600 11px "Source Code Pro", monospace'); };
+  const close = Math.abs(X(t.bei) - X(S.pe)) < 90;
+  vl(S.pe, css('exp'), '▼ Focus ' + pct(S.pe), close ? 30 : 34, [4, 3]);
+  vl(t.bei, css('accent'), '◆ BE ' + pct(t.bei), close ? 44 - 2 : 34, []);
+}
+function drawPath(idx, upto) {
+  const cv = $('cPath'); const { ctx, W, H } = prep(cv);
+  const T = +$('sT').value, M = 12 * T, t = taxas(S.pe, S.phi, S.liq, S.r), sig = +$('sSig').value / 100;
+  const mL = 52, mR = 14, mT = 30, mB = 34;
+  const vmaxF = 1000 * Math.pow(1 + t.i, T);
+  const vmax = 1000 * Math.pow(1 + t.rb, T) * Math.pow(1 + S.pe + 2.5 * sig, T);
+  const ymax = Math.max(vmaxF, vmax) * 1.02, ymin = 1000 * 0.98;
+  const X = m => mL + m / M * (W - mL - mR), Y = v => H - mB - (v - ymin) / (ymax - ymin) * (H - mT - mB);
+  txt(ctx, 'Valor de R$ 1.000 aplicado (R$)', mL - 44, 16, css('text'), 'left', '600 13px "Public Sans", sans-serif');
+  ctx.strokeStyle = css('grid-dim'); ctx.lineWidth = 1;
+  const st = niceStep(ymax - ymin, 4);
+  for (let g = Math.ceil(ymin / st) * st; g <= ymax; g += st) { const y = Y(g); ctx.beginPath(); ctx.moveTo(mL, y); ctx.lineTo(W - mR, y); ctx.stroke(); txt(ctx, fmt(g, 0), mL - 6, y + 4, css('text-dim'), 'right'); }
+  for (let a = 0; a <= T; a++) { const x = X(12 * a); ctx.beginPath(); ctx.moveTo(x, mT); ctx.lineTo(x, H - mB); ctx.stroke(); txt(ctx, a + 'a', x, H - mB + 15, css('text-dim'), 'center'); }
+  // LTN: trajetória determinística
+  ctx.strokeStyle = css('ltn'); ctx.lineWidth = 2.4; ctx.beginPath();
+  for (let m = 0; m <= M; m++) { const v = 1000 * Math.pow(1 + t.i, m / 12); m ? ctx.lineTo(X(m), Y(v)) : ctx.moveTo(X(m), Y(v)); } ctx.stroke();
+  // NTN-B "no breakeven" (tracejada) = mesma curva da LTN, por definição
+  if (!idx) { txt(ctx, 'Clique ▶ para sortear uma trajetória de IPCA', (mL + W) / 2, H / 2, css('text-dim'), 'center', '13px "Public Sans", sans-serif'); return; }
+  ctx.strokeStyle = css('ntnb'); ctx.lineWidth = 2.4; ctx.beginPath();
+  for (let m = 0; m <= upto; m++) { const v = 1000 * Math.pow(1 + t.rb, m / 12) * idx[m]; m ? ctx.lineTo(X(m), Y(v)) : ctx.moveTo(X(m), Y(v)); } ctx.stroke();
+  const vB = 1000 * Math.pow(1 + t.rb, upto / 12) * idx[upto], vF = 1000 * Math.pow(1 + t.i, upto / 12);
+  ctx.fillStyle = css('ntnb'); ctx.beginPath(); ctx.arc(X(upto), Y(vB), 4, 0, 2 * Math.PI); ctx.fill();
+  if (upto === M) {
+    const ip = Math.pow(idx[M], 1 / T) - 1, win = vF > vB ? 'LTN vence' : 'NTN-B vence';
+    const c = vF > vB ? css('ltn') : css('ntnb'), fo = '600 11px "Source Code Pro", monospace';
+    const a1 = `IPCA ${pct(ip)} a.a. vs BE ${pct(t.bei)}`, a2 = `→ ${win} (${vF > vB ? '+' : '−'}R$ ${fmt(Math.abs(vF - vB))})`;
+    if (W > 520) txt(ctx, a1 + ' ' + a2, mL, mT + 12, c, 'left', fo); else { txt(ctx, a1, mL, mT + 12, c, 'left', fo); txt(ctx, a2, mL, mT + 26, c, 'left', fo); }
+  }
+}
+$('bPlay').addEventListener('click', () => {
+  if (anim) cancelAnimationFrame(anim.raf);
+  const T = +$('sT').value, sig = +$('sSig').value / 100;
+  const idx = trajetoria(S.pe, sig, T, rng(Math.floor(Math.random() * 1e9)));
+  anim = { idx, m: 0, M: 12 * T, last: 0 };
+  const stepFn = ts => {
+    if (ts - anim.last > 1200 / anim.M * 1.4) { anim.m++; anim.last = ts; }
+    drawPath(anim.idx, Math.min(anim.m, anim.M));
+    if (anim.m < anim.M) anim.raf = requestAnimationFrame(stepFn); else { const keep = anim; anim = null; lastPath = keep; }
+  };
+  anim.raf = requestAnimationFrame(stepFn);
+});
+let lastPath = null;
+$('bNew').addEventListener('click', () => { seed++; sim3(); });
+['sSig', 'sT'].forEach(id => $(id).addEventListener('input', () => { lastPath = null; if (anim) { cancelAnimationFrame(anim.raf); anim = null; } sim3(); drawPath(null, 0); }));
+
+/* ===================== ABA 4: CENÁRIOS ===================== */
+const cenarios = [
+  { trap: 'Breakeven = expectativa', s: 'Comitê de ALCO', q: 'O tesoureiro abre o terminal, vê "inflação implícita 2 anos: 5,91%" e informa ao comitê que "o mercado espera IPCA de quase 6% ao ano".', ok: false,
+    a: 'O número mistura expectativa, prêmio de risco e liquidez. O Focus para o mesmo horizonte estava perto de 4,2% — a diferença (~1,7 p.p.) é sobretudo prêmio e liquidez. A frase correta seria "o mercado precifica 5,91% de breakeven".' },
+  { trap: 'Breakeven = expectativa', s: 'Relatório de research', q: 'O analista calcula breakeven − Focus = 1,7 p.p. e escreve: "o prêmio de risco inflacionário está em 1,7 p.p., recorde".', ok: false,
+    a: 'Breakeven − Focus ≈ prêmio de risco + distorção de liquidez (e ainda o viés da pesquisa). Atribuir tudo ao prêmio ignora, por exemplo, a NTN-F menos líquida em vértices longos. Para separar, é preciso modelo ou hipótese explícita.' },
+  { trap: 'Uso correto', s: 'Mesa de juros', q: 'A estrategista usa a ETTJ da ANBIMA (zero-cupom) no vértice de 504 DU, calcula por Fisher e compara com o Focus interpolado para o mesmo período.', ok: true,
+    a: 'Procedimento correto: curvas zero eliminam o problema dos cupons, Fisher elimina o erro da subtração, e o Focus do mesmo horizonte dá a melhor proxy pública da expectativa. A diferença deve ser lida como prêmio + liquidez.' },
+  { trap: 'Subtração aritmética', s: 'Trade de inflação', q: 'Um trader calcula 13,71% − 7,37% = 6,34% e vende inflação implícita achando que está 0,4 p.p. "cara" contra sua projeção de 5,95%.', ok: false,
+    a: 'Por Fisher, o breakeven é 5,91% — já abaixo da projeção dele. O erro da subtração (r × π ≈ 0,43 p.p.) inverteu o sinal do trade. No Brasil, com juro real alto, a subtração não é aproximação aceitável para decisão.' },
+  { trap: 'Subtração aritmética', s: 'Aula com dados dos EUA', q: 'Com Treasury nominal de 4,1% e TIPS de 1,9%, o professor faz a subtração (2,2%) e diz que a diferença para Fisher é desprezível.', ok: true,
+    a: 'Correto neste caso: o erro é r × π = 1,9% × 2,16% ≈ 0,04 p.p. O ponto é que a aproximação depende do nível das taxas — o mesmo atalho no Brasil erra dez vezes mais.' },
+  { trap: 'Prazos descasados', s: 'Planilha da tesouraria', q: 'Para "ganhar liquidez", a planilha calcula o breakeven com a LTN jan/2027 e a NTN-B ago/2030, os dois papéis mais negociados do dia.', ok: false,
+    a: 'Taxas de prazos diferentes não formam breakeven de horizonte nenhum: o resultado mistura a inclinação da curva real com a inflação. É preciso o mesmo prazo — interpolando a curva — e, com títulos com cupom, casar a duration.' }
+];
+$('scenGrid').innerHTML = cenarios.map((c, k) => `
+  <div class="card scen" data-k="${k}" tabindex="0" role="button" aria-expanded="false">
+    <div class="trap">${c.s}</div>
+    <div class="q">${c.q}</div>
+    <div class="more">Clique para ver o veredito →</div>
+    <div class="ans ${c.ok ? 'ok' : 'bad'}"><b>${c.ok ? '✓ Faz sentido' : '✗ Problema'} — ${c.trap}</b>${c.a}</div>
+  </div>`).join('');
+document.querySelectorAll('.scen').forEach(el => {
+  const tog = () => { el.classList.toggle('open'); el.setAttribute('aria-expanded', el.classList.contains('open')); el.querySelector('.more').textContent = el.classList.contains('open') ? 'Clique para recolher' : 'Clique para ver o veredito →'; };
+  el.addEventListener('click', tog); el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tog(); } });
+});
+
+/* ===================== ABA 5: TESTE ===================== */
+const quiz = [
+  { q: 'LTN de 1 ano a 14,00% a.a. e NTN-B Principal de 1 ano a 7,00% a.a. Qual a inflação implícita?', o: ['6,54%', '7,00%', '6,34%', '6,14%'], c: 0,
+    f: '(1,14 / 1,07) − 1 = 6,54%. 7,00% é a subtração simples, que superestima em r × π ≈ 0,46 p.p. 6,34% é a diferença em taxas contínuas, ln(1,14) − ln(1,07) — isso é ln(1 + π), não π. 6,14% divide a diferença pelo fator errado: (i − r)/(1 + i); o certo é (i − r)/(1 + r).' },
+  { q: 'Breakeven de 2 anos em 5,9% e Focus para o mesmo horizonte em 4,2%. A diferença de 1,7 p.p. representa:', o: ['Prêmio de risco inflacionário + distorções de liquidez', 'Apenas o prêmio de risco inflacionário', 'Que o mercado, na verdade, espera 5,9% e o Focus está desatualizado', 'O erro da equação de Fisher'], c: 0,
+    f: 'O breakeven embute expectativa, prêmio de risco e liquidez. Comparar com a expectativa do mesmo horizonte isola os dois últimos juntos — não dá para atribuir tudo ao prêmio sem um modelo. Fisher é a conta certa, não uma fonte de erro.' },
+  { q: 'Num estresse, a NTN-B fica bem menos líquida que a LTN e os investidores passam a exigir um adicional para carregá-la. Mantido o resto, o breakeven:', o: ['Cai', 'Depende do sinal do prêmio de risco inflacionário', 'Não muda, porque a expectativa não mudou', 'Sobe, porque liquidez sempre infla o breakeven'], c: 0,
+    f: 'O adicional entra na taxa real; com taxa real maior e pré igual, (1+i)/(1+r) − 1 diminui. A figura em que a liquidez sempre "soma" vale quando o papel ilíquido é o prefixado. O prêmio de risco não mudou, então não é ele que decide; a expectativa também não mudou, mas o número de tela sim.' },
+  { q: 'Com breakeven de 5,9%, um investidor escolhe a LTN em vez da NTN-B de mesmo prazo. Ele termina melhor se:', o: ['O IPCA realizado ficar abaixo de 5,9% a.a.', 'O IPCA realizado ficar acima de 5,9% a.a.', 'O IPCA realizado ficar abaixo do Focus', 'Sempre, porque a LTN tem taxa maior'], c: 0,
+    f: 'O breakeven é o ponto de indiferença. Abaixo dele, o prefixado vence. A referência não é o Focus: com prêmio positivo, a LTN pode ganhar mesmo com IPCA acima do Focus, desde que abaixo do breakeven. Taxa nominal maior não significa retorno real maior.' },
+  { q: 'Uma planilha calcula o "breakeven" com a LTN de 1 ano e a NTN-B de 5 anos. O número resultante:', o: ['Não é a inflação implícita de nenhum horizonte: mistura a inclinação da curva real com inflação', 'É a inflação média esperada para os próximos 3 anos', 'É válido se os dois títulos forem líquidos', 'Só tem o erro da subtração, que se corrige com Fisher'], c: 0,
+    f: 'Breakeven exige o mesmo prazo nos dois lados (e, com cupons, a mesma duration). Liquidez e Fisher não resolvem o descasamento: a taxa real de 5 anos traz o formato da curva real para dentro da conta.' }
+];
+let answered = 0, right = 0;
+function shuffleIdx(n, s) { const u = rng(s), a = [...Array(n).keys()]; for (let i = n - 1; i > 0; i--) { const j = Math.floor(u() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+$('quiz').innerHTML = quiz.map((x, k) => {
+  const ord = shuffleIdx(x.o.length, 77 + k * 13);
+  return `<div class="qq" data-k="${k}"><b>${k + 1}.</b> ${x.q}<div class="opts">${ord.map(j => `<button class="opt" data-j="${j}">${x.o[j]}</button>`).join('')}</div><div class="fb"></div></div>`;
+}).join('');
+document.querySelectorAll('.qq').forEach(el => {
+  const k = +el.dataset.k;
+  el.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => {
+    if (el.dataset.done) return; el.dataset.done = 1; answered++;
+    const j = +b.dataset.j, ok = j === quiz[k].c; if (ok) right++;
+    el.querySelectorAll('.opt').forEach(o => { if (+o.dataset.j === quiz[k].c) o.classList.add('right'); });
+    if (!ok) b.classList.add('wrong');
+    const fb = el.querySelector('.fb'); fb.innerHTML = (ok ? '<b style="color:var(--ok)">Isso mesmo.</b> ' : '<b style="color:var(--bad)">Não é essa.</b> ') + quiz[k].f; fb.classList.add('show');
+    $('score').textContent = `· ${right}/${answered}` + (answered === quiz.length ? ' — fim' : '');
+  }));
+});
+
+/* ===================== abas e redimensionamento ===================== */
+function renderVisible() {
+  const on = document.querySelector('section.tab.on').id;
+  if (on === 't2') render2();
+  if (on === 't3') { drawHist(); if (lastPath) drawPath(lastPath.idx, lastPath.M); else if (!anim) drawPath(null, 0); }
+}
+document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('nav.tabs button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('section.tab').forEach(s => s.classList.toggle('on', s.id === b.dataset.tab));
+  renderVisible();
+}));
+let rT; window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(renderVisible, 120); });
+render2(); sim3();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(renderVisible);
+</script>
+</body>
+</html>

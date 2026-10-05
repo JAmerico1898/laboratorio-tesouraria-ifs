@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FRA de DI1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,600;0,700;1,600&family=Figtree:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f6f3;
+  --bg2:#edebe6;
+  --bg-card:#ffffff;
+  --text:#1d1c26;
+  --text-dim:#53515f;
+  --accent:#3e3a92;      /* identidade: índigo = FRA / custo travado */
+  --ok:#276b2b;
+  --bad:#b83227;
+  --ref:#1f5fa8;
+  --warn:#8a5a00;        /* sem hedge */
+  --curta:#0d6b72;       /* ponta curta (T1) */
+  --longa:#3e3a92;       /* ponta longa (T2) */
+  --vert:#1d1c26;
+  --grid-dim:#e4e1da;
+  --accent-bg:#ecebf7;
+  --ok-bg:#e8f3e8;
+  --bad-bg:#fbeceb;
+  --warn-bg:#fbf1df;
+  --ref-bg:#e8eff9;
+  --accent-brd:#c9c6ea;
+  --ok-brd:#b9dbba;
+  --bad-brd:#efc2bd;
+  --warn-brd:#ecd29f;
+  --ref-brd:#bccfeb;
+  --serif:'Bitter',Georgia,serif;
+  --sans:'Figtree',system-ui,sans-serif;
+  --mono:'Fira Code',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 20px 40px}
+header .tag{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-brd);padding:3px 10px;border-radius:999px}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(28px,4.4vw,44px);line-height:1.1;margin:12px 0 8px}
+h1 em{color:var(--accent);font-style:italic;font-weight:600}
+.lead{color:var(--text-dim);max-width:800px;margin:0 0 18px;font-size:17px}
+h2{font-family:var(--serif);font-size:24px;margin:2px 0 10px;line-height:1.2}
+h3{font-family:var(--serif);font-size:18px;margin:0 0 6px}
+nav.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px}
+nav.tabs button{font-family:var(--sans);font-weight:600;font-size:14px;border:1px solid var(--accent-brd);background:var(--bg-card);color:var(--text);padding:8px 16px;border-radius:999px;cursor:pointer}
+nav.tabs button:hover{background:var(--accent-bg)}
+nav.tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+section.tab{display:none;animation:fade .45s ease}
+section.tab.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--bg-card);border-radius:14px;box-shadow:0 1px 2px rgba(20,20,40,.06),0 4px 16px rgba(20,20,40,.05);padding:20px;margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.grid2>*{min-width:0}
+.formula{font-family:var(--serif);font-size:clamp(17px,2.4vw,24px);text-align:center;background:var(--bg2);border-radius:12px;padding:16px 10px;margin:8px 0 12px;overflow-x:auto}
+.formula .sm{display:block;font-family:var(--sans);font-size:14px;color:var(--text-dim);margin-top:6px}
+.pair .ok,.pair .bad{border-radius:12px;padding:14px 16px;border:1px solid}
+.pair .ok{background:var(--ok-bg);border-color:var(--ok-brd)}
+.pair .bad{background:var(--bad-bg);border-color:var(--bad-brd)}
+.pair .ok b:first-child{color:var(--ok)}.pair .bad b:first-child{color:var(--bad)}
+.box{border-radius:12px;padding:14px 16px;border:1px solid;margin-top:12px}
+.box p{margin:6px 0}
+.box.idea{background:var(--accent-bg);border-color:var(--accent-brd)}
+.box.warn{background:var(--warn-bg);border-color:var(--warn-brd)}
+.box.world{background:var(--ref-bg);border-color:var(--ref-brd)}
+.mono{font-family:var(--mono)}
+.c-curta{color:var(--curta);font-weight:700}.c-longa{color:var(--longa);font-weight:700}
+.tblwrap{overflow-x:auto;margin-top:10px}
+table.t{border-collapse:collapse;width:100%;font-size:14px}
+table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);text-align:left;padding:7px 8px;border-bottom:2px solid var(--grid-dim)}
+table.t td{padding:7px 8px;border-bottom:1px solid var(--grid-dim);white-space:nowrap}
+table.t td.n{font-family:var(--mono);text-align:right}
+table.t th.n{text-align:right}
+table.t tr.tot td{font-weight:600;border-top:2px solid var(--grid-dim);border-bottom:none}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid}
+.pill.tom{color:var(--bad);border-color:var(--bad-brd);background:var(--bad-bg)}
+.pill.dad{color:var(--ok);border-color:var(--ok-brd);background:var(--ok-bg)}
+.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 18px;align-items:end}
+.ctl label{display:flex;justify-content:space-between;font-size:13px;font-weight:600;gap:6px}
+.ctl label .v{font-family:var(--mono);color:var(--accent)}
+.ctl input[type=range]{width:100%;accent-color:var(--accent)}
+.ctl .hint{font-size:12px;color:var(--text-dim);line-height:1.35;margin-top:2px}
+.ctl.t1 label .v{color:var(--curta)}.ctl.t1 input{accent-color:var(--curta)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+select{max-width:100%}
+select,button.act{font-family:var(--sans);font-size:14px;border-radius:10px;border:1px solid var(--accent-brd);background:var(--bg-card);color:var(--text);padding:7px 12px}
+button.act{cursor:pointer;font-weight:600}
+button.act.on{background:var(--accent);border-color:var(--accent);color:#fff}
+button.act.err.on{background:var(--bad);border-color:var(--bad);color:#fff}
+.seg{display:inline-flex;border:1px solid var(--accent-brd);border-radius:10px;overflow:hidden}
+.seg button{border:none;border-radius:0;font-family:var(--sans);font-size:14px;font-weight:600;padding:7px 12px;background:var(--bg-card);color:var(--text);cursor:pointer}
+.seg button.on{background:var(--accent);color:#fff}
+details.vt{margin-top:12px;background:var(--bg2);border-radius:10px;padding:8px 14px}
+details.vt summary{cursor:pointer;font-weight:600;font-size:14px}
+details.vt .controls{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:8px}
+canvas{width:100%;max-width:100%;display:block;border-radius:10px;background:var(--bg-card)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0}
+.stat{background:var(--bg2);border-radius:12px;padding:12px 14px;min-width:0}
+.stat .k{font-size:12px;color:var(--text-dim);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.stat .n{font-family:var(--mono);font-size:22px;font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat .s{font-size:12px;color:var(--text-dim)}
+.what{background:var(--accent-bg);border:1px solid var(--accent-brd);border-radius:12px;padding:14px 16px}
+.what p{margin:6px 0}
+.what.alert{background:var(--bad-bg);border-color:var(--bad-brd)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--text-dim);margin-top:8px}
+.legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:5px;vertical-align:3px}
+.legend i.dot{width:10px;height:10px;border-radius:50%;vertical-align:-1px}
+.legend i.blk{width:12px;height:12px;border-radius:3px;vertical-align:-1px}
+.scen{cursor:pointer;border:1px solid var(--grid-dim);transition:transform .2s,border-color .2s}
+.scen:hover{transform:translateY(-2px);border-color:var(--accent-brd)}
+.scen .trap{font-family:var(--mono);font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em}
+.scen .q{font-weight:600;margin-top:4px}
+.scen .ans{display:none;margin-top:10px;border-radius:10px;padding:10px 12px;font-size:14.5px}
+.scen.open .ans{display:block;animation:fade .4s}
+.scen .ans.ok{background:var(--ok-bg);border:1px solid var(--ok-brd)}
+.scen .ans.bad{background:var(--bad-bg);border:1px solid var(--bad-brd)}
+.scen .ans b:first-child{display:block;margin-bottom:2px}
+.scen .ans.ok b:first-child{color:var(--ok)}.scen .ans.bad b:first-child{color:var(--bad)}
+.scen .more{font-size:12px;color:var(--accent);font-weight:700;margin-top:8px}
+.quiz .qq{margin-bottom:18px}
+.quiz .opts{display:grid;gap:8px;margin-top:8px}
+.quiz .opt{text-align:left;font-family:var(--sans);font-size:15px;background:var(--bg-card);border:1px solid var(--grid-dim);border-radius:10px;padding:9px 12px;cursor:pointer;color:var(--text)}
+.quiz .opt:hover{border-color:var(--accent-brd);background:var(--accent-bg)}
+.quiz .opt.right{background:var(--ok-bg);border-color:var(--ok)}
+.quiz .opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.quiz .fb{display:none;margin-top:8px;font-size:14.5px;border-radius:10px;padding:10px 12px;background:var(--bg2)}
+.quiz .fb.show{display:block;animation:fade .4s}
+.score{font-family:var(--mono);color:var(--accent)}
+footer{margin-top:26px;padding-top:14px;border-top:1px solid var(--grid-dim);font-size:13px;color:var(--text-dim)}
+@media (max-width:900px){.controls,details.vt .controls{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.grid2,.controls,details.vt .controls{grid-template-columns:minmax(0,1fr)}.wrap{padding:20px 14px 32px}.stat .n{font-size:16px;white-space:normal;overflow:visible}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="tag">Tesouraria · Derivativos de juros · FRA de DI1</span>
+  <h1>FRA de DI1: <em>travar</em> um trecho da curva</h1>
+  <p class="lead">Duas pontas de DI1 em sentidos opostos, com quantidades que zeram o financeiro, deixam o operador exposto apenas à <b>taxa a termo</b> entre os dois vencimentos. Quem vai captar entre T1 e T2 compra o FRA e fixa hoje o custo daquele período.</p>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="on" data-tab="t1">① Conceito</button>
+  <button data-tab="t2">② Montar o FRA</button>
+  <button data-tab="t3">③ Chegou T1</button>
+  <button data-tab="t4">④ Cenários</button>
+  <button data-tab="t5">⑤ Teste</button>
+</nav>
+
+<!-- ============ ABA 1: CONCEITO ============ -->
+<section class="tab on" id="t1">
+  <div class="card">
+    <h2>O que se trava: a taxa a termo</h2>
+    <div class="formula">(1 + f)<sup>(du<sub>2</sub> − du<sub>1</sub>)/252</sup> = (1 + r<sub>2</sub>)<sup>du<sub>2</sub>/252</sup> / (1 + r<sub>1</sub>)<sup>du<sub>1</sub>/252</sup> = PU<sub>1</sub> / PU<sub>2</sub>
+      <span class="sm">r<sub>1</sub>, r<sub>2</sub>: taxas dos DI1 com vencimento em T1 e T2 (DU/252) · PU = 100.000 / (1 + r)<sup>du/252</sup> · f: taxa a termo de T1 a T2, efetiva ao ano</span></div>
+    <p>O FRA de DI1 é cotado diretamente em <b>f</b>. A B3 o registra como duas operações de DI1 — a <span class="c-curta">ponta curta (T1)</span> e a <span class="c-longa">ponta longa (T2)</span> — em sentidos opostos, com quantidades calibradas para que os <b>financeiros se anulem</b> (PU neutro):</p>
+    <div class="formula" style="font-size:clamp(16px,2.2vw,21px)">N<sub>1</sub> × PU<sub>1</sub> = N<sub>2</sub> × PU<sub>2</sub> &nbsp;⇒&nbsp; N<sub>1</sub> = N<sub>2</sub> × PU<sub>2</sub> / PU<sub>1</sub> = N<sub>2</sub> / (1 + f)<sup>(du<sub>2</sub> − du<sub>1</sub>)/252</sup></div>
+    <div class="tblwrap"><table class="t">
+      <tr><th>Quem</th><th>Posição no FRA</th><th>Ponta longa (T2)</th><th>Ponta curta (T1)</th><th>Ganha se f…</th></tr>
+      <tr><td>Captador (vai tomar recursos em T1)</td><td><b>Compra</b> FRA</td><td><span class="pill tom">tomado em taxa</span> = vendido em PU · N<sub>2</sub></td><td><span class="pill dad">dado em taxa</span> = comprado em PU · N<sub>1</sub></td><td>subir</td></tr>
+      <tr><td>Investidor (vai aplicar em T1)</td><td><b>Vende</b> FRA</td><td><span class="pill dad">dado em taxa</span> = comprado em PU · N<sub>2</sub></td><td><span class="pill tom">tomado em taxa</span> = vendido em PU · N<sub>1</sub></td><td>cair</td></tr>
+    </table></div>
+    <div class="grid2 pair" style="margin-top:14px">
+      <div class="ok"><b>✓ Certo</b><br>Com vértices de 252 DU a 12,80% e 504 DU a 12,90%, o FRA trava <b>13,0001%</b> para o ano entre T1 e T2: a razão entre os fatores, não a taxa de 504 DU. Para 1.000 contratos na ponta longa, a curta tem 1.000 × 78.453,46 / 88.652,48 ≈ <b>885</b> contratos.</div>
+      <div class="bad"><b>✗ Armadilha</b><br>"Comprar FRA é comprar DI1" (no DI1 se compra PU, e comprar PU é <i>dar</i> taxa); "uso 1.000 contratos nas duas pontas"; "travei 12,90%, a taxa de 504 DU". Os três erros mudam o resultado — veja as abas ② e ③.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Por que trava</h2>
+    <p>Em T1 a ponta curta vence a 100.000, e a longa passa a valer 100.000 / (1 + R)<sup>τ</sup>, em que R é a taxa de mercado para o período restante (τ = (du<sub>2</sub> − du<sub>1</sub>)/252 anos). Para quem comprou o FRA, o resultado acumulado é:</p>
+    <div class="formula" style="font-size:clamp(16px,2.2vw,21px)">Π<sub>T1</sub> = N<sub>2</sub> × 100.000 × [ 1/(1 + f)<sup>τ</sup> − 1/(1 + R)<sup>τ</sup> ]
+      <span class="sm">positivo se R &gt; f: a taxa subiu e o FRA paga a diferença</span></div>
+    <p>O captador precisa de X = N<sub>1</sub> × 100.000 em T1. Se usar o resultado do FRA para captar só X − Π à taxa R, deve em T2 exatamente <b>N<sub>2</sub> × 100.000 = X × (1 + f)<sup>τ</sup></b>. O custo efetivo é f, seja R qual for.</p>
+    <div class="box idea"><p>💡 <b>Por que PU neutro.</b> Até T1, os ajustes de cada ponta corrigem o preço anterior pelo CDI do dia. Com N<sub>1</sub>·PU<sub>1</sub> = N<sub>2</sub>·PU<sub>2</sub>, o termo do CDI aparece nas duas pontas com sinais opostos e se anula. A estrutura fica exposta apenas à a termo. Com quantidades iguais sobra uma posição líquida em CDI.</p></div>
+    <div class="box warn"><p>⚠️ <b>Convenção desta animação.</b> Mostramos só o resultado em T1, somando os ajustes sem o rendimento que cada ajuste teria entre o dia em que é pago e T1; esse efeito é pequeno e foi ignorado. Datas em DU, PU base 100.000, curva interpolada por flat-forward (CDI como vértice de 1 DU). Na B3 a quantidade da ponta curta sai do cálculo da bolsa, e o lote é múltiplo de 5 contratos.</p></div>
+    <div class="box world"><p>🌎 <b>Janela para o mundo real.</b> A B3 negocia a "Operação Estruturada de FRA de DI1 (PU Neutro)", código <b>DIF</b>, cotada em taxa a termo efetiva ao ano (base 252), com lote mínimo de 5 contratos. Pela curva pré da ANBIMA de <b>02/10/2026</b>, a termo de 1 ano daqui a 1 ano: <b>14,04%</b> (com 252 DU a 13,38% e 504 DU a 13,71%); de 2 anos daqui a 3 anos: <b>14,68%</b>. A a termo fica acima das duas taxas spot que a formam.</p></div>
+  </div>
+</section>
+
+<!-- ============ ABA 2: MONTAR O FRA ============ -->
+<section class="tab" id="t2">
+  <div class="card">
+    <h2>Escolha o trecho e monte as pontas</h2>
+    <div class="row" style="margin-top:0">
+      <div class="seg" role="group" aria-label="Lado"><button class="on" data-lado="1">Captador · compra FRA</button><button data-lado="-1">Investidor · vende FRA</button></div>
+      <label for="preset" style="font-size:14px;font-weight:600">Curva:</label>
+      <select id="preset">
+        <option value="colher">Fictícia — "colher"</option>
+        <option value="anbima">ANBIMA 02/10/2026</option>
+        <option value="positiva">Positivamente inclinada</option>
+        <option value="invertida">Invertida</option>
+      </select>
+      <button class="act err" id="bEq" aria-pressed="false">Erro: quantidades iguais</button>
+    </div>
+    <div class="controls" style="margin-top:14px">
+      <div class="ctl t1"><label>T1 · ponta curta <span class="v" id="vT1"></span></label><input type="range" id="sT1" min="21" max="1500" step="1" value="252"><div class="hint">início do período travado</div></div>
+      <div class="ctl"><label>T2 · ponta longa <span class="v" id="vT2"></span></label><input type="range" id="sT2" min="42" max="1764" step="1" value="504"><div class="hint">fim do período (mín. T1 + 21 DU)</div></div>
+      <div class="ctl"><label>Contratos na ponta longa <span class="v" id="vN2"></span></label><input type="range" id="sN2" min="5" max="5000" step="5" value="1000"><div class="hint">múltiplos de 5 (lote B3)</div></div>
+    </div>
+    <details class="vt"><summary>Ajustar os vértices da curva</summary><div class="controls" id="vertCtl"></div></details>
+    <div class="stats">
+      <div class="stat"><div class="k">Taxa a termo travada</div><div class="n" id="s2f" style="color:var(--accent)"></div><div class="s" id="s2fS"></div></div>
+      <div class="stat"><div class="k">Spot T1 · spot T2</div><div class="n" id="s2r"></div><div class="s">não são o que se trava</div></div>
+      <div class="stat"><div class="k">Contratos na curta</div><div class="n" id="s2n1" style="color:var(--curta)"></div><div class="s" id="s2n1S"></div></div>
+      <div class="stat"><div class="k">Financeiro líquido</div><div class="n" id="s2liq"></div><div class="s" id="s2liqS"></div></div>
+    </div>
+    <div class="tblwrap"><table class="t" id="tPontas"></table></div>
+    <canvas id="cCurva" height="290" style="margin-top:14px" aria-label="Curva com o trecho travado"></canvas>
+    <div class="legend"><span><i style="background:var(--text-dim)"></i>curva spot (flat-forward)</span><span><i class="dot" style="background:var(--curta)"></i>T1</span><span><i class="dot" style="background:var(--longa)"></i>T2</span><span><i class="blk" style="background:var(--accent-bg);border:2px solid var(--accent)"></i>a termo travada</span></div>
+    <div class="what" id="whatBox2" style="margin-top:14px"><h3>🔍 O que está acontecendo</h3><div id="what2"></div></div>
+  </div>
+</section>
+
+<!-- ============ ABA 3: CHEGOU T1 ============ -->
+<section class="tab" id="t3">
+  <div class="card">
+    <h2>Chegou T1: o custo ficou travado?</h2>
+    <p style="margin-top:0;color:var(--text-dim)">Usa o FRA montado na aba ② (<span class="mono" id="t3fra"></span>). Escolha a taxa de mercado em T1 para o período T1 → T2 e quanto o CDI até T1 se afastou do que a curva previa.</p>
+    <div class="controls">
+      <div class="ctl"><label>Taxa em T1 para T1→T2 <span class="v" id="vR"></span></label><input type="range" id="sR" min="-5" max="5" step="0.05" value="2"><div class="hint" id="hR"></div></div>
+      <div class="ctl"><label>CDI até T1: desvio do previsto <span class="v" id="vD"></span></label><input type="range" id="sD" min="-3" max="3" step="0.05" value="0"><div class="hint">com PU neutro, não deve importar</div></div>
+      <div class="ctl"><div class="hint" id="hX" style="font-size:13px"></div></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">Resultado do FRA em T1</div><div class="n" id="s3pi"></div><div class="s" id="s3piS"></div></div>
+      <div class="stat"><div class="k" id="k3sem">Custo sem hedge</div><div class="n" id="s3sem" style="color:var(--warn)"></div><div class="s">taxa de mercado em T1</div></div>
+      <div class="stat"><div class="k" id="k3com">Custo efetivo com FRA</div><div class="n" id="s3com" style="color:var(--accent)"></div><div class="s" id="s3comS"></div></div>
+      <div class="stat"><div class="k" id="k3t2">Pago em T2</div><div class="n" id="s3t2"></div><div class="s" id="s3t2S"></div></div>
+    </div>
+    <div class="grid2">
+      <div><canvas id="cCusto" height="280" aria-label="Custo efetivo em função da taxa em T1"></canvas>
+        <div class="legend"><span><i style="background:var(--warn)"></i>sem hedge</span><span><i style="background:var(--accent)"></i>com FRA</span><span class="eq-only"><i style="background:var(--bad)"></i>com FRA de quantidades iguais</span></div></div>
+      <div><canvas id="cBarras" height="280" aria-label="Valores em T1 e T2"></canvas>
+        <div class="legend"><span><i class="blk" style="background:var(--warn)"></i>sem hedge</span><span><i class="blk" style="background:var(--accent)"></i>com FRA</span></div></div>
+    </div>
+    <div class="what" id="whatBox3" style="margin-top:14px"><h3>🔍 O que está acontecendo</h3><div id="what3"></div></div>
+  </div>
+</section>
+
+<!-- ============ ABA 4: CENÁRIOS ============ -->
+<section class="tab" id="t4">
+  <h2>Seis situações de mesa — clique para ver o veredito</h2>
+  <div class="grid2" id="scenGrid"></div>
+</section>
+
+<!-- ============ ABA 5: TESTE ============ -->
+<section class="tab" id="t5">
+  <div class="card quiz"><h2>Teste rápido <span class="score" id="score"></span></h2><div id="quiz"></div></div>
+</section>
+
+<footer>Operações de Tesouraria em Instituições Financeiras — FGV · Prof. José Américo · Curvas fictícias com ordens de grandeza realistas; resultado em T1 sem reinvestimento dos ajustes diários. Dados reais: produto DIF (B3) e ETTJ pré ANBIMA (02/10/2026).</footer>
+</div>
+
+<script>
+/* ===================== utilidades ===================== */
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue('--' + n).trim();
+const fmt = (x, d = 2) => x.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const pct = (x, d = 2) => fmt(x * 100, d) + '%';
+const pp = (x, d = 2) => (x >= 0 ? '+' : '−') + fmt(Math.abs(x * 100), d) + ' p.p.';
+const brl = (x, d = 0) => (x < 0 ? '−' : '') + 'R$ ' + fmt(Math.abs(x), d);
+const sbrl = (x, d = 0) => (x >= 0 ? '+' : '−') + 'R$ ' + fmt(Math.abs(x), d);
+// R$ compacto: mil / mi
+const brlC = x => { const a = Math.abs(x), s = x < 0 ? '−' : ''; return a >= 1e6 ? s + 'R$ ' + fmt(a / 1e6, 2) + ' mi' : a >= 1e3 ? s + 'R$ ' + fmt(a / 1e3, 1) + ' mil' : s + 'R$ ' + fmt(a, 0); };
+const sbrlC = x => (x >= 0 ? '+' : '') + brlC(x);
+
+/* ===================== curva flat-forward (a mesma da animação anterior) ===================== */
+const fator = (r, du) => Math.pow(1 + r, du / 252);
+function ffTaxa(du, V) {
+  if (du <= V[0][0]) return V[0][1];
+  for (let k = 0; k < V.length - 1; k++) {
+    const [d1, r1] = V[k], [d2, r2] = V[k + 1];
+    if (du <= d2) { const f1 = fator(r1, d1), f2 = fator(r2, d2); return Math.pow(f1 * Math.pow(f2 / f1, (du - d1) / (d2 - d1)), 252 / du) - 1; }
+  }
+  const n = V.length, [d1, r1] = V[n - 2], [d2, r2] = V[n - 1];
+  const fwd = Math.pow(fator(r2, d2) / fator(r1, d1), 252 / (d2 - d1)) - 1;
+  return Math.pow(fator(r2, d2) * Math.pow(1 + fwd, (du - d2) / 252), 252 / du) - 1;
+}
+
+/* ===================== FRA de DI1 (conferido em Python) ===================== */
+const PUB = 100000;                         // PU no vencimento do DI1
+// monta o FRA entre T1 e T2 com N2 contratos na ponta longa
+function montaFRA(T1, T2, N2, V, iguais) {
+  const r1 = ffTaxa(T1, V), r2 = ffTaxa(T2, V);
+  const PU1 = PUB / fator(r1, T1), PU2 = PUB / fator(r2, T2);
+  const tau = (T2 - T1) / 252;
+  const f = Math.pow(PU1 / PU2, 1 / tau) - 1;     // taxa a termo
+  const N1neutro = N2 * PU2 / PU1;                // PU neutro
+  const N1 = iguais ? N2 : N1neutro;
+  return { T1, T2, r1, r2, PU1, PU2, tau, f, N1, N1neutro, N2 };
+}
+// resultado acumulado em T1 para quem COMPROU o FRA (tomado em taxa), sem reinvestir ajustes:
+//   ponta curta comprada em PU:  N1 × (100.000 − PU1 × C)
+//   ponta longa vendida em PU:   N2 × (PU2 × C − PU2(T1))
+// C = CDI acumulado até T1. Com PU neutro os termos em C se cancelam.
+function resultadoT1(F, R, desvioCDI) {
+  const C = Math.pow(1 + F.r1 + desvioCDI, F.T1 / 252);
+  const PU2T1 = PUB / Math.pow(1 + R, F.tau);
+  return F.N1 * (PUB - F.PU1 * C) + F.N2 * (F.PU2 * C - PU2T1);
+}
+// custo (captador) ou retorno (investidor) efetivo de X = N1neutro × 100.000 entre T1 e T2
+function efetivo(F, R, Pi, lado) {
+  const X = F.N1neutro * PUB;
+  const fim = lado > 0 ? (X - Pi) * Math.pow(1 + R, F.tau)     // captador usa o ganho para captar menos
+                       : (X + Pi) * Math.pow(1 + R, F.tau);    // investidor aplica X mais o resultado
+  return { X, fim, taxa: Math.pow(fim / X, 1 / F.tau) - 1, semHedge: X * Math.pow(1 + R, F.tau) };
+}
+
+/* ===================== estado ===================== */
+const DUS = [63, 126, 252, 504, 756, 1260];
+const presets = {
+  colher:    { cdi: 13.65, r: [13.40, 13.10, 12.80, 12.90, 13.20, 13.50] },
+  anbima:    { cdi: 13.65, r: [13.3565, 13.3089, 13.3811, 13.7085, 13.9820, 14.2600] },
+  positiva:  { cdi: 11.15, r: [11.40, 11.70, 12.20, 12.90, 13.40, 13.90] },
+  invertida: { cdi: 14.90, r: [14.70, 14.30, 13.60, 12.80, 12.40, 12.10] }
+};
+const S = { lado: 1, iguais: false };
+(function () {
+  let h = `<div class="ctl"><label>CDI · 1 DU <span class="v" id="vCdi"></span></label><input type="range" id="sCdi" min="8" max="17" step="0.05" value="13.65"></div>`;
+  DUS.forEach((d, k) => h += `<div class="ctl"><label>DI1 · ${fmt(d, 0)} DU <span class="v" id="vV${k}"></span></label><input type="range" id="sV${k}" min="8" max="17" step="0.05" value="${presets.colher.r[k]}"></div>`);
+  $('vertCtl').innerHTML = h;
+})();
+function curva() { const V = [[1, +$('sCdi').value / 100]]; DUS.forEach((d, k) => V.push([d, +$('sV' + k).value / 100])); return V; }
+function lerFRA() {
+  let T1 = +$('sT1').value, T2 = +$('sT2').value;
+  if (T2 < T1 + 21) { T2 = Math.min(1764, T1 + 21); $('sT2').value = T2; }
+  const N2 = +$('sN2').value;
+  $('vT1').textContent = fmt(T1, 0) + ' DU'; $('vT2').textContent = fmt(T2, 0) + ' DU'; $('vN2').textContent = fmt(N2, 0);
+  $('vCdi').textContent = pct(+$('sCdi').value / 100); DUS.forEach((d, k) => $('vV' + k).textContent = pct(+$('sV' + k).value / 100));
+  const V = curva(); return { V, F: montaFRA(T1, T2, N2, V, S.iguais) };
+}
+
+/* ===================== canvas (altura-base guardada uma vez) ===================== */
+function prep(cv) {
+  const dpr = window.devicePixelRatio || 1;
+  if (!cv.dataset.h) cv.dataset.h = cv.getAttribute('height');
+  const h = +cv.dataset.h; cv.style.height = h + 'px';
+  cv.width = Math.round(cv.clientWidth * dpr); cv.height = Math.round(h * dpr);
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, W: cv.clientWidth, H: h };
+}
+function txt(ctx, s, x, y, color, align = 'left', font = '11px "Fira Code", monospace') { ctx.fillStyle = color; ctx.font = font; ctx.textAlign = align; ctx.fillText(s, x, y); }
+function niceStep(range, n = 5) { const raw = range / n, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p; return (m < 1.5 ? 1 : m < 3 ? 2 : m < 7 ? 5 : 10) * p; }
+function linha(ctx, pts, col, w = 2.2, dash = []) { ctx.setLineDash(dash); ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke(); ctx.setLineDash([]); }
+function ponto(ctx, x, y, col, r = 5) { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke(); }
+// rótulo com fundo branco, sem sair do canvas
+function etiqueta(ctx, s, x, y, col, W) {
+  ctx.font = '500 11px "Fira Code", monospace'; const w = ctx.measureText(s).width, x0 = Math.min(Math.max(x - w / 2, 4), W - w - 4);
+  ctx.fillStyle = 'rgba(255,255,255,.93)'; ctx.fillRect(x0 - 4, y - 12, w + 8, 17); txt(ctx, s, x0, y, col, 'left', '500 11px "Fira Code", monospace');
+}
+function grade(ctx, W, H, m, xr, yr, yfmt, xfmt, xlab) {
+  const X = v => m.l + (v - xr[0]) / (xr[1] - xr[0]) * (W - m.l - m.r), Y = v => H - m.b - (v - yr[0]) / (yr[1] - yr[0]) * (H - m.t - m.b);
+  ctx.strokeStyle = css('grid-dim'); ctx.lineWidth = 1;
+  const sy = niceStep(yr[1] - yr[0], 5);
+  for (let g = Math.ceil(yr[0] / sy) * sy; g <= yr[1] + 1e-12; g += sy) { const y = Y(g); ctx.beginPath(); ctx.moveTo(m.l, y); ctx.lineTo(W - m.r, y); ctx.stroke(); txt(ctx, yfmt(g, sy), m.l - 6, y + 4, css('text-dim'), 'right'); }
+  const sx = niceStep(xr[1] - xr[0], Math.max(3, Math.floor((W - m.l - m.r) / 80)));
+  for (let g = Math.ceil(xr[0] / sx) * sx; g <= xr[1] + 1e-12; g += sx) { const x = X(g); ctx.beginPath(); ctx.moveTo(x, m.t); ctx.lineTo(x, H - m.b); ctx.stroke(); txt(ctx, xfmt(g, sx), x, H - m.b + 15, css('text-dim'), 'center'); }
+  txt(ctx, xlab, W - m.r, H - 4, css('text-dim'), 'right');
+  return { X, Y };
+}
+const yPct = (g, s) => fmt(g * 100, s * 100 < 0.1 ? 2 : 1) + '%';
+
+/* ===================== ABA 2 ===================== */
+function drawCurva(V, F) {
+  const { ctx, W, H } = prep($('cCurva')), m = { l: 52, r: 16, t: 34, b: 34 };
+  const xmax = Math.max(F.T2 + 150, 1300);
+  const ys = [F.f]; for (let d = 1; d <= xmax; d += 5) ys.push(ffTaxa(d, V));
+  let lo = Math.min(...ys), hi = Math.max(...ys), pad = Math.max(0.002, (hi - lo) * 0.18); lo -= pad; hi += pad;
+  const { X, Y } = grade(ctx, W, H, m, [0, xmax], [lo, hi], yPct, g => fmt(g, 0), 'DU');
+  txt(ctx, 'Curva pré e o trecho travado (% a.a.)', 8, 16, css('text'), 'left', '700 13px Figtree, sans-serif');
+  // faixa do trecho travado, com a a termo como patamar
+  const x1 = X(F.T1), x2 = X(F.T2), yf = Y(F.f);
+  ctx.fillStyle = css('accent-bg'); ctx.fillRect(x1, m.t, x2 - x1, H - m.t - m.b);
+  linha(ctx, [[x1, yf], [x2, yf]], css('accent'), 3.4);
+  // curva spot
+  const pts = []; for (let d = 1; d <= xmax; d += 2) pts.push([X(d), Y(ffTaxa(d, V))]);
+  linha(ctx, pts, css('text-dim'), 2.2);
+  V.forEach(([d, r]) => { if (d > 1) { ctx.fillStyle = css('vert'); ctx.beginPath(); ctx.arc(X(d), Y(r), 3, 0, 7); ctx.fill(); } });
+  ponto(ctx, x1, Y(F.r1), css('curta'), 6); ponto(ctx, x2, Y(F.r2), css('longa'), 6);
+  etiqueta(ctx, 'a termo ' + pct(F.f, 3), (x1 + x2) / 2, yf - 9 < m.t + 14 ? yf + 20 : yf - 9, css('accent'), W);
+  etiqueta(ctx, 'T1 ' + pct(F.r1), x1, Math.min(H - m.b - 6, Y(F.r1) + 22), css('curta'), W);
+  etiqueta(ctx, 'T2 ' + pct(F.r2), x2, Math.min(H - m.b - 6, Y(F.r2) + 22), css('longa'), W);
+}
+function render2() {
+  const { V, F } = lerFRA(), L = S.lado;
+  $('s2f').textContent = pct(F.f, 4);
+  $('s2fS').textContent = `de ${fmt(F.T1, 0)} a ${fmt(F.T2, 0)} DU (${fmt(F.tau, 2)} ano${F.tau >= 2 ? 's' : ''})`;
+  $('s2r').textContent = pct(F.r1) + ' · ' + pct(F.r2);
+  $('s2n1').textContent = fmt(F.N1, 1); $('s2n1S').textContent = S.iguais ? `PU neutro seria ${fmt(F.N1neutro, 1)}` : `≈ ${fmt(Math.round(F.N1neutro), 0)} na prática`;
+  const liq = F.N1 * F.PU1 - F.N2 * F.PU2;
+  $('s2liq').textContent = Math.abs(liq) < 0.5 ? 'R$ 0' : brlC(liq); $('s2liq').style.color = Math.abs(liq) < 0.5 ? css('ok') : css('bad');
+  $('s2liqS').textContent = Math.abs(liq) < 0.5 ? 'PU neutro' : 'sobra posição em CDI';
+  // tabela das pontas: captador compra FRA = tomado na longa / dado na curta
+  const longaTom = L > 0;
+  const lin = (nome, cls, du, r, tom, N, PU) => `<tr><td><span class="${cls}">${nome}</span></td><td class="n">${fmt(du, 0)}</td><td class="n">${pct(r, 4)}</td><td><span class="pill ${tom ? 'tom' : 'dad'}">${tom ? 'tomado em taxa' : 'dado em taxa'}</span></td><td>${tom ? 'vendido' : 'comprado'} em PU</td><td class="n">${fmt(N, 1)}</td><td class="n">${fmt(PU, 2)}</td><td class="n">${brlC(N * PU)}</td></tr>`;
+  $('tPontas').innerHTML = `<tr><th>Ponta</th><th class="n">DU</th><th class="n">Taxa</th><th>Em taxa</th><th>Em PU</th><th class="n">Contratos</th><th class="n">PU</th><th class="n">Financeiro</th></tr>`
+    + lin('DI1 T1 · curta', 'c-curta', F.T1, F.r1, !longaTom, F.N1, F.PU1)
+    + lin('DI1 T2 · longa', 'c-longa', F.T2, F.r2, longaTom, F.N2, F.PU2)
+    + `<tr class="tot"><td colspan="7">Diferença de financeiro (curta − longa)</td><td class="n" style="color:${Math.abs(liq) < 0.5 ? css('ok') : css('bad')}">${Math.abs(liq) < 0.5 ? 'R$ 0' : brlC(liq)}</td></tr>`;
+  drawCurva(V, F);
+  // texto condicionado aos números
+  const w = [], ex = F.N1neutro * PUB;
+  w.push(`<p>${L > 0 ? 'O captador <b>compra</b> o FRA: fica <b>tomado em taxa</b> (vendido em PU) no DI1 de T2 e <b>dado</b> (comprado em PU) no de T1.' : 'O investidor <b>vende</b> o FRA: fica <b>dado em taxa</b> (comprado em PU) no DI1 de T2 e <b>tomado</b> (vendido em PU) no de T1.'} Trava <b>${pct(F.f, 4)}</b> para o período de ${fmt(F.T1, 0)} a ${fmt(F.T2, 0)} DU, sobre ${brlC(ex)} em T1.</p>`);
+  const dif = F.f - F.r2;
+  w.push(`<p>Repare: a taxa travada não é a de T2 (${pct(F.r2)}), mas a a termo, ${Math.abs(dif) < 0.0001 ? 'que aqui praticamente coincide com ela (curva plana nesse trecho)' : `${fmt(Math.abs(dif) * 100, 2)} p.p. ${dif > 0 ? 'acima' : 'abaixo'} — porque a curva ${dif > 0 ? 'sobe' : 'cai'} entre T1 e T2`}.</p>`);
+  if (S.iguais) w.push(`<p><b>Erro ativado:</b> com ${fmt(F.N2, 0)} contratos nas duas pontas, o financeiro da curta supera o da longa em ${brlC(liq)}. Essa diferença fica ${L > 0 ? 'aplicada' : 'tomada'} em CDI até T1: se o CDI realizado se afastar do previsto, o resultado muda (veja a aba ③ com o desvio de CDI).</p>`);
+  else w.push(`<p>Com ${fmt(F.N1, 1)} contratos na curta, os financeiros se igualam (${brlC(F.N2 * F.PU2)} em cada ponta) e a estrutura não tem exposição ao CDI até T1.</p>`);
+  $('what2').innerHTML = w.join(''); $('whatBox2').classList.toggle('alert', S.iguais);
+  $('t3fra').textContent = `${L > 0 ? 'compra' : 'venda'} de FRA ${fmt(F.T1, 0)}→${fmt(F.T2, 0)} DU a ${pct(F.f, 3)} · ${fmt(F.N2, 0)} × ${fmt(F.N1, 1)} contratos${S.iguais ? ' (quantidades iguais)' : ''}`;
+}
+
+/* ===================== ABA 3 ===================== */
+function calc3() {
+  const { F } = lerFRA(), L = S.lado, dev = +$('sR').value / 100, dCDI = +$('sD').value / 100, R = F.f + dev;
+  const Pi = L * resultadoT1(F, R, dCDI), E = efetivo(F, R, Pi, L);
+  return { F, L, R, dev, dCDI, Pi, E };
+}
+function render3() {
+  const { F, L, R, dev, dCDI, Pi, E } = calc3();
+  $('vR').textContent = pct(R); $('hR').textContent = `a termo travada ${pct(F.f, 3)} · desvio ${pp(dev)}`;
+  $('vD').textContent = pp(dCDI);
+  $('hX').innerHTML = `${L > 0 ? 'Precisa captar' : 'Vai aplicar'} <b>${brlC(E.X)}</b> em T1, por ${fmt(F.tau, 2)} ano${F.tau >= 2 ? 's' : ''}.`;
+  $('s3pi').textContent = sbrlC(Pi); $('s3pi').style.color = Pi >= 0 ? css('ok') : css('bad');
+  $('s3piS').textContent = Pi >= 0 ? 'recebido em ajustes' : 'pago em ajustes';
+  $('k3sem').textContent = L > 0 ? 'Custo sem hedge' : 'Retorno sem hedge';
+  $('k3com').textContent = L > 0 ? 'Custo efetivo com FRA' : 'Retorno efetivo com FRA';
+  $('k3t2').textContent = L > 0 ? 'Pago em T2' : 'Recebido em T2';
+  $('s3sem').textContent = pct(R, 3); $('s3com').textContent = pct(E.taxa, 4);
+  const err = Math.abs(E.taxa - F.f);
+  $('s3comS').textContent = err < 5e-7 ? '= a termo travada' : `${pp(E.taxa - F.f, 3)} vs a termo`;
+  $('s3t2').textContent = brlC(E.fim); $('s3t2S').textContent = `sem hedge: ${brlC(E.semHedge)}`;
+  drawCusto(F, L, R, dCDI); drawBarras(E, Pi, L);
+  // texto condicionado
+  const w = [];
+  if (Math.abs(dev) < 0.0001) w.push(`<p>A taxa em T1 coincidiu com a a termo: o FRA não gera resultado e o hedge não fez diferença. Foi o único cenário em que ficar sem hedge custaria o mesmo.</p>`);
+  else if (L > 0) w.push(dev > 0
+    ? `<p>A taxa <b>subiu</b> para ${pct(R)}: sem hedge, o captador pagaria ${pct(R)}. O FRA rendeu <b>${brlC(Pi)}</b> em ajustes; com esse dinheiro ele capta só ${brlC(E.X - Pi)} a ${pct(R)} e deve ${brlC(E.fim)} em T2 — custo efetivo de <b>${pct(E.taxa, 4)}</b>.</p>`
+    : `<p>A taxa <b>caiu</b> para ${pct(R)}: sem hedge, o captador pagaria só ${pct(R)}. O FRA custou <b>${brlC(-Pi)}</b> em ajustes, que ele precisa captar a mais (${brlC(E.X - Pi)}); o custo efetivo continua <b>${pct(E.taxa, 4)}</b>. Hedge também abre mão do ganho — é trava, não aposta.</p>`);
+  else w.push(dev < 0
+    ? `<p>A taxa <b>caiu</b> para ${pct(R)}: sem hedge, o investidor aplicaria a ${pct(R)}. O FRA vendido rendeu <b>${brlC(Pi)}</b>; aplicando ${brlC(E.X + Pi)} a ${pct(R)}, ele recebe ${brlC(E.fim)} em T2 — retorno efetivo de <b>${pct(E.taxa, 4)}</b>.</p>`
+    : `<p>A taxa <b>subiu</b> para ${pct(R)}: sem hedge, o investidor aplicaria a ${pct(R)}. O FRA custou <b>${brlC(-Pi)}</b>, e ele aplica só ${brlC(E.X + Pi)}; o retorno efetivo fica em <b>${pct(E.taxa, 4)}</b>.</p>`);
+  if (S.iguais) w.push(err < 5e-6 ? `<p>Quantidades iguais, mas o CDI veio igual ao previsto: o erro ficou escondido. Mexa no desvio do CDI.</p>`
+    : `<p><b>Quantidades iguais:</b> com o CDI ${pp(dCDI)} em relação ao previsto, a sobra de financeiro ${(E.taxa - F.f) * L > 0 ? 'custou' : 'rendeu'} CDI até T1, e o ${L > 0 ? 'custo' : 'retorno'} efetivo saiu <b>${pct(E.taxa, 4)}</b> em vez de ${pct(F.f, 4)} (${pp(E.taxa - F.f, 3)}). O "hedge" ficou com risco de CDI.</p>`);
+  else if (Math.abs(dCDI) > 0.0001) w.push(`<p>O CDI até T1 ficou ${pp(dCDI)} longe do previsto e o resultado não mudou: com PU neutro, a correção pelo CDI se anula entre as pontas.</p>`);
+  $('what3').innerHTML = w.join(''); $('whatBox3').classList.toggle('alert', S.iguais && err >= 5e-6);
+}
+function drawCusto(F, L, R, dCDI) {
+  const { ctx, W, H } = prep($('cCusto')), m = { l: 52, r: 14, t: 34, b: 34 };
+  const xr = [F.f - 0.05, F.f + 0.05];
+  const comFRA = (Rx, Fx) => efetivo(Fx, Rx, L * resultadoT1(Fx, Rx, dCDI), L).taxa;
+  const Fn = { ...F, N1: F.N1neutro };
+  const ys = [xr[0], xr[1]]; let pe = [];
+  if (S.iguais) for (let i = 0; i <= 40; i++) { const Rx = xr[0] + (xr[1] - xr[0]) * i / 40, y = comFRA(Rx, F); pe.push([Rx, y]); ys.push(y); }
+  let lo = Math.min(...ys), hi = Math.max(...ys), pad = (hi - lo) * 0.06; lo -= pad; hi += pad;
+  const { X, Y } = grade(ctx, W, H, m, xr, [lo, hi], yPct, (g, s) => fmt(g * 100, 0) + '%', 'taxa em T1');
+  txt(ctx, (L > 0 ? 'Custo' : 'Retorno') + ' efetivo × taxa em T1', 8, 16, css('text'), 'left', '700 13px Figtree, sans-serif');
+  linha(ctx, [[X(xr[0]), Y(xr[0])], [X(xr[1]), Y(xr[1])]], css('warn'), 2.4);
+  linha(ctx, [[X(xr[0]), Y(comFRA(xr[0], Fn))], [X(xr[1]), Y(comFRA(xr[1], Fn))]], css('accent'), 2.8);
+  if (S.iguais) linha(ctx, pe.map(p => [X(p[0]), Y(p[1])]), css('bad'), 2, [6, 4]);
+  ctx.setLineDash([3, 3]); ctx.strokeStyle = css('text-dim'); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(X(R), m.t); ctx.lineTo(X(R), H - m.b); ctx.stroke(); ctx.setLineDash([]);
+  ponto(ctx, X(R), Y(R), css('warn'), 5.5);
+  const yc = comFRA(R, F); ponto(ctx, X(R), Y(yc), S.iguais ? css('bad') : css('accent'), 5.5);
+  etiqueta(ctx, 'trava ' + pct(F.f, 3), X(xr[0]) + 60, Y(F.f) - 10, css('accent'), W);
+}
+function drawBarras(E, Pi, L) {
+  const { ctx, W, H } = prep($('cBarras')), m = { l: 14, r: 14, t: 34, b: 52 };
+  txt(ctx, L > 0 ? 'Quanto se deve em T2' : 'Quanto se recebe em T2', 8, 16, css('text'), 'left', '700 13px Figtree, sans-serif');
+  const vals = [{ k: 'sem hedge', v: E.semHedge, c: css('warn') }, { k: 'com FRA', v: E.fim, c: css('accent') }];
+  const vmin = Math.min(E.X, ...vals.map(o => o.v)) * 0.96, vmax = Math.max(...vals.map(o => o.v)) * 1.02;
+  const Y = v => H - m.b - (v - vmin) / (vmax - vmin) * (H - m.t - m.b);
+  const bw = Math.min(110, (W - m.l - m.r) / 4);
+  vals.forEach((o, i) => {
+    const xc = m.l + (W - m.l - m.r) * (i === 0 ? 0.42 : 0.78);
+    ctx.fillStyle = o.c; ctx.fillRect(xc - bw / 2, Y(o.v), bw, H - m.b - Y(o.v));
+    etiqueta(ctx, brlC(o.v), xc, Y(o.v) - 8, o.c, W);
+    txt(ctx, o.k, xc, H - m.b + 18, css('text'), 'center', '600 13px Figtree, sans-serif');
+  });
+  // linha do valor em T1 (X) como referência
+  ctx.setLineDash([4, 3]); ctx.strokeStyle = css('text-dim'); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(m.l, Y(E.X)); ctx.lineTo(W - m.r, Y(E.X)); ctx.stroke(); ctx.setLineDash([]);
+  { const s = (L > 0 ? 'captado em T1 ' : 'aplicado em T1 ') + brlC(E.X); ctx.font = '11px "Fira Code", monospace'; const w = ctx.measureText(s).width;
+    ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.fillRect(m.l, Y(E.X) - 17, w + 8, 16); txt(ctx, s, m.l + 4, Y(E.X) - 5, css('text-dim'), 'left'); }
+  txt(ctx, 'eixo vertical cortado: começa perto do valor em T1', m.l, H - 8, css('text-dim'), 'left', '11px Figtree, sans-serif');
+}
+
+/* ===================== eventos ===================== */
+function renderAll() { render2(); render3(); }
+['sT1', 'sT2', 'sN2', 'sR', 'sD'].forEach(id => $(id).addEventListener('input', renderAll));
+$('vertCtl').addEventListener('input', renderAll);
+$('preset').addEventListener('change', e => { const p = presets[e.target.value]; $('sCdi').value = p.cdi; p.r.forEach((v, k) => $('sV' + k).value = v); renderAll(); });
+document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => { S.lado = +b.dataset.lado; document.querySelectorAll('.seg button').forEach(x => x.classList.toggle('on', x === b)); $('sR').value = S.lado > 0 ? 2 : -2; renderAll(); }));
+$('bEq').addEventListener('click', () => { S.iguais = !S.iguais; $('bEq').classList.toggle('on', S.iguais); $('bEq').setAttribute('aria-pressed', S.iguais);
+  document.querySelectorAll('.eq-only').forEach(e => e.style.display = S.iguais ? '' : 'none'); if (S.iguais && +$('sD').value === 0) $('sD').value = 1.5; renderAll(); });
+
+/* ===================== ABA 4: CENÁRIOS ===================== */
+const cenarios = [
+  { trap: 'Sinal: taxa × PU', s: 'Tesouraria de banco médio', q: 'Para travar o custo de uma captação daqui a 1 ano, o operador "compra DI1" de 2 anos e vende o de 1 ano, porque "quem quer se proteger da alta compra".', ok: false,
+    a: 'No DI1 se negocia PU: comprar DI1 é comprar PU, ou seja, ficar dado em taxa, que ganha se a taxa cai. O captador precisa do contrário: tomado em taxa (vendido em PU) no vencimento longo e dado no curto. Na B3 isso é comprar o FRA. Montada assim, a operação dobra o risco em vez de travar o custo.' },
+  { trap: 'Quantidades iguais', s: 'Mesa de juros', q: 'Para "simplificar", o operador monta o FRA com 1.000 contratos de DI1 jan/27 e 1.000 de DI1 jan/28, em sentidos opostos.', ok: false,
+    a: 'Os PUs são diferentes (≈ 88,7 mil e ≈ 78,5 mil), então os financeiros não se anulam: sobram cerca de R$ 10 milhões expostos ao CDI até T1. O certo é PU neutro, N₁ = N₂ × PU₂/PU₁ ≈ 885 contratos na ponta curta. Na aba ②, ative o erro e mexa no desvio do CDI na aba ③.' },
+  { trap: 'Trava a spot de T2', s: 'Reunião com o CFO', q: 'O tesoureiro informa: "compramos FRA entre 252 e 504 DU; nosso custo de captação no segundo ano está travado em 12,90%, a taxa do DI1 de 504 DU".', ok: false,
+    a: '12,90% é a taxa de 0 a 504 DU. O FRA trava a a termo de 252 a 504 DU, que é 13,0001%: a razão dos fatores, (1,129² / 1,128) − 1. Com curva inclinada, a diferença pode ser grande. Na curva ANBIMA de 02/10/2026, o "1 ano daqui a 1 ano" era 14,04%, contra 13,71% de spot em 2 anos.' },
+  { trap: 'A termo por subtração', s: 'Planilha de pricing', q: 'Com 1 ano a 10% e 2 anos a 15%, a planilha calcula a a termo do segundo ano como 2 × 15% − 10% = 20%.', ok: false,
+    a: 'Com capitalização exponencial, a a termo é 1,15² / 1,10 − 1 = 20,23%. A conta linear erra 23 bp, e o erro cresce com o nível das taxas e com a inclinação. A a termo sai sempre da razão dos fatores, que é o mesmo que a razão dos PUs.' },
+  { trap: 'Uso correto · captador', s: 'Empresa com captação programada', q: 'Uma empresa que emitirá debêntures pré em T1 compra FRA de T1 a T2 com N₁ = N₂ × PU₂/PU₁ e usa o resultado em T1 para ajustar o valor captado.', ok: true,
+    a: 'Estrutura correta: tomada em taxa na ponta longa, dada na curta, PU neutro. Se a taxa subir, o ganho do FRA reduz o valor a captar à taxa mais alta; se cair, a perda aumenta o valor a captar à taxa mais baixa. Nos dois casos o custo efetivo é a a termo travada.' },
+  { trap: 'Uso correto · investidor', s: 'Fundo com caixa futuro', q: 'Um fundo que receberá caixa em T1 e quer garantir o retorno até T2 vende FRA, ficando dado em taxa no vencimento longo e tomado no curto.', ok: true,
+    a: 'É o espelho do captador. Se a taxa cair, o FRA vendido rende e o fundo aplica mais dinheiro à taxa menor; se subir, perde no FRA e aplica menos à taxa maior. O retorno efetivo fica na a termo.' }
+];
+$('scenGrid').innerHTML = cenarios.map((c, k) => `
+  <div class="card scen" tabindex="0" role="button" aria-expanded="false">
+    <div class="trap">${c.s}</div><div class="q">${c.q}</div>
+    <div class="more">Clique para ver o veredito →</div>
+    <div class="ans ${c.ok ? 'ok' : 'bad'}"><b>${c.ok ? '✓ Faz sentido' : '✗ Problema'} — ${c.trap}</b>${c.a}</div>
+  </div>`).join('');
+document.querySelectorAll('.scen').forEach(el => {
+  const tog = () => { el.classList.toggle('open'); const o = el.classList.contains('open'); el.setAttribute('aria-expanded', o); el.querySelector('.more').textContent = o ? 'Clique para recolher' : 'Clique para ver o veredito →'; };
+  el.addEventListener('click', tog); el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tog(); } });
+});
+
+/* ===================== ABA 5: TESTE ===================== */
+const quiz = [
+  { q: 'DI1 de 252 DU a 12,80% e de 504 DU a 12,90% (DU/252). Que taxa um FRA entre os dois vencimentos trava?', o: ['13,00% (≈ 1,129² / 1,128 − 1)', '12,90%', '12,85%', '0,10%'], c: 0,
+    f: 'O FRA trava a a termo, que é a razão dos fatores: 1,274641 / 1,128 − 1 = 13,0001%. 12,90% é a spot de 504 DU. 12,85% é a média das spots. 0,10% é a diferença entre as taxas, que não é taxa de nada.' },
+  { q: 'Uma empresa vai captar recursos daqui a 1 ano, por 1 ano, e quer travar o custo. Qual posição em DI1 corresponde a comprar o FRA?', o: ['Vendida em PU (tomada em taxa) no DI1 de 2 anos e comprada em PU (dada em taxa) no de 1 ano', 'Comprada em PU no DI1 de 2 anos e vendida em PU no de 1 ano', 'Vendida em PU nos dois vencimentos', 'Comprada em PU apenas no DI1 de 2 anos'], c: 0,
+    f: 'Quem vai captar perde se a a termo subir, então precisa ganhar com a alta: tomado em taxa no longo e dado no curto. A segunda opção é a do investidor, que vende o FRA. Posições no mesmo sentido não isolam a a termo, e uma ponta só expõe ao risco da taxa de 0 a 2 anos.' },
+  { q: 'Ponta longa com 1.000 contratos a PU 78.453 e ponta curta a PU 88.652. Quantos contratos na ponta curta para PU neutro?', o: ['≈ 885', '1.000', '≈ 1.130', '≈ 113'], c: 0,
+    f: 'N₁ = 1.000 × 78.453 / 88.652 ≈ 885, para que os financeiros se igualem. 1.000 é o erro das quantidades iguais. 1.130 inverte a razão. 113 confunde a ordem de grandeza.' },
+  { q: 'O captador comprou FRA a 13,00%. Em T1 a taxa de mercado para o período caiu para 11%. O que acontece?', o: ['Ele perde no FRA, capta mais à taxa de 11% e o custo efetivo fica em 13,00%', 'Ele ganha no FRA e o custo cai para 11%', 'O FRA é cancelado e ele capta a 11%', 'Ele perde no FRA e o custo efetivo sobe para 15%'], c: 0,
+    f: 'Hedge é trava: abre mão do ganho com a queda para eliminar a perda com a alta. A perda nos ajustes é financiada à taxa nova, mais baixa, e o custo total fecha exatamente na a termo. Ninguém cancela o FRA nem "ganha a queda", e o custo não sobe além do travado.' },
+  { q: 'Por que a estrutura com PU neutro não fica exposta ao CDI acumulado até T1?', o: ['Porque a correção pelo CDI aparece nas duas pontas com o mesmo financeiro e sinais opostos', 'Porque o DI1 não tem ajuste diário', 'Porque a B3 isenta o FRA do ajuste diário', 'Porque o CDI só afeta a ponta longa'], c: 0,
+    f: 'Cada ajuste corrige o PU anterior pelo CDI. Com N₁·PU₁ = N₂·PU₂, os termos em CDI se cancelam. O DI1 tem ajuste diário em todas as pontas, inclusive dentro do FRA, e o CDI afeta as duas pontas.' }
+];
+let answered = 0, right = 0;
+function rng(s) { return () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function shuffleIdx(n, s) { const u = rng(s), a = [...Array(n).keys()]; for (let i = n - 1; i > 0; i--) { const j = Math.floor(u() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+$('quiz').innerHTML = quiz.map((x, k) => { const ord = shuffleIdx(4, 29 + k * 11);
+  return `<div class="qq" data-k="${k}"><b>${k + 1}.</b> ${x.q}<div class="opts">${ord.map(j => `<button class="opt" data-j="${j}">${x.o[j]}</button>`).join('')}</div><div class="fb"></div></div>`; }).join('');
+document.querySelectorAll('.qq').forEach(el => { const k = +el.dataset.k;
+  el.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => {
+    if (el.dataset.done) return; el.dataset.done = 1; answered++;
+    const ok = +b.dataset.j === quiz[k].c; if (ok) right++;
+    el.querySelectorAll('.opt').forEach(o => { if (+o.dataset.j === quiz[k].c) o.classList.add('right'); }); if (!ok) b.classList.add('wrong');
+    const fb = el.querySelector('.fb'); fb.innerHTML = (ok ? '<b style="color:var(--ok)">Isso mesmo.</b> ' : '<b style="color:var(--bad)">Não é essa.</b> ') + quiz[k].f; fb.classList.add('show');
+    $('score').textContent = `· ${right}/${answered}` + (answered === quiz.length ? ' — fim' : '');
+  })); });
+
+/* ===================== abas e redimensionamento ===================== */
+function renderVisible() { const on = document.querySelector('section.tab.on').id; if (on === 't2') render2(); if (on === 't3') render3(); }
+document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('nav.tabs button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('section.tab').forEach(s => s.classList.toggle('on', s.id === b.dataset.tab));
+  renderVisible();
+}));
+let rT; window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(renderVisible, 120); });
+document.querySelectorAll('.eq-only').forEach(e => e.style.display = 'none');
+renderAll();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(renderVisible);
+</script>
+</body>
+</html>

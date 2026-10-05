@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transmissão da Selic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf8f4; --bg2:#f1eee7; --bg-card:#ffffff;
+  --text:#1d2433; --text-dim:#4f5a6b;
+  --accent:#0e6e7a;            /* identidade: azul-petróleo */
+  --ok:#1f7a3d; --bad:#b42318; --ref:#2457a6; --warn:#9a5b00;
+  --roxo:#6b3fa0; --mag:#a8326e; --oliva:#5a6a1e; --laranja:#b8470b; --ardosia:#44515f;
+  --cinza:#7d8792;             /* potência zero */
+  --accent-bg:#e3f1f2; --ok-bg:#e7f4ea; --bad-bg:#fbeae8; --warn-bg:#fdf3e1; --ref-bg:#e8eef8;
+  --line-brd:#e3ded3;
+  --serif:'Fraunces',Georgia,serif; --sans:'Hanken Grotesk',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 16px 40px}
+header .tag{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:3px 12px}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,4.6vw,48px);line-height:1.08;margin:14px 0 8px}
+h1 em{color:var(--accent);font-style:italic;font-weight:600}
+.lead{color:var(--text-dim);max-width:820px;margin:0 0 20px;font-size:17px}
+nav.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 22px}
+nav.tabs button{font:600 15px var(--sans);border:1.5px solid var(--line-brd);background:var(--bg-card);color:var(--text);padding:8px 16px;border-radius:999px;cursor:pointer;transition:.2s}
+nav.tabs button:hover{border-color:var(--accent)}
+nav.tabs button.ativo{background:var(--accent);border-color:var(--accent);color:#fff}
+.aba{display:none;animation:entra .45s ease}
+.aba.ativa{display:block}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{background:var(--bg-card);border-radius:14px;box-shadow:0 1px 3px rgba(29,36,51,.07),0 6px 22px rgba(29,36,51,.05);padding:20px 22px;margin-bottom:18px}
+h2{font-family:var(--serif);font-size:24px;margin:0 0 10px;font-weight:700}
+h3{font-family:var(--serif);font-size:19px;margin:0 0 8px}
+.formula{font-family:var(--mono);font-size:clamp(14px,2vw,18px);background:var(--accent-bg);border-left:4px solid var(--accent);padding:14px 16px;border-radius:8px;margin:10px 0 14px;overflow-x:auto}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.par{border-radius:10px;padding:14px 16px}
+.par.certo{background:var(--ok-bg);border-left:4px solid var(--ok)}
+.par.errado{background:var(--bad-bg);border-left:4px solid var(--bad)}
+.par b.t{display:block;margin-bottom:4px}
+.par.certo b.t{color:var(--ok)} .par.errado b.t{color:var(--bad)}
+.caixa{border-radius:10px;padding:14px 16px;margin-top:12px}
+.caixa.dica{background:var(--accent-bg)} .caixa.cuidado{background:var(--warn-bg)} .caixa.mundo{background:var(--ref-bg)}
+.caixa h4{margin:0 0 6px;font-size:16px}
+.mono{font-family:var(--mono)}
+table.par-tab{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}
+table.par-tab th,table.par-tab td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line-brd);vertical-align:top}
+table.par-tab th{font-family:var(--mono);font-size:12px;color:var(--text-dim);font-weight:600}
+details summary{cursor:pointer;font-weight:600;color:var(--accent)}
+.tabela-wrap{overflow-x:auto}
+
+/* controles */
+.controles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 18px;align-items:end}
+.ctl label{display:block;font-size:13px;font-weight:600;color:var(--text-dim);margin-bottom:4px}
+.ctl .val{font-family:var(--mono);color:var(--accent);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select{width:100%;font:500 15px var(--sans);padding:7px 8px;border-radius:8px;border:1.5px solid var(--line-brd);background:#fff;color:var(--text)}
+.friccoes{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+.friccoes .rot{font-size:13px;font-weight:600;color:var(--text-dim);margin-right:4px}
+.chip{display:inline-flex;align-items:center;gap:6px;font:600 14px var(--sans);border:1.5px solid var(--line-brd);background:#fff;color:var(--text);padding:6px 12px;border-radius:999px;cursor:pointer;user-select:none}
+.chip input{accent-color:var(--accent);margin:0}
+.chip.on{border-color:var(--accent);background:var(--accent-bg)}
+.btn{font:600 14px var(--sans);border:1.5px solid var(--accent);background:#fff;color:var(--accent);padding:7px 14px;border-radius:999px;cursor:pointer}
+.btn.cheio{background:var(--accent);color:#fff}
+.btn:hover{filter:brightness(.95)}
+.tempo{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.tempo input[type=range]{flex:1;min-width:180px}
+.tempo .rel{font-family:var(--mono);font-size:14px;min-width:230px;color:var(--text)}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.stat{background:var(--bg2);border-radius:10px;padding:10px 14px}
+.stat .k{font-size:12.5px;color:var(--text-dim);font-weight:600}
+.stat .v{font-family:var(--mono);font-size:24px;font-weight:600;line-height:1.25}
+.stat .s{font-family:var(--mono);font-size:12px;color:var(--text-dim)}
+.canvas-box{position:relative;width:100%}
+.canvas-rolagem{overflow-x:auto;-webkit-overflow-scrolling:touch}
+canvas{display:block}
+.legenda-arv{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--text-dim);margin-top:8px;align-items:center}
+.grad{display:inline-block;width:120px;height:10px;border-radius:5px;background:linear-gradient(90deg,var(--cinza),var(--accent));vertical-align:middle}
+.info-no{background:var(--bg2);border-radius:10px;padding:12px 14px;margin-top:10px;font-size:15px;min-height:70px}
+.info-no b{color:var(--accent)}
+.explica{background:var(--accent-bg);border-radius:10px;padding:14px 16px;margin-top:14px}
+.explica h4{margin:0 0 6px}
+.explica p{margin:4px 0}
+.series{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px}
+.series .chip{font-size:13px;padding:4px 10px}
+.series .bola{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+/* cenários */
+.cen{cursor:pointer;border:1.5px solid var(--line-brd);border-radius:12px;padding:16px;background:#fff;transition:.2s}
+.cen:hover{border-color:var(--accent)}
+.cen .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
+.cen .resp{display:none;margin-top:10px;padding:10px 12px;border-radius:8px;font-size:15px}
+.cen.aberto .resp{display:block;animation:entra .35s ease}
+.cen .resp.ok{background:var(--ok-bg);border-left:4px solid var(--ok)}
+.cen .resp.ruim{background:var(--bad-bg);border-left:4px solid var(--bad)}
+.cen .dica-clique{font-size:13px;color:var(--text-dim);margin-top:8px}
+.cen.aberto .dica-clique{display:none}
+
+/* teste */
+.q{margin-bottom:18px}
+.q p.enun{font-weight:600;margin:0 0 8px}
+.alt{display:block;width:100%;text-align:left;font:500 15px var(--sans);background:#fff;color:var(--text);border:1.5px solid var(--line-brd);border-radius:10px;padding:9px 12px;margin:6px 0;cursor:pointer}
+.alt:hover{border-color:var(--accent)}
+.alt.certa{background:var(--ok-bg);border-color:var(--ok)}
+.alt.errada{background:var(--bad-bg);border-color:var(--bad)}
+.fb{display:none;padding:10px 12px;border-radius:8px;font-size:15px;margin-top:6px}
+.fb.mostrar{display:block}
+.fb.ok{background:var(--ok-bg)} .fb.ruim{background:var(--bad-bg)}
+.placar{font-family:var(--mono);font-size:18px;font-weight:600;color:var(--accent)}
+
+footer{margin-top:30px;padding-top:14px;border-top:1px solid var(--line-brd);font-size:13px;color:var(--text-dim)}
+
+@media (max-width:860px){
+  .controles{grid-template-columns:1fr 1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .grid3{grid-template-columns:1fr 1fr}
+}
+@media (max-width:600px){
+  .grid2,.grid3,.controles{grid-template-columns:1fr}
+  .stat .v{font-size:20px}
+  .card{padding:16px 14px}
+  .tempo .rel{min-width:0;width:100%}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="tag">Tesouraria · Arquitetura das taxas</span>
+  <h1>A árvore das taxas e a <em>transmissão da Selic</em></h1>
+  <p class="lead">Um choque na Selic meta escorre pelos ramos da árvore — mas não com a mesma velocidade nem com a mesma força. Veja, mês a mês, onde ele chega inteiro e onde as fricções o dissolvem.</p>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="ativo" data-aba="conceito">① Conceito</button>
+  <button data-aba="sim">② Simulação</button>
+  <button data-aba="cenarios">③ Cenários</button>
+  <button data-aba="teste">④ Teste</button>
+</nav>
+
+<!-- ============ ABA 1 — CONCEITO ============ -->
+<section class="aba ativa" id="conceito">
+  <div class="card">
+    <h2>Velocidade e potência</h2>
+    <p>Cada ramo da árvore responde ao ramo-pai com <b>defasagem</b> (quando começa), <b>velocidade</b> (quão rápido converge) e <b>potência</b> (quanto do choque chega). No modelo da simulação, a resposta de um ramo <i>i</i> é um atraso de 1ª ordem:</p>
+    <div class="formula">Δtaxa<sub>i</sub>(t) = β<sub>i</sub> · Δpai(t − L<sub>i</sub>) · [1 − e<sup>−(t − L<sub>i</sub>)/τ<sub>i</sub></sup>]&nbsp;&nbsp;&nbsp;&nbsp;potência<sub>i</sub>(t) = |Δtaxa<sub>i</sub>(t)| / |ΔSelic|</div>
+    <p><b>β</b> é a potência de longo prazo, <b>L</b> a defasagem e <b>τ</b> a constante de tempo (em meses). Fricções — crédito direcionado, taxas administradas, rigidez de spread, repreçamento do estoque — aparecem como β menor e τ maior. Na simulação, a potência vira <b>cor</b> (azul-petróleo = choque inteiro; cinza = choque perdido) e <b>espessura</b> do ramo.</p>
+    <p>Há <b>dois canais</b> partindo da Selic meta: o <b>canal de mercado</b> (Selic over → CDI → DI futuro → títulos e crédito livre), que reage até antes da decisão, porque vive de expectativa; e o <b>canal administrado</b> (TR, poupança, FGTS, TLP, crédito direcionado), que segue regras escritas e responde pouco, tarde, ou por degraus.</p>
+    <div class="grid2" style="margin-top:14px">
+      <div class="par certo"><b class="t">✓ Certo</b>A alta da Selic sobe as <i>taxas</i> dos prefixados e derruba o seu <i>PU</i>; a LFT, indexada à própria Selic, quase não oscila de preço — só passa a render mais.</div>
+      <div class="par errado"><b class="t">✗ Armadilha</b>"O Copom subiu 1 p.p., então todas as taxas da economia sobem 1 p.p. no dia seguinte." O DI futuro pode já ter subido semanas antes; o crédito livre repassa em parte e devagar; o direcionado quase não se mexe.</div>
+    </div>
+    <div class="caixa cuidado">
+      <h4>⚠️ Correções em relação à árvore do slide</h4>
+      <p style="margin:0">1) A <b>TLP não descende da TR</b>: é IPCA + juro real da NTN-B de 5 anos (média de 3 meses), fixada no contrato. 2) A <b>poupança</b> não depende só da TR: rende 0,5% a.m. + TR quando a Selic está acima de 8,5% e 70% da Selic + TR quando está em 8,5% ou abaixo — por isso a árvore da simulação tem uma aresta tracejada direto da Selic meta para a poupança. 3) A TR não vem "da NTN": vem da TBF, calculada a partir das taxas de títulos prefixados, com um redutor que a zera quando os juros estão baixos.</p>
+    </div>
+    <div class="caixa dica">
+      <h4>💡 O que muda a potência</h4>
+      <p style="margin:0">Expectativa (choque já precificado = quase nada acontece no dia), nível da Selic (regra da poupança e redutor da TR são não lineares), duration (prefixado longo perde mais PU por p.p. de taxa), e a fatia de crédito com taxa definida por regra em vez de mercado.</p>
+    </div>
+    <div class="caixa mundo">
+      <h4>🌎 Janela para o mundo real</h4>
+      <p style="margin:0">No ciclo de alta de 2021-22, a Selic foi de 2% (mar/2021) a 13,75% (ago/2022); em dez/2021, ao passar de 7,75% para 9,25%, a poupança trocou de regime — deixou de render 70% da Selic e travou em 0,5% a.m. + TR. No ciclo seguinte, a Selic subiu de 10,50% (set/2024) a 15% (jun/2025). Em 16/09/2026 o Copom cortou para 13,75%, o ponto de partida padrão da simulação. O crédito direcionado somava R$ 3,1 trilhões em abril/2026 (BCB) — cerca de 4 de cada 10 reais da carteira, a parte da árvore em que a Selic tem menos potência.</p>
+    </div>
+  </div>
+  <div class="card">
+    <details>
+      <summary>Parâmetros do modelo (estilizados, para fins didáticos)</summary>
+      <div class="tabela-wrap">
+      <table class="par-tab">
+        <tr><th>Ramo</th><th>Responde a</th><th>β (potência)</th><th>Defasagem / τ</th><th>Fricção que atua</th></tr>
+        <tr><td>Selic over, CDI</td><td>Selic meta</td><td>1</td><td>0 / 0</td><td>—</td></tr>
+        <tr><td>DI futuro 1 ano</td><td>Expectativa E(t)</td><td>1</td><td>0 / 0,15 mês</td><td>— (antecipa se o choque é esperado)</td></tr>
+        <tr><td>DI futuro 5 anos</td><td>Expectativa E(t)</td><td>0,45</td><td>0 / 0,3 mês</td><td>— (curva achata)</td></tr>
+        <tr><td>NTN-B 5a (juro real)</td><td>Expectativa E(t)</td><td>0,35</td><td>0 / 0,3 mês</td><td>—</td></tr>
+        <tr><td>TR</td><td>Selic over</td><td>0,35 se Selic &gt; 8,5%; 0 abaixo</td><td>1 mês / degrau</td><td>Taxas administradas</td></tr>
+        <tr><td>Poupança</td><td>Selic meta e TR</td><td>regra 0,5% a.m. + TR ou 70%·Selic + TR</td><td>0 / degrau</td><td>Taxas administradas</td></tr>
+        <tr><td>FGTS</td><td>TR</td><td>≈ TR</td><td>1 mês / degrau</td><td>Taxas administradas</td></tr>
+        <tr><td>TLP</td><td>NTN-B 5a</td><td>1 (média de 3 meses)</td><td>degraus mensais</td><td>—</td></tr>
+        <tr><td>Crédito livre (concessões)</td><td>DI futuro 1a</td><td>0,8 × 0,9 = 0,72</td><td>0,5 mês / 3 meses</td><td>Rigidez de spread (0,8) e tetos (0,9)</td></tr>
+        <tr><td>Crédito direcionado</td><td>0,25·TLP + 0,45·TR</td><td>≈ 0,25</td><td>0 / 4 meses</td><td>Crédito direcionado</td></tr>
+        <tr><td>Crédito (estoque)</td><td>58% livre + 42% direcionado</td><td>média ponderada</td><td>0 / 10 meses</td><td>Repreçamento lento do estoque</td></tr>
+      </table>
+      </div>
+      <p style="font-size:14px;color:var(--text-dim)">Sem uma fricção, o ramo correspondente passa a responder como mercado: β = 1 e τ curto. TR estilizada como max(0; 0,35·(Selic − 8,5)) % a.a. PU por DU/252 exponencial, base 1.000; NTN-F com cupom de 10% a.a. e NTN-B com cupom de 6% a.a. sobre o VNA, ambas com 5 anos; juro real de partida da NTN-B de 7,5% a.a. (ilustrativo).</p>
+    </details>
+  </div>
+</section>
+
+<!-- ============ ABA 2 — SIMULAÇÃO ============ -->
+<section class="aba" id="sim">
+  <div class="card">
+    <div class="controles">
+      <div class="ctl"><label>Choque na Selic meta: <span class="val" id="vChoque"></span></label>
+        <input type="range" id="choque" min="-3" max="3" step="0.25" value="1"></div>
+      <div class="ctl"><label>Selic de partida: <span class="val" id="vS0"></span></label>
+        <input type="range" id="s0" min="2" max="16" step="0.25" value="13.75"></div>
+      <div class="ctl"><label>O mercado esperava?</label>
+        <select id="modo">
+          <option value="0">Surpresa (0% precificado)</option>
+          <option value="0.5">Parcialmente antecipado (50%)</option>
+          <option value="1">Antecipado (100% precificado)</option>
+        </select></div>
+      <div class="ctl"><label>Velocidade da animação</label>
+        <select id="veloc"><option value="1">1 mês por segundo</option><option value="2" selected>2 meses por segundo</option><option value="4">4 meses por segundo</option></select></div>
+    </div>
+    <div class="friccoes">
+      <span class="rot">Fricções:</span>
+      <label class="chip on"><input type="checkbox" id="fDir" checked> Crédito direcionado</label>
+      <label class="chip on"><input type="checkbox" id="fAdm" checked> Taxas administradas e tetos</label>
+      <label class="chip on"><input type="checkbox" id="fRig" checked> Rigidez de spread</label>
+      <label class="chip on"><input type="checkbox" id="fEst" checked> Repreçamento lento do estoque</label>
+      <button class="btn" id="semFric">Mundo sem fricção</button>
+      <button class="btn" id="comFric">Todas as fricções</button>
+    </div>
+    <div class="tempo">
+      <button class="btn cheio" id="play" aria-label="Reproduzir">▶</button>
+      <button class="btn" id="reset" aria-label="Reiniciar">↺</button>
+      <input type="range" id="tempo" min="-3" max="24" step="0.05" value="-3" aria-label="Tempo em meses">
+      <span class="rel" id="relogio"></span>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="k">DI futuro 1 ano</div><div class="v" id="sDI"></div><div class="s" id="sDIs"></div></div>
+    <div class="stat"><div class="k">PU da NTN-F 5 anos</div><div class="v" id="sPU"></div><div class="s" id="sPUs"></div></div>
+    <div class="stat"><div class="k">Crédito (estoque)</div><div class="v" id="sCred"></div><div class="s" id="sCreds"></div></div>
+    <div class="stat"><div class="k">Poupança</div><div class="v" id="sPoup"></div><div class="s" id="sPoups"></div></div>
+  </div>
+
+  <div class="card">
+    <h3>A árvore em movimento</h3>
+    <div class="canvas-rolagem"><div class="canvas-box" id="boxArv"><canvas id="cvArv"></canvas></div></div>
+    <div class="legenda-arv">
+      <span>Potência: <span class="grad"></span> 0% → 100%</span>
+      <span>Espessura do ramo = potência</span>
+      <span>Bolinhas = choque passando agora</span>
+      <span>Tracejado = regra ou canal de expectativas</span>
+    </div>
+    <div class="info-no" id="infoNo">Clique em um nó da árvore para ver a regra daquela taxa.</div>
+    <div class="explica" id="explica"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>As taxas no tempo (Δ em p.p.)</h3>
+      <div class="series" id="chipsSeries"></div>
+      <div class="canvas-box" id="boxLinhas"><canvas id="cvLinhas"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Potência agora: com fricções × sem fricções</h3>
+      <div class="canvas-box" id="boxBarras"><canvas id="cvBarras"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABA 3 — CENÁRIOS ============ -->
+<section class="aba" id="cenarios">
+  <div class="card"><h2>Seis situações de mesa</h2><p style="margin:0;color:var(--text-dim)">Leia a afirmação, decida se está certa e clique para ver a resposta.</p></div>
+  <div class="grid3" id="gradeCen"></div>
+</section>
+
+<!-- ============ ABA 4 — TESTE ============ -->
+<section class="aba" id="teste">
+  <div class="card"><h2>Teste</h2><p style="margin:0">Acertos: <span class="placar" id="placar">0 / 5</span></p></div>
+  <div class="card" id="quiz"></div>
+</section>
+
+<footer>Operações de Tesouraria em Instituições Financeiras — FGV · Prof. José Américo · Modelo estilizado, com parâmetros ilustrativos; não é previsão.</footer>
+</div>
+
+<script>
+// =====================================================================
+// 1) MODELO DE TRANSMISSÃO — mesmas contas do modelo.py (conferidas em Node)
+// =====================================================================
+const DT = 0.05, T0 = -3, T1 = 24;
+const CHAVES = ['meta','over','di','di1','di5','ltn','ntnf','ntnb','lft',
+                'tr','poup','fgts','tlp','livre','direc','credito','spread'];
+
+// TR anual estilizada (%): zero com Selic abaixo de 8,5%
+function trAA(nivel){ return Math.max(0, 0.35 * (nivel - 8.5)); }
+
+// Regra da poupança (depósitos após 4/5/2012), em % a.a.
+function poupAA(selic, tr){
+  const base = selic > 8.5 ? Math.pow(1.005, 12) : 1 + 0.7 * selic / 100;
+  return (base * (1 + tr / 100) - 1) * 100;
+}
+
+// PU da LTN (base 1.000), DU/252 exponencial
+function puLTN(y, anos = 1){ return 1000 / Math.pow(1 + y / 100, anos); }
+
+// PU de título com cupom semestral (NTN-F: 10% a.a.; NTN-B: 6% a.a. sobre o VNA)
+function puCupom(y, cupomAA, anos = 5){
+  const c = (Math.pow(1 + cupomAA, 0.5) - 1) * 1000;
+  let pu = 0;
+  for (let k = 1; k <= 2 * anos; k++) pu += c / Math.pow(1 + y / 100, k * 0.5);
+  return pu + 1000 / Math.pow(1 + y / 100, anos);
+}
+
+// S0 = Selic de partida; D = choque (p.p.); p = fração antecipada (0; 0,5; 1)
+// F = fricções ligadas {dir, adm, rig, est}
+function simular(S0, D, p, F){
+  const n = Math.round((T1 - T0) / DT) + 1;
+  const ts = [], o = {};
+  for (let i = 0; i < n; i++) ts.push(T0 + i * DT);
+  CHAVES.forEach(k => o[k] = new Array(n).fill(0));
+  // atraso de 1ª ordem: aproxima o valor anterior do alvo com constante de tempo tau
+  const lag = (prev, alvo, tau) => tau <= 0 ? alvo : prev + (alvo - prev) * (1 - Math.exp(-DT / tau));
+  const val = (k, t) => { const i = Math.round((t - T0) / DT); return i >= 0 ? o[k][i] : 0; };
+  const tr0 = trAA(S0), p0 = poupAA(S0, tr0);
+  const bl = (F.rig ? 0.8 : 1) * (F.adm ? 0.9 : 1);   // potência do crédito livre
+  const taul = F.rig ? 3.0 : 0.7;                      // velocidade do crédito livre
+  const passo1m = Math.trunc(1 / DT);
+  for (let i = 0; i < n; i++){
+    const t = ts[i];
+    const g = k => i > 0 ? o[k][i - 1] : 0;
+    const meta = t >= -1e-9 ? D : 0;
+    // E = quanto do choque o mercado já espera no instante t
+    const E = D * (p * Math.min(1, Math.max(0, (t + 3) / 3)) + (1 - p) * (t >= -1e-9 ? 1 : 0));
+    o.meta[i] = meta; o.over[i] = meta; o.di[i] = meta; o.lft[i] = meta;
+    o.di1[i] = lag(g('di1'), E, 0.15);
+    o.di5[i] = lag(g('di5'), 0.45 * E, 0.3);
+    o.ltn[i] = o.di1[i]; o.ntnf[i] = o.di5[i];
+    o.ntnb[i] = lag(g('ntnb'), 0.35 * E, 0.3);
+    if (F.adm){
+      const lvl = (i - passo1m >= 0) ? S0 + val('over', t - 1) : S0;
+      const tr = trAA(lvl) - tr0;
+      o.tr[i] = tr;
+      o.poup[i] = poupAA(S0 + meta, tr0 + tr) - p0;
+      o.fgts[i] = 1.03 * tr;
+    } else {
+      o.tr[i] = lag(g('tr'), o.di[i], 0.5);
+      o.poup[i] = lag(g('poup'), o.di[i], 0.5);
+      o.fgts[i] = lag(g('fgts'), o.di[i], 1.0);
+    }
+    // TLP: média dos 3 meses anteriores da NTN-B 5a, em degraus mensais
+    const m = Math.floor(t + 1e-9);
+    let s = 0;
+    for (const mm of [m - 3, m - 2, m - 1]) s += (mm + 0.5 <= t) ? val('ntnb', mm + 0.5) : 0;
+    o.tlp[i] = s / 3;
+    o.livre[i] = lag(g('livre'), bl * val('di1', t - 0.5), taul);
+    o.direc[i] = F.dir ? lag(g('direc'), 0.25 * o.tlp[i] + 0.45 * o.tr[i], 4.0) : o.livre[i];
+    const mix = 0.58 * o.livre[i] + 0.42 * o.direc[i];
+    o.credito[i] = lag(g('credito'), mix, F.est ? 10.0 : 0);
+    o.spread[i] = o.livre[i] - o.di1[i];
+  }
+  return { ts, o };
+}
+
+// =====================================================================
+// 2) A ÁRVORE: nós (coluna, linha) e arestas
+// =====================================================================
+const NOS = [
+  {id:'meta', nome:'Selic meta', c:0, r:4.4, regra:'Decisão do Copom: degrau de Δ em t = 0. É a raiz da árvore.'},
+  {id:'over', nome:'Selic over', c:1, r:1.7, regra:'Média das compromissadas de 1 dia lastreadas em títulos públicos. Fica cerca de 0,10 p.p. abaixo da meta e a acompanha 1:1 no mesmo dia.'},
+  {id:'di',   nome:'DI / CDI', c:2, r:1.7, regra:'Taxa interbancária de 1 dia (B3). Acompanha a Selic over 1:1 no mesmo dia.'},
+  {id:'di1',  nome:'DI futuro 1a', c:3, r:0.9, regra:'Precifica o CDI médio esperado para o próximo ano. Reage à EXPECTATIVA, não à decisão: se o choque já era esperado, ele sobe antes do Copom. β = 1; τ ≈ 0,15 mês.'},
+  {id:'di5',  nome:'DI futuro 5a', c:3, r:2.6, regra:'A parte longa sobe menos (β = 0,45): a alta tende a ancorar a inflação futura e a curva achata. τ ≈ 0,3 mês.'},
+  {id:'lft',  nome:'LFT', c:4.3, r:0, regra:'Pós-fixada à Selic: a remuneração acompanha a nova Selic 1:1. O PU fica praticamente estável — só o ágio/deságio de mercado oscila.'},
+  {id:'ltn',  nome:'LTN 1a', c:4.3, r:1.05, regra:'Prefixado sem cupom: a taxa segue o DI futuro de 1 ano e o PU = 1.000/(1+y)^(DU/252) cai.'},
+  {id:'ntnf', nome:'NTN-F 5a', c:4.3, r:2.1, regra:'Prefixado com cupom de 10% a.a.: a taxa segue o DI futuro de 5 anos; por ter duration maior, o PU cai mais por p.p. de taxa.'},
+  {id:'ntnb', nome:'NTN-B 5a', c:4.3, r:3.15, regra:'Juro real (IPCA + cupom de 6% a.a.). β = 0,35 sobre a expectativa: parte da alta nominal vira queda da inflação esperada, não juro real.'},
+  {id:'tlp',  nome:'TLP', c:5.4, r:3.6, regra:'IPCA + juro real da NTN-B de 5 anos (média de 3 meses), fixada no contrato do BNDES. Muda em degraus mensais e com atraso. Não vem da TR — correção do slide.'},
+  {id:'livre',nome:'Crédito livre', c:4.3, r:5.0, regra:'Novas concessões com taxa de mercado: custo de captação (DI 1a) + spread. Potência 0,8 (rigidez de spread) × 0,9 (tetos de cheque especial, cartão e consignado); defasagem 0,5 mês; τ = 3 meses.'},
+  {id:'spread',nome:'Spread', c:5.4, r:5.0, regra:'Δ taxa do crédito livre − Δ DI futuro 1a. Negativo = o banco absorve parte do choque no curto prazo (o spread comprime na alta e abre na queda).'},
+  {id:'tr',   nome:'TR', c:1, r:7.0, regra:'Vem da TBF (taxas de títulos prefixados) com um redutor que a zera quando os juros estão baixos. Estilizada: max(0; 0,35·(Selic − 8,5)) % a.a., com 1 mês de atraso.'},
+  {id:'poup', nome:'Poupança', c:2.15, r:6.1, regra:'Selic acima de 8,5%: 0,5% a.m. + TR (≈ 6,17% a.a. + TR). Selic em 8,5% ou abaixo: 70% da Selic + TR. Regra para depósitos a partir de 4/5/2012.'},
+  {id:'fgts', nome:'FGTS', c:2.15, r:8.0, regra:'3% a.a. + TR, mais distribuição de lucros do fundo (com garantia mínima do IPCA, por decisão do STF de 2024). Só sente a Selic via TR.'},
+  {id:'direc',nome:'Crédito direcionado', c:4.3, r:7.0, regra:'Rural (taxas do Plano Safra, fixadas pelo CMN), habitacional (TR + taxa fixa) e BNDES (TLP). No modelo: responde a 0,25·TLP + 0,45·TR, com τ = 4 meses.'},
+  {id:'credito',nome:'Crédito (estoque)', c:6, r:6.0, regra:'Taxa média da carteira: 58% livre + 42% direcionado. O estoque reprecia devagar (τ = 10 meses), porque só as novas operações e as pós-fixadas carregam a nova taxa.'}
+];
+const ARESTAS = [
+  ['meta','over'],['over','di'],['di','di1'],['di','di5'],
+  ['meta','di1','expect'],
+  ['over','lft'],['di1','ltn'],['di5','ntnf'],['di5','ntnb'],
+  ['ntnb','tlp','baixo'],['di1','livre'],['livre','spread'],
+  ['meta','tr'],['tr','poup'],['meta','poup','regra'],['tr','fgts'],
+  ['tlp','direc'],['tr','direc'],['livre','credito'],['direc','credito']
+];
+const NO = Object.fromEntries(NOS.map(n => [n.id, n]));
+
+// =====================================================================
+// 3) ESTADO, CORES E FORMATAÇÃO
+// =====================================================================
+const est = { S0:13.75, D:1, p:0, F:{dir:true,adm:true,rig:true,est:true}, t:-3, tocando:false,
+              sim:null, livreSim:null, sel:null, relogioAnim:0 };
+const css = n => getComputedStyle(document.documentElement).getPropertyValue('--' + n).trim();
+let COR = {};
+function lerCores(){ ['bg','bg2','text','text-dim','accent','ok','bad','ref','warn','roxo','mag','oliva','laranja','ardosia','cinza','line-brd','accent-bg']
+  .forEach(k => COR[k] = css(k)); }
+
+function hexRgb(h){ h = h.replace('#',''); return [0,2,4].map(i => parseInt(h.substr(i,2),16)); }
+// mistura cinza → acento conforme a potência (0 a 1)
+function corPot(pot){
+  const a = hexRgb(COR.cinza), b = hexRgb(COR.accent), w = Math.max(0, Math.min(1, pot));
+  return `rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*w)).join(',')})`;
+}
+const nf = (x, d=2) => x.toLocaleString('pt-BR',{minimumFractionDigits:d, maximumFractionDigits:d});
+const sinal = (x, d=2) => (x > 0.00049 ? '+' : (x < -0.00049 ? '−' : '')) + nf(Math.abs(x), d);
+const pp = (x, d=2) => sinal(x, d) + ' p.p.';
+const pct = (x, d=0) => nf(x * 100, d) + '%';
+
+// índice da série no instante t
+const idx = t => Math.max(0, Math.min(est.sim.ts.length - 1, Math.round((t - T0) / DT)));
+const v = (k, t = est.t, sim = est.sim) => sim.o[k][idx(t)];
+const pot = (k, t = est.t, sim = est.sim) => est.D === 0 ? 0 : Math.abs(v(k, t, sim)) / Math.abs(est.D);
+
+// ΔPU em % para os títulos
+const Y_REAL0 = 7.5;
+function dPU(id, t = est.t){
+  const y0 = est.S0;
+  if (id === 'ltn')  return puLTN(y0 + v('ltn', t)) / puLTN(y0) - 1;
+  if (id === 'ntnf') return puCupom(y0 + v('ntnf', t), 0.10) / puCupom(y0, 0.10) - 1;
+  if (id === 'ntnb') return puCupom(Y_REAL0 + v('ntnb', t), 0.06) / puCupom(Y_REAL0, 0.06) - 1;
+  return 0;
+}
+
+function recalcular(){
+  est.sim = simular(est.S0, est.D, est.p, est.F);
+  est.livreSim = simular(est.S0, est.D, est.p, {dir:false,adm:false,rig:false,est:false});
+}
+
+// =====================================================================
+// 4) CANVAS UTILITÁRIOS
+// =====================================================================
+function prepCanvas(cv, box, altura, larguraMin = 0){
+  const dpr = window.devicePixelRatio || 1;
+  const pai = box.parentElement, cs = getComputedStyle(pai);
+  const util = pai.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  const w = Math.max(util, larguraMin);
+  box.style.width = w + 'px';
+  cv.width = w * dpr; cv.height = altura * dpr;
+  cv.style.width = w + 'px'; cv.style.height = altura + 'px';
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, w, h: altura };
+}
+
+// escreve texto sobre uma "pílula" de fundo, para o ramo que passa atrás não cobrir o rótulo
+function pill(ctx, txt, x, y){
+  const larg = ctx.measureText(txt).width, alt = parseInt(ctx.font.match(/(\d+)px/)[1], 10);
+  const x0 = ctx.textAlign === 'center' ? x - larg / 2 : (ctx.textAlign === 'right' ? x - larg : x);
+  const cor = ctx.fillStyle;
+  ctx.fillStyle = 'rgba(255,255,255,0.92)';
+  ctx.beginPath(); ctx.roundRect(x0 - 3, y - alt + 1, larg + 6, alt + 4, 4); ctx.fill();
+  ctx.fillStyle = cor;
+  ctx.fillText(txt, x, y);
+}
+
+// ponto numa curva de Bézier cúbica
+function bez(p0, p1, p2, p3, s){
+  const u = 1 - s;
+  return [u*u*u*p0[0] + 3*u*u*s*p1[0] + 3*u*s*s*p2[0] + s*s*s*p3[0],
+          u*u*u*p0[1] + 3*u*u*s*p1[1] + 3*u*s*s*p2[1] + s*s*s*p3[1]];
+}
+
+// =====================================================================
+// 5) DESENHO DA ÁRVORE
+// =====================================================================
+let posNos = {};
+function desenharArvore(){
+  const box = document.getElementById('boxArv'), cv = document.getElementById('cvArv');
+  const { ctx, w, h } = prepCanvas(cv, box, 560, 900);
+  ctx.clearRect(0, 0, w, h);
+  const mx = 70, my = 46;
+  const X = c => mx + c * (w - 2 * mx - 40) / 6;
+  const Y = r => my + r * (h - 2 * my) / 8;
+  NOS.forEach(n => posNos[n.id] = [X(n.c), Y(n.r)]);
+
+  // grupos de fundo
+  const grupo = (x1, y1, x2, y2, rot) => {
+    ctx.fillStyle = COR['bg2']; ctx.strokeStyle = COR['line-brd']; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.roundRect(x1, y1, x2 - x1, y2 - y1, 14); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = COR['text-dim']; ctx.font = '600 11px "JetBrains Mono"'; ctx.textAlign = 'left';
+    ctx.fillText(rot, x1 + 10, y1 + 15);
+  };
+  grupo(X(4.3) - 34, Y(0) - 46, X(4.3) + 150, Y(3.15) + 28, 'CURVAS DE TÍTULOS PÚBLICOS');
+  grupo(X(4.3) - 62, Y(5.0) - 54, X(6) + 64, Y(7.0) + 34, 'MERCADO DE CRÉDITO');
+  grupo(X(1) - 52, Y(6.1) - 40, X(2.15) + 62, Y(8.0) + 30, est.F.adm ? 'TAXAS ADMINISTRADAS' : 'TAXAS ADMINISTRADAS (desligadas)');
+
+  const i = idx(est.t), i0 = Math.max(0, i - 1);
+  const D = est.D || 1e-9;
+  const selicAgora = est.S0 + v('meta');
+  const regraAtiva = selicAgora <= 8.5 || est.S0 <= 8.5;
+
+  // arestas
+  const rotArestas = [];
+  ARESTAS.forEach(([a, b, tipo]) => {
+    const [x1, y1] = posNos[a], [x2, y2] = posNos[b];
+    let p0 = [x1, y1], p3 = [x2, y2], p1, p2;
+    if (tipo === 'expect'){ p1 = [x1 + 40, Y(-0.6)]; p2 = [x2 - 120, Y(-0.4)]; }
+    else if (tipo === 'regra'){ p1 = [x1 + 60, y2 + 40]; p2 = [x2 - 110, y2]; }
+    else if (tipo === 'baixo'){ p1 = [x1, y1 + 70]; p2 = [x2 - 50, y2 + 10]; }
+    else { const mxp = x1 + (x2 - x1) * 0.5; p1 = [mxp, y1]; p2 = [mxp, y2]; }
+    let pt = pot(b);
+    if (b === 'spread') pt = Math.min(1, pot('spread'));
+    if (tipo === 'expect') pt = est.p > 0 ? est.p : 0.15;
+    if (tipo === 'regra') pt = regraAtiva ? Math.min(1, pot('poup')) : 0.08;
+    ctx.strokeStyle = corPot(pt);
+    ctx.lineWidth = 1.4 + 6 * Math.min(1, pt);
+    ctx.setLineDash(tipo && tipo !== 'baixo' ? [7, 6] : []);
+    ctx.globalAlpha = (tipo === 'regra' && !regraAtiva) ? 0.45 : 1;
+    ctx.beginPath(); ctx.moveTo(...p0); ctx.bezierCurveTo(...p1, ...p2, ...p3); ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+    // rótulo das arestas especiais
+    if (tipo && tipo !== 'baixo'){
+      const m = bez(p0, p1, p2, p3, 0.45);
+      ctx.fillStyle = COR['text-dim']; ctx.font = 'italic 11px "Hanken Grotesk"'; ctx.textAlign = 'center';
+      rotArestas.push([tipo === 'expect' ? 'canal de expectativas' : (regraAtiva ? 'regra 70% da Selic (ativa)' : 'regra 70% (inativa: Selic > 8,5%)'), m[0], m[1] - 6]);
+    }
+    // bolinhas: choque passando agora (proporcional à velocidade de variação do nó-filho)
+    let chave = b;
+    const deriv = Math.abs(est.sim.o[chave][i] - est.sim.o[chave][i0]) / DT;
+    let intens = Math.min(1, deriv / Math.abs(D) * 1.5);
+    if (tipo === 'expect' && est.p === 0) intens = 0;
+    if (tipo === 'regra' && !regraAtiva) intens = 0;
+    if (intens > 0.03){
+      ctx.fillStyle = COR.accent;
+      for (let k = 0; k < 3; k++){
+        const s = ((est.relogioAnim * 0.7) + k / 3) % 1;
+        const q = bez(p0, p1, p2, p3, s);
+        ctx.globalAlpha = 0.25 + 0.75 * intens;
+        ctx.beginPath(); ctx.arc(q[0], q[1], 3.5, 0, 2 * Math.PI); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+  });
+
+  // rótulos das arestas especiais, por cima de todas as linhas
+  ctx.fillStyle = COR['text-dim']; ctx.font = 'italic 11px "Hanken Grotesk"'; ctx.textAlign = 'center';
+  rotArestas.forEach(([t, x, y]) => pill(ctx, t, x, y));
+
+  // nós
+  NOS.forEach(n => {
+    const [x, y] = posNos[n.id];
+    let pt = Math.min(1, pot(n.id));
+    const isSpread = n.id === 'spread';
+    ctx.beginPath(); ctx.arc(x, y, n.id === 'meta' ? 15 : 9, 0, 2 * Math.PI);
+    ctx.fillStyle = isSpread ? '#ffffff' : corPot(pt); ctx.fill();
+    ctx.lineWidth = est.sel === n.id ? 3 : 1.5;
+    ctx.strokeStyle = isSpread ? COR.warn : (est.sel === n.id ? COR.text : '#ffffff');
+    ctx.stroke();
+    // rótulo e valor (títulos: à direita do nó, para não amontoar a coluna)
+    const val = v(n.id);
+    let txt = n.id === 'meta' ? `${nf(est.S0)}% ${sinal(val)}` : pp(val);
+    if (!isSpread && n.id !== 'meta') txt += ' · ' + pct(pot(n.id));
+    const titulo = ['lft','ltn','ntnf','ntnb'].includes(n.id);
+    let puTxt = null;
+    if (titulo) puTxt = n.id === 'lft' ? 'PU ≈ 0,00%' : 'PU ' + sinal(dPU(n.id) * 100) + '%';
+    if (titulo){
+      ctx.textAlign = 'left';
+      ctx.fillStyle = COR.text; ctx.font = '700 13px "Hanken Grotesk"';
+      pill(ctx, n.nome, x + 15, y - 3);
+      ctx.font = '600 11px "JetBrains Mono"'; ctx.fillStyle = COR['text-dim'];
+      pill(ctx, txt, x + 15, y + 11);
+      const d = n.id === 'lft' ? 0 : dPU(n.id);
+      ctx.fillStyle = d < -1e-5 ? COR.bad : (d > 1e-5 ? COR.ok : COR['text-dim']);
+      pill(ctx, puTxt, x + 15, y + 24);
+    } else {
+      ctx.textAlign = 'center';
+      ctx.fillStyle = COR.text; ctx.font = '700 13px "Hanken Grotesk"';
+      pill(ctx, n.nome, x, n.id === 'meta' ? y - 24 : y - 15);
+      ctx.font = '600 11px "JetBrains Mono"';
+      ctx.fillStyle = isSpread ? COR.warn : COR['text-dim'];
+      pill(ctx, txt, x, y + (n.id === 'meta' ? 30 : 22));
+    }
+  });
+}
+
+// clique num nó → painel de informação
+document.getElementById('cvArv').addEventListener('click', e => {
+  const r = e.target.getBoundingClientRect();
+  const x = e.clientX - r.left, y = e.clientY - r.top;
+  let melhor = null, dmin = 26;
+  NOS.forEach(n => { const [nx, ny] = posNos[n.id]; const d = Math.hypot(nx - x, ny - y); if (d < dmin){ dmin = d; melhor = n.id; } });
+  if (melhor){ est.sel = melhor; atualizarInfo(); desenharArvore(); }
+});
+
+function atualizarInfo(){
+  const el = document.getElementById('infoNo');
+  if (!est.sel){ el.innerHTML = 'Clique em um nó da árvore para ver a regra daquela taxa.'; return; }
+  const n = NO[est.sel];
+  let extra = `Agora: <span class="mono">${pp(v(n.id))}</span>`;
+  if (n.id !== 'spread' && n.id !== 'meta') extra += ` · potência <span class="mono">${pct(pot(n.id))}</span> (sem fricções seria <span class="mono">${pct(pot(n.id, est.t, est.livreSim))}</span>)`;
+  if (['ltn','ntnf','ntnb'].includes(n.id)) extra += ` · ΔPU <span class="mono">${sinal(dPU(n.id) * 100)}%</span>`;
+  el.innerHTML = `<b>${n.nome}.</b> ${n.regra}<br>${extra}`;
+}
+
+// =====================================================================
+// 6) GRÁFICO DE LINHAS
+// =====================================================================
+const SERIES = [
+  {k:'meta', nome:'Selic meta', cor:'text', on:true},
+  {k:'di1', nome:'DI fut. 1a', cor:'ref', on:true},
+  {k:'di5', nome:'DI fut. 5a', cor:'roxo', on:false},
+  {k:'ntnb', nome:'NTN-B 5a', cor:'mag', on:false},
+  {k:'tr', nome:'TR', cor:'oliva', on:false},
+  {k:'poup', nome:'Poupança', cor:'warn', on:true},
+  {k:'tlp', nome:'TLP', cor:'laranja', on:true},
+  {k:'livre', nome:'Créd. livre', cor:'accent', on:true},
+  {k:'direc', nome:'Créd. direcionado', cor:'ardosia', on:true},
+  {k:'credito', nome:'Crédito (estoque)', cor:'ok', on:true},
+  {k:'spread', nome:'Spread', cor:'bad', on:false}
+];
+function montarChipsSeries(){
+  const c = document.getElementById('chipsSeries'); c.innerHTML = '';
+  SERIES.forEach(s => {
+    const l = document.createElement('label'); l.className = 'chip' + (s.on ? ' on' : '');
+    l.innerHTML = `<input type="checkbox" ${s.on ? 'checked' : ''}><span class="bola" style="background:var(--${s.cor})"></span>${s.nome}`;
+    l.querySelector('input').addEventListener('change', ev => { s.on = ev.target.checked; l.classList.toggle('on', s.on); desenharLinhas(); });
+    c.appendChild(l);
+  });
+}
+function desenharLinhas(){
+  const box = document.getElementById('boxLinhas'), cv = document.getElementById('cvLinhas');
+  const { ctx, w, h } = prepCanvas(cv, box, 330);
+  ctx.clearRect(0, 0, w, h);
+  const ml = 52, mr = 14, mt = 16, mb = 34;
+  const ativas = SERIES.filter(s => s.on);
+  let lo = Math.min(0, est.D), hi = Math.max(0, est.D);
+  ativas.forEach(s => est.sim.o[s.k].forEach(y => { lo = Math.min(lo, y); hi = Math.max(hi, y); }));
+  if (hi - lo < 0.1){ hi += 0.5; lo -= 0.5; }
+  const pad = (hi - lo) * 0.08; lo -= pad; hi += pad;
+  const X = t => ml + (t - T0) / (T1 - T0) * (w - ml - mr);
+  const Y = y => mt + (hi - y) / (hi - lo) * (h - mt - mb);
+  // grade
+  ctx.strokeStyle = COR['line-brd']; ctx.lineWidth = 1; ctx.font = '11px "JetBrains Mono"'; ctx.fillStyle = COR['text-dim'];
+  const passoY = (hi - lo) > 3 ? 1 : (hi - lo) > 1.2 ? 0.5 : 0.25;
+  ctx.textAlign = 'right';
+  for (let y = Math.ceil(lo / passoY) * passoY; y <= hi; y += passoY){
+    ctx.beginPath(); ctx.moveTo(ml, Y(y)); ctx.lineTo(w - mr, Y(y)); ctx.stroke();
+    ctx.fillText(nf(Math.abs(y) < 1e-9 ? 0 : y, 2), ml - 6, Y(y) + 4);
+  }
+  ctx.textAlign = 'center';
+  for (let t = -3; t <= 24; t += 3){
+    ctx.beginPath(); ctx.moveTo(X(t), mt); ctx.lineTo(X(t), h - mb); ctx.stroke();
+    ctx.fillText(t, X(t), h - mb + 15);
+  }
+  ctx.fillText('meses após a decisão do Copom', ml + (w - ml - mr) / 2, h - 4);
+  // linha do Copom
+  ctx.strokeStyle = COR['text-dim']; ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(X(0), mt); ctx.lineTo(X(0), h - mb); ctx.stroke(); ctx.setLineDash([]);
+  // séries (até o instante atual, cheias; depois, apagadas)
+  const iAgora = idx(est.t);
+  ativas.forEach(s => {
+    const arr = est.sim.o[s.k];
+    ctx.strokeStyle = COR[s.cor]; ctx.lineWidth = 2.2;
+    ctx.setLineDash(s.k === 'spread' ? [5, 4] : []);
+    ctx.globalAlpha = 0.18; ctx.beginPath();
+    arr.forEach((y, j) => { const x = X(est.sim.ts[j]); j ? ctx.lineTo(x, Y(y)) : ctx.moveTo(x, Y(y)); }); ctx.stroke();
+    ctx.globalAlpha = 1; ctx.beginPath();
+    for (let j = 0; j <= iAgora; j++){ const x = X(est.sim.ts[j]); j ? ctx.lineTo(x, Y(arr[j])) : ctx.moveTo(x, Y(arr[j])); }
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = COR[s.cor]; ctx.beginPath(); ctx.arc(X(est.t), Y(arr[iAgora]), 3.5, 0, 2 * Math.PI); ctx.fill();
+  });
+  // cursor do tempo
+  ctx.strokeStyle = COR.accent; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(X(est.t), mt); ctx.lineTo(X(est.t), h - mb); ctx.stroke();
+}
+
+// =====================================================================
+// 7) BARRAS DE POTÊNCIA (com × sem fricções)
+// =====================================================================
+const BARRAS = ['di1','di5','ntnb','tr','poup','fgts','tlp','livre','direc','credito'];
+function desenharBarras(){
+  const box = document.getElementById('boxBarras'), cv = document.getElementById('cvBarras');
+  const h = 40 + BARRAS.length * 28 + 26;
+  const { ctx, w } = prepCanvas(cv, box, h);
+  ctx.clearRect(0, 0, w, h);
+  const ml = 128, mr = 54, mt = 14;
+  const X = q => ml + q / 1.1 * (w - ml - mr);
+  ctx.font = '11px "JetBrains Mono"'; ctx.fillStyle = COR['text-dim']; ctx.textAlign = 'center';
+  ctx.strokeStyle = COR['line-brd'];
+  [0, 0.25, 0.5, 0.75, 1].forEach(q => {
+    ctx.beginPath(); ctx.moveTo(X(q), mt); ctx.lineTo(X(q), mt + BARRAS.length * 28); ctx.stroke();
+    ctx.fillText(pct(q), X(q), mt + BARRAS.length * 28 + 14);
+  });
+  BARRAS.forEach((k, j) => {
+    const y = mt + j * 28 + 5;
+    const pc = Math.min(1.1, pot(k)), ps = Math.min(1.1, pot(k, est.t, est.livreSim));
+    ctx.textAlign = 'right'; ctx.fillStyle = COR.text; ctx.font = '600 12.5px "Hanken Grotesk"';
+    ctx.fillText(NO[k].nome, ml - 8, y + 13);
+    // fantasma: sem fricções
+    ctx.strokeStyle = COR.ref; ctx.setLineDash([4, 3]); ctx.lineWidth = 1.5;
+    ctx.strokeRect(X(0), y, X(ps) - X(0), 18); ctx.setLineDash([]);
+    // com fricções
+    ctx.fillStyle = corPot(pc); ctx.fillRect(X(0), y + 3, X(pc) - X(0), 12);
+    ctx.textAlign = 'left'; ctx.font = '600 11px "JetBrains Mono"'; ctx.fillStyle = COR.text;
+    ctx.fillText(pct(pot(k)), Math.max(X(pc), X(ps)) + 6, y + 13);
+  });
+  ctx.textAlign = 'left'; ctx.font = '12px "Hanken Grotesk"'; ctx.fillStyle = COR['text-dim'];
+  ctx.fillText('barra cheia = com as fricções escolhidas · contorno tracejado = mundo sem fricção', 8, h - 6);
+}
+
+// =====================================================================
+// 8) NÚMEROS E TEXTO "O QUE ESTÁ ACONTECENDO" (condicionados aos cálculos)
+// =====================================================================
+function atualizarStats(){
+  document.getElementById('sDI').textContent = pp(v('di1'));
+  document.getElementById('sDIs').textContent = 'potência ' + pct(pot('di1'));
+  const dpu = dPU('ntnf') * 100;
+  const elPU = document.getElementById('sPU');
+  elPU.textContent = sinal(dpu) + '%'; elPU.style.color = dpu < -0.005 ? COR.bad : (dpu > 0.005 ? COR.ok : COR.text);
+  document.getElementById('sPUs').textContent = 'taxa ' + pp(v('ntnf'));
+  document.getElementById('sCred').textContent = pp(v('credito'));
+  document.getElementById('sCreds').textContent = 'potência ' + pct(pot('credito')) + ' (sem fricção ' + pct(pot('credito', est.t, est.livreSim)) + ')';
+  document.getElementById('sPoup').textContent = pp(v('poup'));
+  document.getElementById('sPoups').textContent = 'potência ' + pct(pot('poup'));
+}
+
+function explicar(){
+  const t = est.t, D = est.D, el = document.getElementById('explica');
+  const frases = [];
+  if (D === 0){ el.innerHTML = '<h4>🔍 O que está acontecendo</h4><p>Choque nulo: mova o controle do choque para ver a transmissão.</p>'; return; }
+  const dir = D > 0 ? 'alta' : 'queda';
+  if (t < 0){
+    if (v('di1') === 0 && est.p === 0) frases.push(`Faltam ${nf(-t,1)} meses para o Copom. Como a ${dir} é uma <b>surpresa</b>, nada se move ainda: o mercado não a espera.`);
+    else frases.push(`Faltam ${nf(-t,1)} meses para o Copom, mas o DI futuro de 1 ano já andou <b>${pp(v('di1'))}</b> — o mercado precifica ${pct(est.p)} da ${dir}. Selic over, CDI e poupança ainda estão parados: <b>a expectativa chega antes da decisão</b>.`);
+  } else {
+    const iDec = idx(0), dDia = est.sim.o.di1[Math.min(iDec + 2, est.sim.ts.length - 1)] - est.sim.o.di1[Math.max(iDec - 2, 0)];
+    if (t < 1){
+      if (Math.abs(dDia) < 0.2 * Math.abs(D)) frases.push(`Dia da decisão: Selic over e CDI saltam ${pp(D)}, mas o DI futuro quase não se mexe (${pp(dDia)} em torno da data) — a ${dir} <b>já estava no preço</b>.`);
+      else frases.push(`Dia da decisão: Selic over e CDI saltam ${pp(D)} e o DI futuro de 1 ano reage na hora (${pp(dDia)} em torno da data) — o choque <b>pegou o mercado de surpresa</b>.`);
+    }
+    const dpu = dPU('ntnf') * 100, dpl = dPU('ltn') * 100;
+    if (Math.abs(dpu) > 0.01) frases.push(`Títulos: a taxa da NTN-F 5a variou ${pp(v('ntnf'))} e o PU ${sinal(dpu)}%; a LTN 1a, com taxa ${pp(v('ltn'))}, variou ${sinal(dpl)}% — ${Math.abs(dpu) > Math.abs(dpl) ? 'a NTN-F mexe mais por ter duration maior, mesmo com variação de taxa menor' : 'a LTN mexe mais porque sua taxa variou bem mais'}. A LFT passa a render ${pp(D)} a mais, com PU praticamente parado.`);
+    const pl = pot('livre'), pd = pot('direc'), pc = pot('credito'), pcs = pot('credito', t, est.livreSim);
+    frases.push(`Crédito: as novas concessões livres já carregam ${pct(pl)} do choque; o direcionado, ${pct(pd)}; a taxa média do estoque, ${pct(pc)}. Sem fricções, o estoque estaria em ${pct(pcs)} — ${pcs - pc > 0.05 ? `as fricções <b>engolem ${pct(pcs - pc)}</b> da potência neste momento` : 'as fricções quase não fazem diferença agora'}.`);
+    if (pot('spread') > 0.05) frases.push(`O spread do crédito livre variou ${pp(v('spread'))}: o banco ainda não repassou toda a variação do custo de captação — no curto prazo, a margem absorve parte do choque.`);
+  }
+  // poupança: regime
+  const sAntes = est.S0, sDepois = est.S0 + D;
+  if (est.F.adm){
+    if ((sAntes > 8.5) !== (sDepois > 8.5)) frases.push(`Poupança: a Selic cruza 8,5% (${nf(sAntes)}% → ${nf(sDepois)}%) e a regra <b>muda de regime</b> — ${sDepois > 8.5 ? 'trava em 0,5% a.m. + TR' : 'passa a render 70% da Selic + TR'}. ${t >= 0 ? `Variação até agora: ${pp(v('poup'))}.` : ''}`);
+    else if (sAntes > 8.5) frases.push(`Poupança: com Selic acima de 8,5%, rende 0,5% a.m. + TR e só sente o choque via TR — ${t >= 0 ? `${pp(v('poup'))} até agora, potência de ${pct(pot('poup'))}` : 'potência baixa'}.`);
+    else frases.push(`Poupança: com Selic em 8,5% ou abaixo, rende 70% da Selic (+ TR, que fica zerada) — ${t >= 0 ? `${pp(v('poup'))} até agora, potência de ${pct(pot('poup'))}` : 'potência de 70%'}.`);
+  } else frases.push('Taxas administradas desligadas: poupança, FGTS e TR passam a acompanhar o CDI, como se fossem de mercado.');
+  if (t >= 1) frases.push(`TLP: ${pp(v('tlp'))} — anda em degraus mensais, pela média trimestral da NTN-B 5a.`);
+  el.innerHTML = '<h4>🔍 O que está acontecendo</h4>' + frases.map(f => `<p>${f}</p>`).join('');
+}
+
+// =====================================================================
+// 9) CONTROLES, TEMPO E ANIMAÇÃO
+// =====================================================================
+const $ = id => document.getElementById(id);
+function lerControles(){
+  est.S0 = +$('s0').value;
+  let D = +$('choque').value;
+  if (est.S0 + D < 0.25){ D = Math.ceil((0.25 - est.S0) / 0.25) * 0.25; $('choque').value = D; }
+  est.D = D; est.p = +$('modo').value;
+  est.F = { dir:$('fDir').checked, adm:$('fAdm').checked, rig:$('fRig').checked, est:$('fEst').checked };
+  document.querySelectorAll('.friccoes .chip').forEach(l => l.classList.toggle('on', l.querySelector('input').checked));
+  $('vChoque').textContent = pp(est.D);
+  $('vS0').textContent = nf(est.S0) + '% → ' + nf(est.S0 + est.D) + '%';
+  recalcular(); redesenhar();
+}
+function relogio(){
+  const t = est.t;
+  $('relogio').textContent = t < 0 ? `t = ${sinal(t, 1)} mês (antes do Copom)` : `t = ${nf(t, 1)} ${t < 1.95 && t >= 0.95 ? 'mês' : 'meses'} após o Copom`;
+  $('tempo').value = t;
+}
+function redesenhar(){
+  if (!$('sim').classList.contains('ativa')) return;
+  relogio(); desenharArvore(); desenharLinhas(); desenharBarras(); atualizarStats(); atualizarInfo(); explicar();
+}
+['s0','choque','modo','fDir','fAdm','fRig','fEst'].forEach(id => $(id).addEventListener('input', lerControles));
+$('semFric').addEventListener('click', () => { ['fDir','fAdm','fRig','fEst'].forEach(id => $(id).checked = false); lerControles(); });
+$('comFric').addEventListener('click', () => { ['fDir','fAdm','fRig','fEst'].forEach(id => $(id).checked = true); lerControles(); });
+$('tempo').addEventListener('input', e => { est.t = +e.target.value; redesenhar(); });
+$('play').addEventListener('click', () => {
+  if (!est.tocando && est.t >= T1 - 1e-6) est.t = T0;
+  est.tocando = !est.tocando;
+  $('play').textContent = est.tocando ? '⏸' : '▶';
+  $('play').setAttribute('aria-label', est.tocando ? 'Pausar' : 'Reproduzir');
+});
+$('reset').addEventListener('click', () => { est.tocando = false; $('play').textContent = '▶'; est.t = T0; redesenhar(); });
+
+let tAnt = null;
+function quadro(ts){
+  const dt = tAnt === null ? 0 : Math.min(0.1, (ts - tAnt) / 1000);
+  tAnt = ts;
+  if ($('sim').classList.contains('ativa')){
+    est.relogioAnim += dt;
+    if (est.tocando){
+      est.t = Math.min(T1, est.t + dt * +$('veloc').value);
+      if (est.t >= T1){ est.tocando = false; $('play').textContent = '▶'; }
+      redesenhar();
+    } else desenharArvore();   // mantém as bolinhas vivas mesmo pausado
+  }
+  requestAnimationFrame(quadro);
+}
+
+// abas
+document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('nav.tabs button').forEach(x => x.classList.toggle('ativo', x === b));
+  document.querySelectorAll('.aba').forEach(a => a.classList.toggle('ativa', a.id === b.dataset.aba));
+  redesenhar();
+}));
+window.addEventListener('resize', redesenhar);
+
+// =====================================================================
+// 10) CENÁRIOS
+// =====================================================================
+const CENARIOS = [
+  {s:'O Copom surpreende com +1 p.p. O gestor diz: "minha carteira de LFT vai tomar um prejuízo grande na marcação a mercado".', ok:false,
+   r:'Não. A LFT é indexada à própria Selic: a alta muda a remuneração (passa a render a nova Selic), não o desconto do fluxo. O PU quase não se mexe — só o ágio/deságio de mercado, que é pequeno. Quem toma prejuízo na marcação é o prefixado.'},
+  {s:'Um fundo prefixado comprado em NTN-F de 5 anos comemora a surpresa de +1 p.p.: "a taxa subiu, vou ganhar mais".', ok:false,
+   r:'Ao contrário. Taxa de prefixado subindo = PU caindo. No modelo, a NTN-F 5a sobe 0,45 p.p. e o PU cai cerca de 1,56% com Selic de partida de 13,75% — mais que a LTN 1a (−0,87% com +1 p.p. de taxa), porque a duration é maior. O ganho de carregar a taxa maior só aparece com o tempo.'},
+  {s:'O tesoureiro de uma indústria diz que, depois da alta de 1 p.p., o capital de giro vai ficar exatamente 1 p.p. mais caro já na semana seguinte.', ok:false,
+   r:'Errado em duas dimensões. Potência: o crédito livre repassa só parte (no modelo, 72% no longo prazo, por rigidez de spread e tetos). Tempo: o repasse leva meses (τ ≈ 3 meses), e o estoque da carteira reprecia ainda mais devagar. No curto prazo o spread comprime.'},
+  {s:'O Copom sobe 0,50 p.p., exatamente o que a curva precificava. No dia seguinte, o DI futuro de 1 ano praticamente não se mexe. Isso faz sentido?', ok:true,
+   r:'Sim. O DI futuro precifica a expectativa de CDI; se a alta já era esperada, ela foi para o preço semanas antes. No dia, saltam só a Selic over e o CDI. Selecione "Antecipado" na simulação e veja o DI andar entre t = −3 e t = 0.'},
+  {s:'Com a Selic em 8%, o Copom sobe para 9%. Um analista afirma que a poupança vai mudar de regra de remuneração.', ok:true,
+   r:'Correto. Até 8,5% a poupança rende 70% da Selic + TR; acima, 0,5% a.m. + TR. Ao cruzar 8,5%, ela trava em ≈ 6,17% a.a. + TR. Foi o que aconteceu em dez/2021, quando a Selic passou de 7,75% para 9,25%. Por isso a potência da Selic sobre a poupança depende do nível de partida.'},
+  {s:'Uma empresa vai fechar um financiamento do BNDES em TLP daqui a 10 dias e acha que a surpresa do Copom de hoje já está toda embutida na taxa que vai pagar.', ok:false,
+   r:'Não está. A TLP é IPCA + juro real da NTN-B de 5 anos pela média de três meses, publicada em degraus mensais. Ela responde ao juro real (que sobe menos que a Selic) e com atraso. E não vem da TR, como sugere o slide.'}
+];
+function montarCenarios(){
+  const g = $('gradeCen');
+  CENARIOS.forEach((c, i) => {
+    const d = document.createElement('div'); d.className = 'cen'; d.tabIndex = 0;
+    d.innerHTML = `<div class="num">CENÁRIO ${i + 1}</div><p style="margin:6px 0 0">${c.s}</p><div class="dica-clique">Clique para ver a resposta</div>
+      <div class="resp ${c.ok ? 'ok' : 'ruim'}"><b>${c.ok ? '✓ Faz sentido.' : '✗ Armadilha.'}</b> ${c.r}</div>`;
+    const abrir = () => d.classList.add('aberto');
+    d.addEventListener('click', abrir); d.addEventListener('keydown', e => { if (e.key === 'Enter') abrir(); });
+    g.appendChild(d);
+  });
+}
+
+// =====================================================================
+// 11) TESTE
+// =====================================================================
+const QUIZ = [
+  {q:'O Copom surpreende com alta de 1 p.p. O que acontece com o PU de uma LTN de 1 ano e de uma NTN-F de 5 anos?',
+   a:['Ambos caem; a NTN-F tende a cair mais, pela duration maior','Ambos sobem, porque passam a pagar taxas maiores','A LTN cai e a NTN-F sobe, porque o cupom protege','Nada muda até o vencimento, quando o título paga 1.000'], c:0,
+   e:'Taxa e PU de prefixado andam em sentidos opostos, e a sensibilidade cresce com a duration. "Paga taxa maior" vale para quem compra depois do choque, não para quem já carrega o título.'},
+  {q:'E a LFT, na mesma surpresa?',
+   a:['O PU cai como o de um prefixado de mesmo prazo','O PU fica praticamente estável e a rentabilidade passa a acompanhar a nova Selic','O PU sobe 1%, porque a Selic subiu 1 p.p.','Deixa de render até o próximo Copom'], c:1,
+   e:'A LFT é indexada à Selic: o choque muda a remuneração futura, não o valor presente do fluxo. Só o ágio/deságio de mercado oscila, e pouco.'},
+  {q:'Como o choque de +1 p.p. chega à taxa média da carteira de crédito do SFN?',
+   a:['Integralmente e no dia seguinte','Não chega: crédito não depende da Selic','Mais que integralmente e de imediato, porque o risco sobe junto','Parcialmente e com meses de defasagem — e menos ainda por causa do crédito direcionado'], c:3,
+   e:'O crédito livre repassa em parte e devagar (rigidez de spread, tetos); o direcionado (rural, habitacional, BNDES) segue regras próprias; e o estoque só reprecia conforme as operações são renovadas.'},
+  {q:'O Copom sobe 0,25 p.p., em linha com o consenso e com a curva. O que se espera no dia da decisão?',
+   a:['O DI futuro de 1 ano sobe 0,25 p.p. no fechamento','Selic over e CDI sobem 0,25 p.p.; o DI futuro mexe pouco, pois a alta já estava no preço','Nenhuma taxa se move, porque a decisão era esperada','Só a poupança se ajusta no mesmo dia'], c:1,
+   e:'As taxas de 1 dia seguem a meta mecanicamente; as taxas de mercado a termo já incorporaram a expectativa. Surpresa é o que move a curva no dia.'},
+  {q:'Com a Selic em 13,75%, o Copom sobe para 14,75%. O que acontece com a poupança?',
+   a:['Sobe 0,7 p.p., pois rende 70% da Selic','Sobe 1 p.p., como toda taxa indexada','Sobe pouco, apenas via TR, pois com Selic acima de 8,5% rende 0,5% a.m. + TR','Cai, porque a TR é inversamente ligada à Selic'], c:2,
+   e:'A regra dos 70% só vale com Selic em 8,5% ou abaixo. Acima disso, o único canal é a TR, que tem redutor e responde pouco — a potência é baixa.'}
+];
+let acertos = 0;
+function montarQuiz(){
+  const z = $('quiz');
+  QUIZ.forEach((item, qi) => {
+    const d = document.createElement('div'); d.className = 'q';
+    d.innerHTML = `<p class="enun">${qi + 1}. ${item.q}</p>` + item.a.map((t, ai) => `<button class="alt" data-a="${ai}">${String.fromCharCode(65 + ai)}) ${t}</button>`).join('') + `<div class="fb"></div>`;
+    let respondida = false;
+    d.querySelectorAll('.alt').forEach(b => b.addEventListener('click', () => {
+      if (respondida) return; respondida = true;
+      const a = +b.dataset.a, certo = a === item.c;
+      b.classList.add(certo ? 'certa' : 'errada');
+      d.querySelectorAll('.alt')[item.c].classList.add('certa');
+      const fb = d.querySelector('.fb'); fb.classList.add('mostrar', certo ? 'ok' : 'ruim');
+      fb.innerHTML = `<b>${certo ? 'Isso mesmo.' : 'Não é essa.'}</b> ${item.e}`;
+      if (certo) acertos++;
+      $('placar').textContent = `${acertos} / ${QUIZ.length}`;
+    }));
+    z.appendChild(d);
+  });
+}
+
+// =====================================================================
+// INÍCIO
+// =====================================================================
+lerCores(); montarChipsSeries(); montarCenarios(); montarQuiz(); lerControles();
+requestAnimationFrame(quadro);
+</script>
+</body>
+</html>

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ΔEVE × ΔNII</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,500;0,7..72,700;1,7..72,600&family=Sora:wght@400;500;600;700&family=Red+Hat+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf8f3; --bg2:#f1eee6; --bg-card:#ffffff;
+  --text:#1f2421; --text-dim:#565d58;
+  --accent:#4f5d16; --accent-bg:#eef0e0; --accent-brd:#cdd3a8;
+  --eve:#6a3fa0; --eve-bg:#f1ebf8; --eve-brd:#d6c6ea;
+  --nii:#0b6e72; --nii-bg:#e3f2f2; --nii-brd:#b5dadb;
+  --ok:#27702b; --ok-bg:#e8f3e8; --ok-brd:#bcdcbe;
+  --bad:#b3261e; --bad-bg:#fbe9e7; --bad-brd:#efc2bd;
+  --ref:#2b5797; --ref-bg:#e8eef7; --ref-brd:#c3d2e8;
+  --amb:#8f5b00; --amb-bg:#fbf1dc; --amb-brd:#ecd29a;
+  --slate:#5f6b73;
+  --grid:#e6e2d8; --line-brd:#e2ddd1;
+  --f-disp:'Literata',Georgia,serif; --f-text:'Sora',system-ui,sans-serif; --f-mono:'Red Hat Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:var(--f-text);font-size:15px;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 40px}
+header .tag{display:inline-block;font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-bg);border:1px solid var(--accent-brd);padding:3px 10px;border-radius:99px}
+h1{font-family:var(--f-disp);font-weight:700;font-size:clamp(28px,4.4vw,44px);line-height:1.1;margin:14px 0 8px}
+h1 em{font-style:italic;font-weight:600}
+h1 .e{color:var(--eve)} h1 .n{color:var(--nii)}
+.lead{color:var(--text-dim);max-width:820px;margin:0 0 18px;font-size:16px}
+h2{font-family:var(--f-disp);font-size:24px;margin:6px 0 10px}
+h3{font-family:var(--f-disp);font-size:18px;margin:4px 0 8px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 18px}
+.tab{font-family:var(--f-text);font-weight:600;font-size:14px;border:1px solid var(--line-brd);background:var(--bg-card);color:var(--text);padding:8px 16px;border-radius:99px;cursor:pointer}
+.tab:hover{border-color:var(--accent)}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.pane{display:none;animation:fade .4s ease}
+.pane.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--bg-card);border:1px solid var(--line-brd);border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(40,35,20,.06);margin-bottom:16px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+table.cmp th.c-eve{color:var(--eve);font-weight:600} table.cmp th.c-nii{color:var(--nii);font-weight:600}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.mono{font-family:var(--f-mono)}
+.c-eve{color:var(--eve);font-weight:600} .c-nii{color:var(--nii);font-weight:600} .c-mtm{color:var(--amb);font-weight:600}
+.c-ok{color:var(--ok);font-weight:600} .c-bad{color:var(--bad);font-weight:600}
+/* cartões EVE/NII */
+.lens{border-radius:14px;padding:18px 20px;border:1px solid}
+.lens.eve{background:var(--eve-bg);border-color:var(--eve-brd)}
+.lens.nii{background:var(--nii-bg);border-color:var(--nii-brd)}
+.lens h3{margin-top:0}
+.lens.eve h3{color:var(--eve)} .lens.nii h3{color:var(--nii)}
+.formula{font-family:var(--f-mono);font-size:14px;background:var(--bg-card);border:1px solid var(--line-brd);border-radius:10px;padding:10px 12px;margin:10px 0;overflow-x:auto;white-space:nowrap}
+.lens ul{margin:6px 0 0;padding-left:18px}
+.lens li{margin:3px 0}
+table.cmp{width:100%;border-collapse:collapse;font-size:14px}
+table.cmp th,table.cmp td{padding:9px 10px;border-bottom:1px solid var(--line-brd);text-align:left;vertical-align:top}
+table.cmp th{font-family:var(--f-mono);font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);font-weight:500}
+table.cmp td:first-child{font-weight:600;width:24%}
+.tbl-scroll{overflow-x:auto}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ok-box,.bad-box{border-radius:12px;padding:14px 16px;border:1px solid}
+.ok-box{background:var(--ok-bg);border-color:var(--ok-brd)}
+.bad-box{background:var(--bad-bg);border-color:var(--bad-brd)}
+.ok-box b.r{color:var(--ok)} .bad-box b.r{color:var(--bad)}
+.box{border-radius:12px;padding:14px 16px;border:1px solid;margin:12px 0}
+.box.dica{background:var(--accent-bg);border-color:var(--accent-brd)}
+.box.aviso{background:var(--amb-bg);border-color:var(--amb-brd)}
+.box.mundo{background:var(--ref-bg);border-color:var(--ref-brd)}
+.fonte{display:block;font-size:12px;color:var(--text-dim);margin-top:6px}
+.books{display:grid;grid-template-columns:1fr auto 1fr;gap:8px 10px;align-items:stretch;font-size:14px}
+.books .hd{font-family:var(--f-disp);font-weight:700;font-size:16px;text-align:center;padding:4px}
+.books .tb{background:var(--amb-bg);border:1px solid var(--amb-brd);border-radius:10px;padding:8px 10px}
+.books .bb{background:var(--eve-bg);border:1px solid var(--eve-brd);border-radius:10px;padding:8px 10px}
+.books .mid{font-family:var(--f-mono);font-size:12px;color:var(--text-dim);display:flex;align-items:center;justify-content:center;text-align:center;max-width:110px}
+.quote{font-family:var(--f-disp);font-style:italic;font-size:17px;color:var(--text-dim);border-left:3px solid var(--accent);padding:2px 0 2px 14px;margin:6px 0 14px}
+/* simulação */
+.ctrls{display:grid;grid-template-columns:1.2fr 1.6fr 1fr;gap:16px}
+.ctl-t{font-family:var(--f-mono);font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-dim);margin-bottom:6px}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-family:var(--f-text);font-size:13px;font-weight:500;border:1px solid var(--line-brd);background:var(--bg-card);color:var(--text);padding:6px 11px;border-radius:99px;cursor:pointer}
+.pill:hover{border-color:var(--accent)}
+.pill.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.pill .reg{font-family:var(--f-mono);font-size:10px;margin-left:4px;opacity:.85}
+.hint{font-size:12.5px;color:var(--text-dim);margin-top:6px;min-height:18px}
+.sliders{display:none;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+.sliders.on{display:grid}
+.sl label{display:flex;justify-content:space-between;font-size:13px;font-weight:600}
+.sl label .v{font-family:var(--f-mono);color:var(--accent)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.btns{display:flex;gap:8px;margin-top:10px}
+.btn{font-family:var(--f-text);font-size:13px;font-weight:600;border:1px solid var(--accent);background:var(--bg-card);color:var(--accent);padding:6px 12px;border-radius:8px;cursor:pointer}
+.btn:hover{background:var(--accent-bg)}
+canvas{display:block;width:100%}
+.cv-card{padding:12px 14px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat{background:var(--bg-card);border:1px solid var(--line-brd);border-radius:12px;padding:12px 14px;border-top:4px solid var(--slate)}
+.stat.eve{border-top-color:var(--eve)} .stat.nii{border-top-color:var(--nii)} .stat.mtm{border-top-color:var(--amb)} .stat.tot{border-top-color:var(--slate)}
+.stat .k{font-size:12.5px;color:var(--text-dim);font-weight:600}
+.stat .n{font-family:var(--f-mono);font-size:26px;font-weight:600;margin:2px 0}
+.stat .s{font-size:12px;color:var(--text-dim)}
+.flag{display:inline-block;font-family:var(--f-mono);font-size:11px;padding:1px 7px;border-radius:99px;margin-left:4px}
+.flag.bad{background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad-brd)}
+.flag.ok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-brd)}
+.flag.gest{background:var(--amb-bg);color:var(--amb);border:1px solid var(--amb-brd)}
+.visores{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.visor{border-radius:14px;padding:14px 18px;border:1px solid;display:flex;gap:14px;align-items:center}
+.visor.eve{background:var(--eve-bg);border-color:var(--eve-brd)}
+.visor.nii{background:var(--nii-bg);border-color:var(--nii-brd)}
+.visor .arrow{font-size:38px;line-height:1;font-weight:700;min-width:40px;text-align:center}
+.visor .tt{font-family:var(--f-disp);font-weight:700;font-size:17px}
+.visor .dd{font-size:13.5px;color:var(--text)}
+.explica{background:var(--bg-card);border:1px solid var(--line-brd);border-left:4px solid var(--accent);border-radius:12px;padding:14px 18px}
+.explica p{margin:6px 0}
+.leg{display:flex;flex-wrap:wrap;gap:12px;font-size:12.5px;color:var(--text-dim);margin-top:6px}
+.leg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+/* cenários */
+.cen-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.cen{background:var(--bg-card);border:1px solid var(--line-brd);border-radius:14px;padding:16px;cursor:pointer;transition:transform .15s, box-shadow .15s;display:flex;flex-direction:column}
+.cen:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(40,35,20,.08)}
+.cen .trap{font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent)}
+.cen .who{font-weight:700;margin:4px 0}
+.cen .q{font-size:14px}
+.cen .cta{font-size:12.5px;color:var(--text-dim);margin-top:auto;padding-top:10px}
+.cen .ans{display:none;margin-top:10px;border-radius:10px;padding:10px 12px;font-size:13.5px;border:1px solid}
+.cen.open .ans{display:block;animation:fade .35s ease}
+.cen.open .cta{display:none}
+.cen .ans.ok{background:var(--ok-bg);border-color:var(--ok-brd)}
+.cen .ans.bad{background:var(--bad-bg);border-color:var(--bad-brd)}
+.cen .ans b.v{display:block;margin-bottom:3px}
+.cen .ans.ok b.v{color:var(--ok)} .cen .ans.bad b.v{color:var(--bad)}
+/* teste */
+.qz{background:var(--bg-card);border:1px solid var(--line-brd);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+.qz .qq{font-weight:600;margin-bottom:10px}
+.opt{display:block;width:100%;text-align:left;font-family:var(--f-text);font-size:14px;background:var(--bg);border:1px solid var(--line-brd);border-radius:10px;padding:9px 12px;margin:6px 0;cursor:pointer;color:var(--text)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.right{background:var(--ok-bg);border-color:var(--ok);}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.fb{display:none;margin-top:8px;font-size:14px;border-radius:10px;padding:10px 12px}
+.fb.on{display:block;animation:fade .3s ease}
+.fb.ok{background:var(--ok-bg)} .fb.bad{background:var(--bad-bg)}
+.score{font-family:var(--f-disp);font-size:20px;font-weight:700;margin:8px 0}
+footer{margin-top:30px;padding-top:14px;border-top:1px solid var(--line-brd);font-size:12.5px;color:var(--text-dim)}
+details summary{cursor:pointer;font-weight:600;color:var(--accent)}
+@media (max-width:900px){
+  .ctrls{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .cen-grid{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .wrap{padding:18px 14px 30px}
+  .g2,.pair,.visores,.cen-grid{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .stat .n{font-size:21px}
+  .books{grid-template-columns:1fr 1fr}
+  .books .mid{display:none}
+  .sliders.on{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="tag">IRRBB · risco de juros da carteira bancária</span>
+  <h1>Um choque, dois visores: <em class="e">ΔEVE</em> e <em class="n">ΔNII</em></h1>
+  <p class="lead">O <span class="c-eve">ΔEVE</span> mede o impacto do choque no <b>valor</b> do banco; o <span class="c-nii">ΔNII</span>, no <b>resultado</b> dos próximos 12 meses. No mesmo balanço, os dois podem apontar para lados opostos, e os dois estarão certos.</p>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab on" data-p="p1">① Conceito</button>
+  <button class="tab" data-p="p2">② Simulação</button>
+  <button class="tab" data-p="p3">③ Cenários</button>
+  <button class="tab" data-p="p4">④ Teste</button>
+</nav>
+
+<!-- ============ ① CONCEITO ============ -->
+<section class="pane on" id="p1">
+  <div class="g2">
+    <div class="lens eve">
+      <h3>EVE — Economic Value of Equity</h3>
+      <div>Pergunta: <b>quanto vale o banco</b> depois do choque?</div>
+      <div class="formula">ΔEVE = Σ<sub>k</sub> [ VP<sub>choque</sub>(t<sub>k</sub>) − VP<sub>base</sub>(t<sub>k</sub>) ]</div>
+      <ul>
+        <li><b>Estoque:</b> valor presente de <i>todos</i> os fluxos, até o último vencimento.</li>
+        <li><b>Run-off:</b> o que vence não é renovado.</li>
+        <li>Sente a curva <b>inteira</b>; dói mais na <b>ponta longa</b>.</li>
+      </ul>
+    </div>
+    <div class="lens nii">
+      <h3>NII — Net Interest Income</h3>
+      <div>Pergunta: <b>quanto o banco ganha</b> nos próximos 12 meses?</div>
+      <div class="formula">ΔNII ≈ Σ<sub>t<sub>k</sub> ≤ 1</sub> Gap(t<sub>k</sub>) · Δr(t<sub>k</sub>) · (1 − t<sub>k</sub>)</div>
+      <ul>
+        <li><b>Fluxo:</b> receita menos despesa de intermediação no ano.</li>
+        <li><b>Balanço constante:</b> o que vence é renovado igual, a taxa nova.</li>
+        <li>Só enxerga o que <b>reprecifica em até 12 meses</b>; dói no <b>curto</b>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Lado a lado</h3>
+    <div class="tbl-scroll">
+    <table class="cmp">
+      <tr><th></th><th class="c-eve">ΔEVE</th><th class="c-nii">ΔNII</th></tr>
+      <tr><td>Natureza</td><td>Estoque: <b>riqueza</b></td><td>Fluxo: <b>resultado corrente</b></td></tr>
+      <tr><td>Horizonte</td><td>Até o último fluxo (anos)</td><td>12 meses</td></tr>
+      <tr><td>Premissa de balanço</td><td>Run-off (sem renovação)</td><td>Constante (renova igual)</td></tr>
+      <tr><td>O que move o número</td><td>Prazo × taxa de <i>todos</i> os fluxos pré: ativo pré longo perde valor quando a taxa longa sobe</td><td>O <b>gap de reapreçamento</b> até 1 ano: quem reprecifica primeiro, ativo ou passivo</td></tr>
+      <tr><td>Margens comerciais</td><td>Podem ser excluídas dos fluxos</td><td>Devem ser incluídas</td></tr>
+      <tr><td>Cenários padronizados (S1/S2)</td><td>6: paralelos ±, curto ±, steepener, flattener</td><td>2: só os paralelos ±</td></tr>
+    </table>
+    </div>
+  </div>
+
+  <div class="pair">
+    <div class="bad-box"><b class="r">✗ Armadilha</b><br>“No ciclo de corte o NII projetado subiu. Então o risco de juros do banco diminuiu.”</div>
+    <div class="ok-box"><b class="r">✓ Leitura certa</b><br>“O NII subiu porque o funding pós-CDI reprecificou para baixo. O EVE caiu porque a ponta longa subiu e o crédito pré longo perdeu valor. Os dois estão certos, em horizontes diferentes, e o ALCO precisa olhar os dois.”</div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>Onde a dor aparece: trading × banking book</h3>
+    <div class="quote">“A classificação contábil não muda o risco econômico, mas muda onde ele aparece, quando ele castiga e quem o vigia.”</div>
+    <div class="books">
+      <div class="hd" style="color:var(--amb)">Trading book</div><div></div><div class="hd" style="color:var(--eve)">Banking book</div>
+      <div class="tb">MtM diário no resultado</div><div class="mid">marcação</div><div class="bb">Accrual (carrego)</div>
+      <div class="tb">Dor imediata e visível</div><div class="mid">visibilidade</div><div class="bb">Silenciosa, no valor econômico (EVE)</div>
+      <div class="tb">Mesa de trading, VaR</div><div class="mid">quem vigia</div><div class="bb">ALCO e IRRBB</div>
+      <div class="tb">Diário</div><div class="mid">horizonte</div><div class="bb">Longo prazo, estrutural</div>
+      <div class="tb">Choque absorvido pelo <b>preço</b></div><div class="mid">absorção</div><div class="bb">Choque absorvido pelo <b>tempo</b></div>
+    </div>
+    <div class="box dica"><b>💡 Carregar não é esconder.</b> No banking book a perda econômica continua lá, só que no EVE e não no resultado do dia. Carregar é racional se, e somente se, o passivo der tempo suficiente para o carrego se realizar.</div>
+  </div>
+
+  <div class="box aviso"><b>⚠️ Sinal.</b> Nesta animação, Δ = choque − base: <span class="c-bad">negativo é perda</span>. Na Circular 3.876 e no Pilar 3 a conta é a inversa (base − choque), e a <b>perda aparece como número positivo</b>. Mesmo risco, convenção diferente: confira o sinal antes de comparar com a tabela IRRBB1 de um banco.</div>
+
+  <div class="box mundo"><b>🌎 Janela para o mundo real.</b> A Circular BCB 3.876/2018 fixa, para taxas prefixadas em reais, choques de <b>400 bps</b> (paralelo), <b>500 bps</b> (curto) e <b>300 bps</b> (longo). Curto e longo se misturam pelo peso e<sup>−t/4</sup>: o steepener faz −0,65·500·e<sup>−t/4</sup> + 0,9·300·(1−e<sup>−t/4</sup>). O ΔEVE padronizado é a <b>pior perda</b> entre os seis cenários, e o banco S1/S2 com ΔEVE acima de <b>15% do Nível I</b> é tratado como de exposição potencialmente elevada (teste de outlier, art. 44). O ΔNII padronizado usa só os dois paralelos e horizonte de 12 meses (arts. 9º e 23).<span class="fonte">Fonte: Circular BCB 3.876/2018, texto compilado no site do BCB (redação dada pelas Circulares 3.930 e 3.938/2019 e Resoluções BCB 48/2020 e 266/2022).</span></div>
+</section>
+
+<!-- ============ ② SIMULAÇÃO ============ -->
+<section class="pane" id="p2">
+  <div class="card">
+    <div class="ctrls">
+      <div>
+        <div class="ctl-t">1 · Balanço</div>
+        <div class="pills" id="balPills">
+          <button class="pill on" data-b="varejo">Varejo (descasado)</button>
+          <button class="pill" data-b="blindado">"NII blindado"</button>
+          <button class="pill" data-b="casado">Casado</button>
+        </div>
+        <div class="hint" id="balHint"></div>
+      </div>
+      <div>
+        <div class="ctl-t">2 · Choque (Circular 3.876)</div>
+        <div class="pills" id="cenPills"></div>
+        <div class="hint" id="cenHint"></div>
+        <div class="sliders" id="sliders">
+          <div class="sl"><label>Choque no curto <span class="v" id="vS"></span></label><input type="range" id="sS" min="-500" max="500" step="25" value="-300"></div>
+          <div class="sl"><label>Choque no longo <span class="v" id="vL"></span></label><input type="range" id="sL" min="-500" max="500" step="25" value="250"></div>
+        </div>
+      </div>
+      <div>
+        <div class="ctl-t">3 · Onde a LTN mora</div>
+        <div class="pills" id="bookPills">
+          <button class="pill on" data-k="banking">Banking book</button>
+          <button class="pill" data-k="trading">Trading book</button>
+        </div>
+        <div class="hint" id="bookHint"></div>
+        <div class="btns"><button class="btn" id="bPlay">▶ Animar choque</button><button class="btn" id="bReset">↺ Voltar à base</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat eve"><div class="k">ΔEVE (valor)</div><div class="n" id="stE"></div><div class="s" id="stE2"></div></div>
+    <div class="stat nii"><div class="k">ΔNII (12 meses)</div><div class="n" id="stN"></div><div class="s" id="stN2"></div></div>
+    <div class="stat mtm"><div class="k">MtM no resultado de hoje</div><div class="n" id="stM"></div><div class="s" id="stM2"></div></div>
+    <div class="stat tot"><div class="k">Perda/ganho econômico total</div><div class="n" id="stT"></div><div class="s">ΔEVE + MtM: não depende do book</div></div>
+  </div>
+
+  <div class="visores">
+    <div class="visor eve"><div class="arrow" id="arE"></div><div><div class="tt" style="color:var(--eve)">Visor do valor (EVE)</div><div class="dd" id="txE"></div></div></div>
+    <div class="visor nii"><div class="arrow" id="arN"></div><div><div class="tt" style="color:var(--nii)">Visor do resultado (NII)</div><div class="dd" id="txN"></div></div></div>
+  </div>
+
+  <div class="g2">
+    <div class="card cv-card"><canvas id="cvCurva" height="290"></canvas>
+      <div class="leg"><span><i style="background:var(--ref)"></i>curva-base (fictícia)</span><span><i style="background:var(--accent)"></i>curva com choque</span></div></div>
+    <div class="card cv-card"><canvas id="cvTempo" height="290"></canvas>
+      <div class="leg"><span><i style="background:var(--slate)"></i>ativo / passivo que reprecifica no prazo</span><span><i style="background:var(--nii-bg);border:1px solid var(--nii)"></i>janela do NII (12 meses)</span><span><i style="background:var(--ok)"></i><i style="background:var(--bad);margin-left:-3px"></i>contribuição ao ΔEVE</span></div></div>
+  </div>
+
+  <div class="card cv-card"><canvas id="cvSeis" height="270"></canvas>
+    <div class="leg"><span><i style="background:var(--eve)"></i>ΔEVE</span><span><i style="background:var(--nii)"></i>ΔNII (paralelos: regulatório)</span><span><i style="background:var(--nii);opacity:.35"></i>ΔNII fora dos paralelos: visão de gestão</span></div>
+    <div class="hint" id="seisHint"></div></div>
+
+  <div class="explica"><b>🔍 O que está acontecendo</b><div id="explica"></div></div>
+
+  <details class="card" style="margin-top:16px"><summary>Convenções e simplificações do modelo</summary>
+    <ul style="font-size:14px">
+      <li>Valores em R$ milhões. Curva pré fictícia, com níveis próximos aos de 2026; desconto exponencial, (1 + r)<sup>t</sup>, base 252.</li>
+      <li>Cada fluxo de reapreçamento é tratado como um zero-cupom com VP-base igual ao principal (margens comerciais excluídas do EVE, como a norma permite).</li>
+      <li>Pós-fixados (CDI) reprecificam em 1 dia útil: quase nada no EVE, quase tudo no NII.</li>
+      <li>ΔNII: balanço constante; o que reprecifica no prazo t ≤ 1 ano passa a render Δr(t) pelo resto do ano. Nos cenários não paralelos usamos o choque do próprio prazo de reapreçamento (visão de gestão).</li>
+      <li>Nível I aproximado pelo PL (R$ 100 mi). Ativos não sensíveis (permanente etc.) ficam fora do IRRBB. Sem opcionalidades (pré-pagamento, resgate antecipado) e sem risco de base.</li>
+    </ul>
+  </details>
+</section>
+
+<!-- ============ ③ CENÁRIOS ============ -->
+<section class="pane" id="p3">
+  <h2>Seis decisões de ALCO</h2>
+  <p class="lead" style="font-size:15px">Clique em cada cartão: a leitura está certa ou é uma armadilha? Os números vêm do mesmo modelo da Simulação.</p>
+  <div class="cen-grid" id="cenGrid"></div>
+</section>
+
+<!-- ============ ④ TESTE ============ -->
+<section class="pane" id="p4">
+  <h2>Teste rápido</h2>
+  <div id="quiz"></div>
+  <div class="score" id="score"></div>
+</section>
+
+<footer>Operações de Tesouraria em Instituições Financeiras — FGV · Prof. José Américo · Balanços e curva fictícios, com ordens de grandeza realistas. Dado real: choques padronizados e teste de outlier da Circular BCB 3.876/2018 (texto compilado).</footer>
+</div>
+
+<script>
+// ===================== MODELO (ΔEVE e ΔNII) =====================
+// Curva pré fictícia, em decimal a.a. (capitalização exponencial, base 252)
+function base(t) { return 0.1320 + 0.0090 * (1 - Math.exp(-t / 2)); }
+
+// Choques padronizados da Circular BCB 3.876, Anexo I (prefixado em reais), em bps
+const R_PAR = 400, R_CUR = 500, R_LON = 300;
+const CENARIOS = [
+  { id: 'par_alta',    nome: 'Paralelo de alta',  curto: '+400', longo: '+400', reg: true },
+  { id: 'par_baixa',   nome: 'Paralelo de baixa', curto: '−400', longo: '−400', reg: true },
+  { id: 'curto_alta',  nome: 'Alta do curto',     curto: '+500', longo: '≈0',   reg: false },
+  { id: 'curto_baixa', nome: 'Baixa do curto',    curto: '−500', longo: '≈0',   reg: false },
+  { id: 'steepener',   nome: 'Steepener',         curto: '−325', longo: '→ +270', reg: false },
+  { id: 'flattener',   nome: 'Flattener',         curto: '+400', longo: '→ −180', reg: false },
+];
+
+// Choque Δ(t) em decimal. S e L (bps) só valem no modo livre.
+function choque(cen, t, S, L) {
+  const e = Math.exp(-t / 4);
+  let b;
+  switch (cen) {
+    case 'par_alta':    b = R_PAR; break;
+    case 'par_baixa':   b = -R_PAR; break;
+    case 'curto_alta':  b = R_CUR * e; break;
+    case 'curto_baixa': b = -R_CUR * e; break;
+    case 'steepener':   b = -0.65 * Math.abs(R_CUR * e) + 0.9 * Math.abs(R_LON * (1 - e)); break;
+    case 'flattener':   b = 0.8 * Math.abs(R_CUR * e) - 0.6 * Math.abs(R_LON * (1 - e)); break;
+    default:            b = (S || 0) * e + (L || 0) * (1 - e);   // livre
+  }
+  return b / 10000;
+}
+
+// Balanços (R$ milhões). s = +1 ativo, −1 passivo. f = fluxos [prazo em anos, principal].
+// ns = ativos não sensíveis (permanente etc.), fora do IRRBB (art. 26).
+const D1 = 1 / 252;
+const BALANCOS = {
+  varejo: { nome: 'Banco Varejo (descasado)', pl: 100, ns: 200, itens: [
+    { n: 'Crédito consignado pré',    s: 1,  tx: 0.24,  f: [[2,20],[3,30],[5,40],[7,30]] },
+    { n: 'Títulos pré (LTN)',         s: 1,  tx: null,  f: [[3,80]], tit: true },
+    { n: 'Capital de giro pós-CDI',   s: 1,  tx: 'cdi+.08', f: [[D1,600]] },
+    { n: 'CDB pós (100% CDI)',        s: -1, tx: 'cdi', f: [[D1,700]] },
+    { n: 'Depósito a prazo pré',      s: -1, tx: 0.138, f: [[0.25,100],[0.5,100]] } ] },
+  blindado: { nome: '"NII blindado"', pl: 100, ns: 100, itens: [
+    { n: 'Crédito imobiliário pré',   s: 1,  tx: 0.16,  f: [[5,80],[7,50],[10,40]] },
+    { n: 'Títulos pré (LTN)',         s: 1,  tx: null,  f: [[5,80]], tit: true },
+    { n: 'Crédito pós-CDI (capital de giro)', s: 1, tx: 'cdi+.05', f: [[D1,650]] },
+    { n: 'LF pré 2 anos',             s: -1, tx: 0.14,  f: [[2,150]] },
+    { n: 'LF pré 3 anos',             s: -1, tx: 0.142, f: [[3,100]] },
+    { n: 'CDB pós (100% CDI)',        s: -1, tx: 'cdi', f: [[D1,650]] } ] },
+  casado: { nome: 'Banco Casado', pl: 100, ns: 100, itens: [
+    { n: 'Crédito consignado pré',    s: 1,  tx: 0.22,  f: [[1,60],[2,100],[3,100],[5,90]] },
+    { n: 'Títulos pré (LTN)',         s: 1,  tx: null,  f: [[2,150]], tit: true },
+    { n: 'Capital de giro pós-CDI',   s: 1,  tx: 'cdi+.08', f: [[D1,400]] },
+    { n: 'LF pré (casada)',           s: -1, tx: 0.15,  f: [[1,60],[2,230],[3,100],[5,90]] },
+    { n: 'CDB pós (100% CDI)',        s: -1, tx: 'cdi', f: [[D1,420]] } ] },
+};
+
+function taxa(it, t) {
+  if (it.tx === null) return base(t);
+  if (it.tx === 'cdi') return base(0);
+  if (it.tx === 'cdi+.08') return base(0) + 0.08;
+  if (it.tx === 'cdi+.05') return base(0) + 0.05;
+  return it.tx;
+}
+
+// Cálculo principal. Sinal "intuitivo": choque − base (perda = negativo).
+// Cada fluxo é tratado como zero-cupom com VP-base = principal (sem margem comercial no EVE).
+// ΔNII: balanço constante; o que reprecifica em t ≤ 1 ano ganha Δ(t) pelo resto do ano.
+function calc(balId, cen, book, S, L, k) {
+  if (k === undefined) k = 1;   // fração do choque (animação de 0 a 1)
+  const B = BALANCOS[balId];
+  let dEVE = 0, dNII = 0, mtm = 0, nii0 = 0;
+  const porVertice = {};   // ΔVP por prazo (gráfico)
+  for (const it of B.itens) {
+    for (const [t, p] of it.f) {
+      const d = k * choque(cen, t, S, L), r = base(t);
+      const dpv = p * (Math.pow((1 + r) / (1 + r + d), t) - 1);
+      if (it.tit && book === 'trading') mtm += it.s * dpv;
+      else { dEVE += it.s * dpv; porVertice[t] = (porVertice[t] || 0) + it.s * dpv; }
+      if (t <= 1) dNII += it.s * p * d * (1 - t);
+      nii0 += it.s * p * taxa(it, t);
+    }
+  }
+  return { dEVE, dNII, mtm, nii0, pctN1: dEVE / B.pl, total: dEVE + mtm, porVertice };
+}
+
+// Gap de reapreçamento por prazo (ativo − passivo), para a linha do tempo
+function gaps(balId, book) {
+  const g = {};
+  for (const it of BALANCOS[balId].itens)
+    for (const [t, p] of it.f) {
+      if (it.tit && book === 'trading') continue;
+      g[t] = g[t] || { a: 0, p: 0 };
+      if (it.s > 0) g[t].a += p; else g[t].p += p;
+    }
+  return Object.keys(g).map(Number).sort((x, y) => x - y).map(t => ({ t, a: g[t].a, p: g[t].p }));
+}
+
+if (typeof module !== 'undefined' && module.exports) module.exports = { base, choque, calc, gaps, BALANCOS, CENARIOS };
+
+
+// ===================== UTILITÁRIOS =====================
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt = (x, d = 1) => x.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const rs = x => (x > 0.0005 ? '+' : x < -0.0005 ? '−' : '') + fmt(Math.abs(x), 1);          // R$ mi com sinal
+const pct = (x, d = 1) => (x > 0.00005 ? '+' : x < -0.00005 ? '−' : '') + fmt(Math.abs(x * 100), d) + '%';
+const bps = x => (x > 0.000005 ? '+' : x < -0.000005 ? '−' : '') + fmt(Math.abs(x * 10000), 0) + ' bps';
+const ZERO = 0.05;                                    // |R$ mi| abaixo disso conta como "≈ zero"
+const xT = t => Math.sqrt(Math.min(t, 10) / 10);      // escala de prazo (raiz: dá espaço à ponta curta)
+const TICKS = [[0,'0'],[0.25,'3m'],[0.5,'6m'],[1,'1a'],[2,'2a'],[3,'3a'],[5,'5a'],[7,'7a'],[10,'10a']];
+
+function prepCanvas(cv) {               // ajusta ao contêiner com devicePixelRatio
+  const dpr = window.devicePixelRatio || 1, w = cv.parentElement.clientWidth - 28, h = +cv.getAttribute('height');
+  cv.width = w * dpr; cv.height = h * dpr; cv.style.height = h + 'px';
+  const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { c, w, h };
+}
+
+// ===================== ESTADO =====================
+const S = { bal: 'varejo', cen: 'steepener', book: 'banking', sS: -300, sL: 250, k: 1 };
+const BAL_HINT = {
+  varejo: 'Crédito pré de prazo médio, funding quase todo pós-CDI e depósitos pré curtos.',
+  blindado: 'Gap de 12 meses zerado (pós contra pós), mas ativo pré de 5–10 anos financiado por LF de 2–3 anos.',
+  casado: 'Fluxos pré do passivo casados com os do ativo, prazo a prazo.',
+};
+
+// ===================== CONTROLES =====================
+const cenPills = document.getElementById('cenPills');
+CENARIOS.forEach(c => {
+  const b = document.createElement('button');
+  b.className = 'pill'; b.dataset.c = c.id;
+  b.innerHTML = c.nome + (c.reg ? '<span class="reg">EVE·NII</span>' : '<span class="reg">EVE</span>');
+  cenPills.appendChild(b);
+});
+const bLivre = document.createElement('button'); bLivre.className = 'pill'; bLivre.dataset.c = 'livre'; bLivre.textContent = 'Livre ✎';
+cenPills.appendChild(bLivre);
+
+function marca(grupo, attr, val) { document.querySelectorAll('#' + grupo + ' .pill').forEach(p => p.classList.toggle('on', p.dataset[attr] === val)); }
+
+document.getElementById('balPills').onclick = e => { const b = e.target.closest('.pill'); if (!b) return; S.bal = b.dataset.b; anima(); };
+cenPills.onclick = e => { const b = e.target.closest('.pill'); if (!b) return; S.cen = b.dataset.c; anima(); };
+document.getElementById('bookPills').onclick = e => { const b = e.target.closest('.pill'); if (!b) return; S.book = b.dataset.k; render(); };
+document.getElementById('sS').oninput = e => { S.sS = +e.target.value; S.k = 1; render(); };
+document.getElementById('sL').oninput = e => { S.sL = +e.target.value; S.k = 1; render(); };
+document.getElementById('bPlay').onclick = () => anima();
+document.getElementById('bReset').onclick = () => { cancelAnimationFrame(raf); S.k = 0; render(); };
+
+// animação: o choque cresce de 0 a 100% (curva e números juntos)
+let raf = 0;
+function anima() {
+  cancelAnimationFrame(raf);
+  const t0 = performance.now(), dur = 900;
+  const passo = now => {
+    const u = Math.min(1, (now - t0) / dur);
+    S.k = 1 - Math.pow(1 - u, 3);
+    render();
+    if (u < 1) raf = requestAnimationFrame(passo);
+  };
+  raf = requestAnimationFrame(passo);
+}
+
+// ===================== RENDER =====================
+function calcAtual(k) { return calc(S.bal, S.cen, S.book, S.sS, S.sL, k === undefined ? S.k : k); }
+function dAt(t) { return choque(S.cen, t, S.sS, S.sL); }
+
+function render() {
+  marca('balPills', 'b', S.bal); marca('cenPills', 'c', S.cen); marca('bookPills', 'k', S.book);
+  document.getElementById('balHint').textContent = BAL_HINT[S.bal];
+  document.getElementById('sliders').classList.toggle('on', S.cen === 'livre');
+  document.getElementById('vS').textContent = bps(S.sS / 10000);
+  document.getElementById('vL').textContent = bps(S.sL / 10000);
+  const c = CENARIOS.find(x => x.id === S.cen);
+  document.getElementById('cenHint').innerHTML = S.cen === 'livre'
+    ? 'Δr(t) = curto·e<sup>−t/4</sup> + longo·(1 − e<sup>−t/4</sup>)'
+    : `curto ${c.curto} · longo ${c.longo} bps · ${c.reg ? 'vale para ΔEVE e ΔNII' : 'só ΔEVE na norma; ΔNII aqui é visão de gestão'}`;
+  document.getElementById('bookHint').textContent = S.book === 'banking'
+    ? 'Accrual: a LTN entra no ΔEVE, não passa pelo resultado.'
+    : 'MtM diário: a LTN sai do IRRBB e o choque bate no resultado.';
+
+  const r = calcAtual(), B = BALANCOS[S.bal];
+  const full = calcAtual(1);
+  // estatísticas
+  setN('stE', r.dEVE); setN('stN', r.dNII); setN('stM', r.mtm); setN('stT', r.total);
+  const out = Math.abs(r.pctN1) > 0.15 && r.dEVE < 0;
+  document.getElementById('stE2').innerHTML = `${pct(r.pctN1)} do Nível I` + (out ? '<span class="flag bad">acima de 15%</span>' : '');
+  const regNII = S.cen === 'par_alta' || S.cen === 'par_baixa';
+  document.getElementById('stN2').innerHTML = `${pct(r.nii0 ? r.dNII / r.nii0 : 0)} do NII-base (R$ ${fmt(r.nii0)} mi)` + (!regNII ? '<span class="flag gest">gestão</span>' : '');
+  document.getElementById('stM2').textContent = S.book === 'trading' ? 'LTN no trading: marcação a mercado' : 'LTN no banking: nada no resultado do dia';
+  visores(r);
+  desenhaCurva(); desenhaTempo(r); desenhaSeis();
+  explica(full);
+}
+function setN(id, v) {
+  const el = document.getElementById(id);
+  el.textContent = rs(v);
+  el.style.color = v > ZERO ? css('--ok') : v < -ZERO ? css('--bad') : css('--text');
+}
+function seta(v) { return v > ZERO ? ['↑', css('--ok'), 'melhora'] : v < -ZERO ? ['↓', css('--bad'), 'piora'] : ['→', css('--text-dim'), 'quase não muda']; }
+function visores(r) {
+  const e = seta(r.dEVE), n = seta(r.dNII);
+  const aE = document.getElementById('arE'), aN = document.getElementById('arN');
+  aE.textContent = e[0]; aE.style.color = e[1]; aN.textContent = n[0]; aN.style.color = n[1];
+  document.getElementById('txE').innerHTML = `O valor econômico <b>${e[2]}</b>: ${rs(r.dEVE)} mi.`;
+  document.getElementById('txN').innerHTML = `O resultado dos próximos 12 meses <b>${n[2]}</b>: ${rs(r.dNII)} mi.`;
+}
+
+// ---------- Canvas 1: curva base × choque ----------
+function desenhaCurva() {
+  const { c, w, h } = prepCanvas(document.getElementById('cvCurva'));
+  const m = { l: 46, r: 14, t: 30, b: 30 }, W = w - m.l - m.r, H = h - m.t - m.b;
+  const ts = []; for (let i = 0; i <= 120; i++) ts.push(10 * Math.pow(i / 120, 2));
+  // escala vertical fixa entre os extremos possíveis (evita "pular" durante a animação)
+  let lo = 1, hi = 0;
+  ts.forEach(t => { const b = base(t), f = b + dAt(t); lo = Math.min(lo, b, f); hi = Math.max(hi, b, f); });
+  lo = Math.floor((lo - 0.004) * 100) / 100; hi = Math.ceil((hi + 0.004) * 100) / 100;
+  const X = t => m.l + xT(t) * W, Y = v => m.t + (hi - v) / (hi - lo) * H;
+  eixos(c, m, w, h, X);
+  c.fillStyle = css('--text-dim'); c.font = '11px "Red Hat Mono"'; c.textAlign = 'right';
+  const passo = (hi - lo) > 0.06 ? 0.02 : 0.01;
+  for (let v = lo; v <= hi + 1e-9; v += passo) {
+    c.strokeStyle = css('--grid'); c.beginPath(); c.moveTo(m.l, Y(v)); c.lineTo(w - m.r, Y(v)); c.stroke();
+    c.fillText(fmt(v * 100, 0) + '%', m.l - 6, Y(v) + 4);
+  }
+  // área entre as curvas
+  c.globalAlpha = 0.14; c.fillStyle = css('--accent'); c.beginPath();
+  ts.forEach((t, i) => { const y = Y(base(t) + S.k * dAt(t)); i ? c.lineTo(X(t), y) : c.moveTo(X(t), y); });
+  [...ts].reverse().forEach(t => c.lineTo(X(t), Y(base(t)))); c.closePath(); c.fill(); c.globalAlpha = 1;
+  // curva-base tracejada
+  c.setLineDash([6, 4]); c.strokeStyle = css('--ref'); c.lineWidth = 2; c.beginPath();
+  ts.forEach((t, i) => i ? c.lineTo(X(t), Y(base(t))) : c.moveTo(X(t), Y(base(t)))); c.stroke(); c.setLineDash([]);
+  // curva com choque
+  c.strokeStyle = css('--accent'); c.lineWidth = 2.6; c.beginPath();
+  ts.forEach((t, i) => { const y = Y(base(t) + S.k * dAt(t)); i ? c.lineTo(X(t), y) : c.moveTo(X(t), y); }); c.stroke();
+  // rótulos dos choques nas pontas
+  c.font = '600 11px "Red Hat Mono"'; c.fillStyle = css('--accent');
+  c.textAlign = 'left'; c.fillText('curto ' + bps(S.k * dAt(0)), X(0) + 6, Y(base(0) + S.k * dAt(0)) + (dAt(0) >= 0 ? -8 : 16));
+  c.textAlign = 'right'; c.fillText('10a ' + bps(S.k * dAt(10)), X(10) - 2, Y(base(10) + S.k * dAt(10)) + (dAt(10) >= 0 ? -8 : 16));
+  titulo(c, m, 'A curva: base × choque (taxa pré, % a.a.)');
+}
+function eixos(c, m, w, h, X) {
+  c.strokeStyle = css('--grid'); c.lineWidth = 1; c.fillStyle = css('--text-dim'); c.font = '11px "Red Hat Mono"'; c.textAlign = 'center';
+  TICKS.forEach(([t, lb]) => { c.beginPath(); c.moveTo(X(t), m.t); c.lineTo(X(t), h - m.b); c.stroke(); c.fillText(lb, X(t), h - m.b + 15); });
+}
+function titulo(c, m, txt) { c.fillStyle = css('--text'); c.font = '600 13px Sora'; c.textAlign = 'left'; c.fillText(txt, m.l, 17); }
+
+// ---------- Canvas 2: o balanço no tempo ----------
+function desenhaTempo(r) {
+  const { c, w, h } = prepCanvas(document.getElementById('cvTempo'));
+  const m = { l: 46, r: 14, t: 30, b: 30 }, W = w - m.l - m.r, H = h - m.t - m.b;
+  const X = t => m.l + xT(t) * W;
+  const g = gaps(S.bal, S.book);
+  const hTop = H * 0.58, yMid = m.t + hTop / 2, yE0 = m.t + hTop + (H - hTop) / 2 + 6;
+  // janela do NII
+  c.fillStyle = css('--nii-bg'); c.fillRect(m.l, m.t, X(1) - m.l, H);
+  c.strokeStyle = css('--nii'); c.setLineDash([4, 3]); c.beginPath(); c.moveTo(X(1), m.t); c.lineTo(X(1), h - m.b); c.stroke(); c.setLineDash([]);
+  eixos(c, m, w, h, X);
+  c.font = '600 11px "Red Hat Mono"'; c.textAlign = 'left';
+  c.fillStyle = css('--nii'); c.fillText('NII: 12m', m.l + 3, m.t + 12);
+  c.fillStyle = css('--eve'); c.textAlign = 'right'; c.fillText('EVE: tudo →', w - m.r - 2, m.t + 12);
+  // barras de ativo (para cima) e passivo (para baixo)
+  const mx = Math.max(...g.map(x => Math.max(x.a, x.p)), 1);
+  const sc = (hTop / 2 - 14) / mx, bw = Math.max(8, Math.min(18, W / 34));
+  c.strokeStyle = css('--grid'); c.beginPath(); c.moveTo(m.l, yMid); c.lineTo(w - m.r, yMid); c.stroke();
+  g.forEach(x => {
+    const px = Math.max(X(x.t), m.l + bw / 2 + 1);
+    c.fillStyle = css('--slate'); c.fillRect(px - bw / 2, yMid - x.a * sc, bw, x.a * sc);
+    c.globalAlpha = 0.4; c.fillRect(px - bw / 2, yMid, bw, x.p * sc); c.globalAlpha = 1;
+  });
+  c.fillStyle = css('--text-dim'); c.font = '11px "Red Hat Mono"'; c.textAlign = 'left';
+  c.fillText('ativo ▲', w - m.r - 60, yMid - 6); c.fillText('passivo ▼', w - m.r - 72, yMid + 14);
+  // contribuição ao ΔEVE por prazo
+  const pv = Object.entries(r.porVertice).map(([t, v]) => [+t, v]);
+  const mE = Math.max(...pv.map(x => Math.abs(x[1])), 0.5);
+  const scE = ((H - hTop) / 2 - 8) / mE;
+  c.strokeStyle = css('--grid'); c.beginPath(); c.moveTo(m.l, yE0); c.lineTo(w - m.r, yE0); c.stroke();
+  pv.forEach(([t, v]) => {
+    if (Math.abs(v) < 1e-6) return;
+    const px = Math.max(X(t), m.l + bw / 2 + 1);
+    c.fillStyle = v >= 0 ? css('--ok') : css('--bad');
+    c.fillRect(px - bw / 2, v >= 0 ? yE0 - v * scE : yE0, bw, Math.abs(v) * scE);
+  });
+  c.fillStyle = css('--eve'); c.font = '600 11px "Red Hat Mono"'; c.textAlign = 'right';
+  c.fillText('ΔEVE por prazo', w - m.r - 2, yE0 - (H - hTop) / 2 + 12);
+  titulo(c, m, 'O balanço no tempo: quem reprecifica quando');
+}
+
+// ---------- Canvas 3: os seis cenários padronizados ----------
+function desenhaSeis() {
+  const { c, w, h } = prepCanvas(document.getElementById('cvSeis'));
+  const m = { l: 46, r: 14, t: 34, b: 46 }, W = w - m.l - m.r, H = h - m.t - m.b;
+  const rs6 = CENARIOS.map(cn => ({ cn, r: calc(S.bal, cn.id, S.book) }));
+  let mx = 1; rs6.forEach(x => mx = Math.max(mx, Math.abs(x.r.dEVE), Math.abs(x.r.dNII)));
+  mx *= 1.15;
+  const Y = v => m.t + H / 2 - v / mx * (H / 2), cw = W / 6, bw = Math.min(26, cw * 0.28);
+  // grade
+  c.font = '11px "Red Hat Mono"'; c.textAlign = 'right';
+  [-1, -0.5, 0, 0.5, 1].forEach(f => {
+    const v = f * mx / 1.15; c.strokeStyle = css('--grid'); c.beginPath(); c.moveTo(m.l, Y(v)); c.lineTo(w - m.r, Y(v)); c.stroke();
+    c.fillStyle = css('--text-dim'); c.fillText(fmt(v, 0), m.l - 6, Y(v) + 4);
+  });
+  // pior ΔEVE (= ΔEVE padronizado) e pior ΔNII entre os paralelos
+  const piorE = rs6.reduce((a, x) => x.r.dEVE < a.r.dEVE ? x : a);
+  const piorN = rs6.filter(x => x.cn.reg).reduce((a, x) => x.r.dNII < a.r.dNII ? x : a);
+  rs6.forEach((x, i) => {
+    const cx = m.l + cw * (i + 0.5);
+    if (x.cn.id === S.cen) { c.fillStyle = css('--accent-bg'); c.fillRect(m.l + cw * i + 2, m.t - 4, cw - 4, H + 8); }
+    c.fillStyle = css('--eve'); barra(c, cx - bw - 1, x.r.dEVE, bw, Y);
+    c.fillStyle = css('--nii'); c.globalAlpha = x.cn.reg ? 1 : 0.35; barra(c, cx + 1, x.r.dNII, bw, Y); c.globalAlpha = 1;
+    c.fillStyle = css('--text'); c.font = (x.cn.id === S.cen ? '600 ' : '') + '11.5px Sora'; c.textAlign = 'center';
+    nomeQuebra(c, cw < 95 ? CURTO[x.cn.id] : x.cn.nome, cx, h - m.b + 16, cw - 6);
+    if (x === piorE && x.r.dEVE < -ZERO) { c.fillStyle = css('--eve'); c.font = '600 11px "Red Hat Mono"'; c.fillText('▼ pior EVE', cx - bw / 2, Y(x.r.dEVE) + 14); }
+    if (x === piorN && x.r.dNII < -ZERO) { c.fillStyle = css('--nii'); c.font = '600 11px "Red Hat Mono"'; c.textAlign = 'left'; c.fillText('◀ pior NII', cx + bw + 4, Y(x.r.dNII) - 2); }
+  });
+  c.strokeStyle = css('--text-dim'); c.beginPath(); c.moveTo(m.l, Y(0)); c.lineTo(w - m.r, Y(0)); c.stroke();
+  titulo(c, m, 'Os 6 choques padronizados neste balanço (R$ mi)');
+  const p = -piorE.r.dEVE / BALANCOS[S.bal].pl;
+  document.getElementById('seisHint').innerHTML = piorE.r.dEVE < -ZERO
+    ? `ΔEVE padronizado (pior perda dos 6): <b>R$ ${fmt(-piorE.r.dEVE)} mi</b>, no cenário <b>${piorE.cn.nome}</b> = <b>${fmt(p * 100)}% do Nível I</b> → ${p > 0.15 ? '<span class="c-bad">acima de 15%: exposição potencialmente elevada (teste de outlier)</span>' : '<span class="c-ok">abaixo do limiar de 15% do teste de outlier</span>'}.`
+    : 'Nenhum dos 6 choques gera perda relevante de EVE neste balanço.';
+}
+const CURTO = { par_alta: 'Par. ↑', par_baixa: 'Par. ↓', curto_alta: 'Curto ↑', curto_baixa: 'Curto ↓', steepener: 'Steep.', flattener: 'Flat.' };
+function barra(c, x, v, bw, Y) { const y0 = Y(0), y1 = Y(v); c.fillRect(x, Math.min(y0, y1), bw, Math.max(1, Math.abs(y1 - y0))); }
+function nomeQuebra(c, txt, x, y, maxW) {
+  if (c.measureText(txt).width <= maxW) { c.fillText(txt, x, y); return; }
+  const p = txt.split(' '); const a = p.slice(0, Math.ceil(p.length / 2)).join(' '), b = p.slice(Math.ceil(p.length / 2)).join(' ');
+  c.fillText(a, x, y); c.fillText(b, x, y + 14);
+}
+
+// ---------- texto condicionado aos números ----------
+function explica(r) {
+  const P = [], B = BALANCOS[S.bal];
+  const g12 = gaps(S.bal, S.book).filter(x => x.t <= 1).reduce((s, x) => s + x.a - x.p, 0);
+  const pre = gaps(S.bal, S.book).filter(x => x.t > 2 / 252);
+  const pm = lado => { const s = pre.reduce((a, x) => a + x[lado], 0); return s ? pre.reduce((a, x) => a + x[lado] * x.t, 0) / s : 0; };
+  const prazos = `prazo médio de <b>${fmt(pm('a'))} anos</b> nos ativos pré contra <b>${fmt(pm('p'))} anos</b> nos passivos pré`;
+  const sE = Math.abs(r.dEVE) < ZERO ? 0 : Math.sign(r.dEVE), sN = Math.abs(r.dNII) < ZERO ? 0 : Math.sign(r.dNII);
+  const nomeC = S.cen === 'livre' ? 'choque livre' : CENARIOS.find(x => x.id === S.cen).nome.toLowerCase();
+  if (S.k < 0.999) P.push('<p>Choque aplicado em <b>' + fmt(S.k * 100, 0) + '%</b>. Clique em ▶ para ver o choque inteiro.</p>');
+
+  if (sE !== 0 && sN !== 0 && sE !== sN)
+    P.push(`<p><b>Os visores discordam.</b> No ${nomeC}, o NII ${sN > 0 ? '<span class="c-ok">melhora</span>' : '<span class="c-bad">piora</span>'} (${rs(r.dNII)} mi) e o EVE ${sE > 0 ? '<span class="c-ok">melhora</span>' : '<span class="c-bad">piora</span>'} (${rs(r.dEVE)} mi). O NII só enxerga o que reprecifica em 12 meses: o gap até 1 ano é de <b>R$ ${rs(g12)} mi</b> e a ponta curta andou ${bps(dAt(0))}. O EVE sente a ponta longa, que andou ${bps(dAt(5))} em 5 anos, sobre um balanço com ${prazos}.</p>`);
+  else if (sN === 0 && sE !== 0)
+    P.push(`<p><b>O NII não se mexe, o EVE sim (${rs(r.dEVE)} mi).</b> O gap de reapreçamento em 12 meses é ${Math.abs(g12) < 1 ? 'zero' : 'R$ ' + rs(g12) + ' mi'}, então a margem do ano está protegida. O risco mora além da janela: ${prazos}. Proteger só o NII construiu uma fragilidade silenciosa de EVE.</p>`);
+  else if (sE === 0 && sN === 0)
+    P.push('<p><b>Os dois visores ficam quase parados.</b> Fluxos de ativo e passivo reprecificam nos mesmos prazos: o choque mexe nos dois lados ao mesmo tempo e se cancela.</p>');
+  else {
+    P.push(`<p><b>Os dois visores concordam</b> neste choque: EVE ${rs(r.dEVE)} mi e NII ${rs(r.dNII)} mi.</p>`);
+    const dis = CENARIOS.map(cn => ({ cn, x: calc(S.bal, cn.id, S.book) }))
+      .find(o => Math.abs(o.x.dEVE) > ZERO && Math.abs(o.x.dNII) > ZERO && Math.sign(o.x.dEVE) !== Math.sign(o.x.dNII));
+    if (dis) P.push(`<p>Não generalize: no cenário <b>${dis.cn.nome}</b>, o mesmo balanço tem EVE ${rs(dis.x.dEVE)} e NII ${rs(dis.x.dNII)}. Um choque paralelo esconde essa divergência.</p>`);
+  }
+  if (r.dEVE < 0 && -r.pctN1 > 0.15) P.push(`<p>A perda de EVE neste choque é <b>${fmt(-r.pctN1 * 100)}% do Nível I</b>, acima do limiar de 15% do teste de outlier.</p>`);
+  if (S.book === 'trading' && Math.abs(r.mtm) > ZERO)
+    P.push(`<p><b>LTN no trading book:</b> o choque bate no resultado <i>hoje</i> (MtM ${rs(r.mtm)} mi) e sai do ΔEVE. A perda econômica total, ${rs(r.total)} mi, é a <b>mesma</b> do banking book: mudou só onde a dor aparece e quem a vigia.</p>`);
+  if (S.book === 'banking') {
+    const rt = calc(S.bal, S.cen, 'trading', S.sS, S.sL);
+    if (Math.abs(rt.mtm) > ZERO) P.push(`<p>A LTN está no banking book: nada passa pelo resultado do dia, mas ${rs(rt.mtm)} mi do ΔEVE são dela. No trading book essa mesma parcela apareceria como MtM.</p>`);
+  }
+  if (S.cen !== 'par_alta' && S.cen !== 'par_baixa') P.push('<p><span class="flag gest">gestão</span> Na abordagem padronizada o ΔNII só é calculado nos dois choques paralelos. O ΔNII deste cenário é uma leitura de gestão (ALCO), não o número regulatório.</p>');
+  document.getElementById('explica').innerHTML = P.join('');
+}
+
+// ===================== ③ CENÁRIOS =====================
+const v = (b, c, k) => calc(b, c, k || 'banking');
+const E = (b, c, k) => 'R$ ' + rs(v(b, c, k).dEVE) + ' mi';
+const N = (b, c, k) => 'R$ ' + rs(v(b, c, k).dNII) + ' mi';
+const pN1 = (b, c) => fmt(-v(b, c).pctN1 * 100) + '%';
+const pNII = (b, c) => pct(v(b, c).dNII / v(b, c).nii0, 0);
+const CENS = [
+  { trap: 'Os dois andam juntos?', who: 'ALCO do Banco Varejo',
+    q: () => `Ciclo de corte com a ponta longa pressionada (steepener). O tesoureiro comemora: “o NII projetado sobe ${pNII('varejo','steepener')}; o risco de juros do banco está sob controle”.`, ok: false,
+    a: () => `O NII sobe (${N('varejo','steepener')}) porque o CDB pós reprecifica para baixo. Mas o EVE cai (${E('varejo','steepener')}): o crédito pré longo perde valor com a alta da ponta longa. Melhorar um visor não melhora o outro.` },
+  { trap: 'Otimizar só o NII', who: 'Diretoria do banco “NII blindado”',
+    q: () => 'O ΔNII é zero em todos os cenários. O diretor propõe afrouxar o limite de EVE: “nossa margem não se mexe com juros”.', ok: false,
+    a: () => `A margem está blindada porque pós casa com pós dentro de 12 meses. O descasamento foi empurrado para além da janela: crédito imobiliário pré de 5 a 10 anos financiado por LF de 2 e 3 anos. No paralelo de alta o ΔEVE é ${E('blindado','par_alta')}, ou ${pN1('blindado','par_alta')} do Nível I, acima do limiar de 15% do teste de outlier.` },
+  { trap: 'Accrual = sem risco', who: 'Tesouraria do Banco Varejo',
+    q: () => `A LTN de 3 anos sangra ${'R$ ' + rs(v('varejo','par_alta','trading').mtm) + ' mi'} no resultado no paralelo de alta. Proposta: reclassificar para o banking book “e o problema some”.`, ok: false,
+    a: () => `O problema muda de lugar. No banking book a mesma perda vai para o ΔEVE (que passa de ${E('varejo','par_alta','trading')} para ${E('varejo','par_alta')}). A perda econômica total é idêntica nos dois books. E reclassificar para fugir do MtM é justamente o que a separação entre as carteiras quer impedir.` },
+  { trap: 'Paralelo basta?', who: 'Comitê de riscos do Banco Varejo',
+    q: () => `“Só olhamos os paralelos: no de alta, EVE (${E('varejo','par_alta')}) e NII (${N('varejo','par_alta')}) caem juntos. Basta gerir um deles.”`, ok: false,
+    a: () => `Nos paralelos os dois visores andam juntos neste balanço, e isso esconde o conflito. No steepener o NII sobe (${N('varejo','steepener')}) e o EVE cai (${E('varejo','steepener')}). Por isso a norma exige 6 cenários para o ΔEVE de S1 e S2.` },
+  { trap: 'Estoque × fluxo', who: 'Analista de risco',
+    q: () => '“ΔEVE é estoque: valor presente de todos os fluxos, em run-off. ΔNII é fluxo: resultado de 12 meses com balanço constante. Por isso podem discordar.”', ok: true,
+    a: () => 'Exato. Muda o horizonte (vida inteira × 12 meses), a premissa de balanço (run-off × renovação) e o que entra (todos os fluxos × o que reprecifica no ano). São duas perguntas diferentes sobre o mesmo choque.' },
+  { trap: 'Gerir os dois', who: 'ALCO do Banco Casado',
+    q: () => `Limites para ΔEVE e para ΔNII. No paralelo de alta: EVE ${E('casado','par_alta')}, NII ${N('casado','par_alta')}. A LTN fica no banking book, e o ALCO acompanha os dois números todo mês.`, ok: true,
+    a: () => `Gestão correta: fluxos pré casados prazo a prazo deixam os dois visores quase parados. Note que, se a LTN fosse para o trading book, o resultado sentiria ${'R$ ' + rs(v('casado','par_alta','trading').mtm) + ' mi'} de MtM, porque a LF que a financia continuaria no banking book: o hedge econômico se desfaria contabilmente.` },
+];
+const grid = document.getElementById('cenGrid');
+CENS.forEach(s => {
+  const d = document.createElement('div'); d.className = 'cen';
+  d.innerHTML = `<div class="trap">${s.trap}</div><div class="who">${s.who}</div><div class="q">${s.q()}</div>
+    <div class="cta">Clique para ver a resposta →</div>
+    <div class="ans ${s.ok ? 'ok' : 'bad'}"><b class="v">${s.ok ? '✓ Leitura correta' : '✗ Armadilha'}</b>${s.a()}</div>`;
+  d.onclick = () => d.classList.add('open');
+  grid.appendChild(d);
+});
+
+// ===================== ④ TESTE =====================
+const QZ = [
+  { q: 'O que distingue ΔEVE de ΔNII?', o: [
+      'ΔEVE: variação do valor presente de todos os fluxos, em run-off; ΔNII: variação do resultado de intermediação em 12 meses, com balanço constante',
+      'ΔEVE: variação do resultado em 12 meses; ΔNII: variação do valor presente de todos os fluxos',
+      'Os dois medem a mesma coisa; o ΔEVE só usa um choque maior',
+      'ΔEVE vale para o trading book e ΔNII para o banking book'], c: 0,
+    e: 'EVE é estoque (valor), NII é fluxo (resultado). A troca da 2ª alternativa é o erro mais comum. E os dois são métricas do banking book: o trading book é tratado pelo risco de mercado.' },
+  { q: () => `Banco Varejo: crédito pré de prazo médio e funding pós-CDI. No steepener (curto −325 bps, longo até +270), o que acontece?`, o: [
+      'O NII melhora e o EVE piora', 'Os dois melhoram, porque a Selic caiu', 'Os dois pioram, porque a ponta longa subiu', 'O NII piora e o EVE melhora'], c: 0,
+    e: () => `O funding pós reprecifica para baixo em dias: NII ${N('varejo','steepener')}. O crédito pré longo perde valor com a alta da ponta longa: EVE ${E('varejo','steepener')}. Achar que "os dois andam juntos" é a armadilha.` },
+  { q: 'Um banco tem ΔNII = 0 em todos os choques. Isso indica que:', o: [
+      'Nada sobre o EVE: o descasamento pode estar além da janela de 12 meses',
+      'O banco está imunizado ao risco de juros',
+      'O ΔEVE também será próximo de zero',
+      'O banco pode dispensar limites de EVE'], c: 0,
+    e: () => `O NII só enxerga o que reprecifica em até 1 ano. No banco "NII blindado", o ΔEVE no paralelo de alta é ${E('blindado','par_alta')} (${pN1('blindado','par_alta')} do Nível I). Otimizar só o NII pode construir fragilidade de EVE em silêncio.` },
+  { q: 'Uma LTN que perde valor no trading book é reclassificada para o banking book. A perda econômica:', o: [
+      'Continua a mesma; muda onde ela aparece (EVE em vez de resultado), quando castiga e quem a vigia',
+      'Desaparece, porque o título passa a ser contabilizado por accrual',
+      'Diminui, porque o banking book usa choque menor',
+      'Aumenta, porque o EVE penaliza o título duas vezes'], c: 0,
+    e: 'Carregar não é esconder. O choque deixa de ser absorvido pelo preço (MtM) e passa a ser absorvido pelo tempo (carrego). A escolha só é racional se o passivo der tempo para o carrego se realizar.' },
+  { q: 'Na abordagem padronizada da Circular 3.876, para um banco S1:', o: [
+      'O ΔEVE usa os 6 choques e o ΔNII só os 2 paralelos; ΔEVE acima de 15% do Nível I sinaliza exposição elevada',
+      'ΔEVE e ΔNII usam os mesmos 6 choques',
+      'ΔEVE e ΔNII usam só os 2 paralelos',
+      'O ΔEVE usa os 2 paralelos e o ΔNII os 6 choques'], c: 0,
+    e: 'Arts. 13 e 23: ΔEVE é a pior perda entre os 6 cenários (para S1 e S2) e ΔNII a pior entre os 2 paralelos. O teste de outlier (art. 44) compara o ΔEVE com 15% do Nível I. Por isso, o ΔNII de um steepener é visão de gestão, não número regulatório.' },
+];
+let acertos = 0, respondidas = 0;
+const qz = document.getElementById('quiz');
+QZ.forEach((x, i) => {
+  const d = document.createElement('div'); d.className = 'qz';
+  // embaralha as alternativas de forma determinística (a certa não fica sempre em primeiro)
+  const ordem = [[1,0,3,2],[2,0,3,1],[1,3,0,2],[3,1,0,2],[2,3,1,0]][i];
+  const q = typeof x.q === 'function' ? x.q() : x.q;
+  d.innerHTML = `<div class="qq">${i + 1}. ${q}</div>` + ordem.map(j => `<button class="opt" data-j="${j}">${x.o[j]}</button>`).join('') + '<div class="fb"></div>';
+  d.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    const j = +b.dataset.j, certo = j === x.c;
+    d.querySelectorAll('.opt').forEach(o => { o.disabled = true; if (+o.dataset.j === x.c) o.classList.add('right'); });
+    if (!certo) b.classList.add('wrong');
+    const fb = d.querySelector('.fb'); fb.className = 'fb on ' + (certo ? 'ok' : 'bad');
+    fb.innerHTML = `<b>${certo ? '✓ Correto.' : '✗ Não é essa.'}</b> ${typeof x.e === 'function' ? x.e() : x.e}`;
+    respondidas++; if (certo) acertos++;
+    if (respondidas === QZ.length) document.getElementById('score').textContent = `Resultado: ${acertos} de ${QZ.length}`;
+  });
+  qz.appendChild(d);
+});
+
+// ===================== ABAS =====================
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
+  document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === t.dataset.p));
+  if (t.dataset.p === 'p2') render();
+});
+window.addEventListener('resize', () => { if (document.getElementById('p2').classList.contains('on')) render(); });
+render();
+</script>
+</body>
+</html>

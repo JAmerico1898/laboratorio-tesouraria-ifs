@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cupom Cambial, DDI e FRC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,700;1,6..72,500&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* fundos */
+  --bg:#f7f5f0;
+  --bg-card:#ffffff;
+  /* texto */
+  --text:#1c2420;
+  --text-dim:#4d5852;
+  /* identidade: verde-garrafa (dólar) */
+  --accent:#0f6b52;
+  --accent-bg:#e2f1eb;
+  /* semânticas */
+  --ok:#1b7a3a;
+  --ok-bg:#e5f3e9;
+  --bad:#b8352a;
+  --bad-bg:#fbe8e5;
+  --ref:#1f5aa0;
+  --ref-bg:#e6edf7;
+  --warn:#875600;
+  --warn-bg:#fcf1dc;
+  /* linhas e grade */
+  --line-brd:#d8d3c7;
+  --grid-dim:#ebe7de;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',system-ui,sans-serif;font-size:16px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px 40px}
+header .tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-bg);border-radius:20px;padding:4px 12px;margin-bottom:12px}
+h1{font-family:'Newsreader',serif;font-weight:700;font-size:clamp(28px,4.4vw,44px);line-height:1.12;margin-bottom:10px}
+h1 em{color:var(--accent);font-style:italic;font-weight:500}
+.lead{color:var(--text-dim);max-width:760px;font-size:17px}
+h2{font-family:'Newsreader',serif;font-size:26px;margin-bottom:6px}
+h3{font-family:'Newsreader',serif;font-size:19px;margin:4px 0 6px}
+p{margin-bottom:10px}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* abas */
+nav.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0 20px}
+nav.tabs button{font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:600;border:1.5px solid var(--line-brd);background:var(--bg-card);color:var(--text);border-radius:999px;padding:8px 16px;cursor:pointer;transition:all .2s}
+nav.tabs button:hover{border-color:var(--accent)}
+nav.tabs button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.panel{display:none;animation:entra .45s ease}
+.panel.active{display:block}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.card{background:var(--bg-card);border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 6px 18px rgba(0,0,0,.04);padding:20px;margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+
+.formula{background:var(--accent-bg);border-left:4px solid var(--accent);border-radius:10px;padding:16px 18px;margin:10px 0 14px;font-family:'JetBrains Mono',monospace;font-size:15px;overflow-x:auto}
+.formula .big{font-size:18px;font-weight:600;color:var(--accent)}
+.box{border-radius:10px;padding:14px 16px;margin:10px 0}
+.box.ok{background:var(--ok-bg);border-left:4px solid var(--ok)}
+.box.bad{background:var(--bad-bg);border-left:4px solid var(--bad)}
+.box.ref{background:var(--ref-bg);border-left:4px solid var(--ref)}
+.box.warn{background:var(--warn-bg);border-left:4px solid var(--warn)}
+.box b.t{display:block;margin-bottom:4px}
+
+/* controles */
+.controls{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;margin-bottom:12px}
+.ctrl{flex:1;min-width:240px}
+.ctrl label{display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-bottom:4px}
+.ctrl label span{font-family:'JetBrains Mono',monospace;color:var(--accent)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.btn{font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:14px;border:1.5px solid var(--accent);background:var(--bg-card);color:var(--accent);border-radius:8px;padding:8px 14px;cursor:pointer}
+.btn:hover{background:var(--accent-bg)}
+.btn.on{background:var(--accent);color:#fff}
+.fixos{font-size:13px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-bottom:10px}
+
+canvas{width:100%;display:block;border-radius:10px;background:var(--bg-card)}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+@media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--bg);border-radius:10px;padding:10px 12px}
+.stat .v{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:600}
+.stat .l{font-size:12px;color:var(--text-dim)}
+
+.passos{counter-reset:p;list-style:none;margin:6px 0}
+.passos li{counter-increment:p;position:relative;padding:6px 0 6px 36px;border-bottom:1px dashed var(--line-brd)}
+.passos li:last-child{border-bottom:none}
+.passos li::before{content:counter(p);position:absolute;left:0;top:6px;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.passos .valor{font-family:'JetBrains Mono',monospace;font-weight:600;float:right}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--grid-dim)}
+th:first-child,td:first-child{text-align:left}
+th{font-size:12px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+td{font-family:'JetBrains Mono',monospace}
+.tablewrap{overflow-x:auto}
+.check{color:var(--ok);font-weight:700}
+
+.etapas{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+
+/* cenários */
+.cen{cursor:pointer;border:1.5px solid var(--line-brd);transition:border-color .2s}
+.cen:hover{border-color:var(--accent)}
+.cen .num{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);font-weight:600}
+.cen .resp{display:none;margin-top:10px}
+.cen.aberto .resp{display:block;animation:entra .35s ease}
+.cen .dica{font-size:13px;color:var(--text-dim);margin-top:6px}
+.cen.aberto .dica{display:none}
+
+/* teste */
+.q{margin-bottom:16px}
+.q .opts{display:grid;gap:8px;margin-top:8px}
+.q button.opt{text-align:left;font-family:'Instrument Sans',sans-serif;font-size:15px;background:var(--bg-card);border:1.5px solid var(--line-brd);border-radius:8px;padding:10px 12px;cursor:pointer;color:var(--text)}
+.q button.opt:hover:not(:disabled){border-color:var(--accent)}
+.q button.opt.certa{background:var(--ok-bg);border-color:var(--ok)}
+.q button.opt.errada{background:var(--bad-bg);border-color:var(--bad)}
+.q .fb{display:none;margin-top:8px}
+.placar{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--accent)}
+
+footer{margin-top:30px;padding-top:14px;border-top:1px solid var(--line-brd);font-size:13px;color:var(--text-dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="tag">Bloco 5 · A segunda curva</span>
+  <h1>Cupom Cambial: o <em>juro em dólar</em> que o Brasil paga sem sair de casa</h1>
+  <p class="lead">O cupom é a taxa que fecha a paridade coberta entre dólar spot, dólar futuro e DI. Aqui você vê de onde ele sai, por que o DDI o entrega "sujo", como o FRC o limpa e como a curva é montada.</p>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="active" data-tab="t1">① Conceito</button>
+  <button data-tab="t2">② Paridade e arbitragem</button>
+  <button data-tab="t3">③ DDI → FRC</button>
+  <button data-tab="t4">④ Curva do cupom</button>
+  <button data-tab="t5">⑤ Cenários</button>
+  <button data-tab="t6">⑥ Teste</button>
+</nav>
+
+<!-- ============ ① CONCEITO ============ -->
+<section class="panel active" id="t1">
+  <div class="card">
+    <h2>A paridade coberta de juros</h2>
+    <p>Quem tem R$ hoje tem dois caminhos até a mesma data: aplicar no DI, ou comprar dólar, aplicar em dólar e vender esse dólar no futuro já hoje. Sem risco nos dois, os dois têm de render o mesmo. A taxa em dólar que iguala os caminhos <b>dentro do Brasil</b> é o cupom cambial.</p>
+    <div class="formula">
+      <span class="big">F / S = (1 + i<sub>DI</sub>)<sup>du/252</sup> ÷ (1 + cupom × dc/360)</span><br><br>
+      cupom = [ (1 + i<sub>DI</sub>)<sup>du/252</sup> × S / F − 1 ] × 360 / dc
+    </div>
+    <p>Duas convenções convivem na mesma fórmula: o DI é <b>exponencial em dias úteis (252)</b>; o cupom é <b>linear em dias corridos (360)</b>.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Exemplo do slide</h3>
+      <p class="mono" style="font-size:14px">S = 5,00 · F (1 ano) = 5,40 · DI = 13,60% a.a.<br>du = 252 · dc = 365</p>
+      <p class="mono" style="font-size:14px">1,1360 × 5,00 / 5,40 − 1 = 5,185% no período<br>× 360/365 = <b>5,11% a.a.</b></p>
+      <div class="box warn"><b class="t">⚠️ Cuidado com o dc</b>Um ano tem 365 dias corridos. Quem usa dc = 360 chega a 5,19% — a conta está "certa", mas a contagem de dias não.</div>
+    </div>
+    <div class="card">
+      <h3>Cupom não é taxa offshore</h3>
+      <div class="box ok"><b class="t">✓ Certo</b>O cupom é o juro em dólar <b>onshore</b>. A diferença para a taxa lá fora (SOFR, Treasury) é o preço da fronteira: conversibilidade, fluxo cambial e condições do balanço de pagamentos.</div>
+      <div class="box bad"><b class="t">✗ Armadilha</b>"Cupom acima da SOFR = dinheiro de graça: capto lá fora e aplico aqui." O spread não é arbitragem — é a remuneração de riscos que existem de fato.</div>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="box ref"><b class="t">💡 Por que importa</b>Se F sai da paridade, a arbitragem é mecânica e sem risco residual. Veja na aba ②.</div>
+    <div class="box ref"><b class="t">💡 DDI e FRC</b>O DDI negocia o cupom, mas "sujo" pela PTAX de ontem. O FRC junta dois DDIs e entrega o cupom limpo. Aba ③.</div>
+    <div class="box ref"><b class="t">🌎 Mundo real</b>A curva de cupom cambial limpo aparece nas Taxas Referenciais da B3. Na aba ④ você monta uma do zero.</div>
+  </div>
+</section>
+
+<!-- ============ ② PARIDADE ============ -->
+<section class="panel" id="t2">
+  <div class="card">
+    <h2>Mexa no dólar futuro e veja a arbitragem aparecer</h2>
+    <p class="fixos">Fixos: S = 5,00 · DI = 13,60% a.a. (252 du) · prazo 365 dc · cupom de mercado (captação/aplicação em US$) = 5,11% · nocional US$ 1.000.000</p>
+    <div class="controls">
+      <div class="ctrl">
+        <label for="sF">Dólar futuro de 1 ano (F) <span id="lF">5,4000</span></label>
+        <input type="range" id="sF" min="5.20" max="5.60" step="0.005" value="5.40">
+      </div>
+      <button class="btn" id="bParidade">↺ Voltar à paridade</button>
+    </div>
+    <canvas id="cv2" height="300"></canvas>
+    <div class="stats">
+      <div class="stat"><div class="v" id="st2a">–</div><div class="l">F justo (paridade)</div></div>
+      <div class="stat"><div class="v" id="st2b">–</div><div class="l">Cupom implícito em F</div></div>
+      <div class="stat"><div class="v" id="st2c">–</div><div class="l">Cupom implícito − mercado</div></div>
+      <div class="stat"><div class="v" id="st2d">–</div><div class="l">Lucro sem risco no vencimento</div></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3 id="tit2">Passo a passo</h3>
+      <ol class="passos" id="passos2"></ol>
+    </div>
+    <div class="card">
+      <h3>🔍 O que está acontecendo</h3>
+      <div id="txt2"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ③ DDI → FRC ============ -->
+<section class="panel" id="t3">
+  <div class="card">
+    <h2>A sujeira da PTAX de ontem — e como o FRC a cancela</h2>
+    <p class="fixos">Cupom limpo verdadeiro: 4,81% (30 dc) e 5,11% (365 dc) · dólar spot hoje S = 5,00 · o DDI corrige pela PTAX de D−1</p>
+    <div class="controls">
+      <div class="ctrl">
+        <label for="sV">Variação do dólar: PTAX D−1 → spot de hoje <span id="lV">0,00%</span></label>
+        <input type="range" id="sV" min="-1.5" max="1.5" step="0.05" value="0">
+      </div>
+      <button class="btn" id="bZeroV">↺ Sem variação</button>
+    </div>
+    <canvas id="cv3" height="320"></canvas>
+    <div class="stats">
+      <div class="stat"><div class="v" id="st3a">–</div><div class="l">PTAX D−1</div></div>
+      <div class="stat"><div class="v" id="st3b">–</div><div class="l">Distorção no DDI curto</div></div>
+      <div class="stat"><div class="v" id="st3c">–</div><div class="l">Distorção no DDI longo</div></div>
+      <div class="stat"><div class="v" id="st3d">–</div><div class="l">FRC 30→365 (com os sujos)</div></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3>🔍 O que está acontecendo</h3>
+      <div id="txt3"></div>
+      <div class="formula" style="font-size:13px;margin-bottom:0">
+        (1 + c<sub>sujo</sub>·dc/360) = (1 + c<sub>limpo</sub>·dc/360) × PTAX<sub>D−1</sub> / S<br>
+        FRC = [ (1 + c<sub>2</sub>·dc<sub>2</sub>/360) / (1 + c<sub>1</sub>·dc<sub>1</sub>/360) − 1 ] × 360/(dc<sub>2</sub>−dc<sub>1</sub>)
+      </div>
+    </div>
+    <div class="card">
+      <h3>Montando 100 FRCs (convenção B3, em taxa)</h3>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Perna</th><th>Taxa</th><th>PU</th><th>Posição</th><th>Qtde</th></tr></thead>
+        <tbody id="tb3"></tbody>
+      </table></div>
+      <div class="box ref" style="font-size:14px"><b class="t">Taxa × PU</b>PU = 100.000 / (1 + cupom × dc/360). <b>Comprado em taxa = vendido em PU</b>: ganha se o cupom sobe. Comprar FRC = DDI longo comprado em taxa + DDI curto vendido em taxa, com a quantidade da perna curta ajustada para igualar os valores em PU — é isso que faz as exposições à PTAX se anularem.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ④ CURVA ============ -->
+<section class="panel" id="t4">
+  <div class="card">
+    <h2>Construindo a curva em três etapas</h2>
+    <p class="fixos">Âncora curta pelo casado · empilhamento por FRC · verificação pela paridade</p>
+    <div class="etapas">
+      <button class="btn on" data-etapa="1">1 · Ponto âncora</button>
+      <button class="btn" data-etapa="2">2 · Empilhar FRCs</button>
+      <button class="btn" data-etapa="3">3 · Verificar e interpolar</button>
+    </div>
+    <canvas id="cv4" height="320"></canvas>
+  </div>
+  <div class="grid2">
+    <div class="card" id="painel4"></div>
+    <div class="card">
+      <h3>Vértices da curva</h3>
+      <div class="tablewrap"><table>
+        <thead id="th4"></thead>
+        <tbody id="tb4"></tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="card" id="interp4" style="display:none">
+    <h3>Interpolar: linear na taxa (certo) × flat-forward exponencial (armadilha)</h3>
+    <div class="controls">
+      <div class="ctrl">
+        <label for="sT">Prazo a interpolar <span id="lT">270 dc</span></label>
+        <input type="range" id="sT" min="31" max="729" step="1" value="270">
+      </div>
+      <button class="btn" id="bFF">Mostrar flat-forward exponencial</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="v" id="st4a">–</div><div class="l">Linear na taxa (certo)</div></div>
+      <div class="stat"><div class="v" id="st4b">–</div><div class="l">Flat-forward exponencial</div></div>
+      <div class="stat"><div class="v" id="st4c">–</div><div class="l">Erro</div></div>
+      <div class="stat"><div class="v" id="st4d">–</div><div class="l">Entre os vértices</div></div>
+    </div>
+    <div class="box bad" id="txt4"></div>
+  </div>
+</section>
+
+<!-- ============ ⑤ CENÁRIOS ============ -->
+<section class="panel" id="t5">
+  <h2>Seis situações de mesa</h2>
+  <p style="color:var(--text-dim)">Pense na resposta antes de clicar no cartão.</p>
+  <div class="grid2" id="cenarios"></div>
+</section>
+
+<!-- ============ ⑥ TESTE ============ -->
+<section class="panel" id="t6">
+  <div class="card">
+    <h2>Teste rápido</h2>
+    <p>Cinco questões. O feedback explica a certa e o erro típico. <span class="placar" id="placar">0 / 0</span></p>
+  </div>
+  <div id="quiz"></div>
+</section>
+
+<footer>Operações de Tesouraria em IFs — FGV · Prof. José Américo · dados fictícios com ordens de grandeza realistas</footer>
+</div>
+
+<script>
+/* =====================================================================
+   CÁLCULOS (conferidos contra verif_cupom.py)
+   ===================================================================== */
+// ==CALC-START==
+// Fator do DI: exponencial, dias úteis / 252
+function fatorDI(di, du){ return Math.pow(1 + di, du / 252); }
+// Fator do cupom: linear, dias corridos / 360
+function fatorCupom(c, dc){ return 1 + c * dc / 360; }
+// Cupom que fecha a paridade coberta
+function cupomImplicito(S, F, di, du, dc){ return (fatorDI(di, du) * S / F - 1) * 360 / dc; }
+// Futuro que fecha a paridade dado um cupom
+function futuroJusto(S, c, di, du, dc){ return S * fatorDI(di, du) / fatorCupom(c, dc); }
+// Lucro "direto" (capta US$, vende spot, aplica CDI, recompra no futuro). Se negativo, a operação inversa lucra o valor absoluto.
+function lucroDireto(S, F, cCapt, di, du, dc, N){ return S * N * fatorDI(di, du) - F * N * fatorCupom(cCapt, dc); }
+// FRC: cupom a termo entre dc1 e dc2
+function frc(c1, dc1, c2, dc2){ return (fatorCupom(c2, dc2) / fatorCupom(c1, dc1) - 1) * 360 / (dc2 - dc1); }
+// Cupom sujo: v = S_hoje / PTAX(D-1) - 1
+function sujo(cLimpo, dc, v){ return (fatorCupom(cLimpo, dc) / (1 + v) - 1) * 360 / dc; }
+// PU do DDI (nominal US$ 100.000 de referência)
+function puDDI(c, dc){ return 100000 / fatorCupom(c, dc); }
+// Interpolação linear na taxa (convenção correta do cupom)
+function interpLinear(t, dcs, cs){
+  for (var a = 0; a < dcs.length - 1; a++){
+    if (t >= dcs[a] && t <= dcs[a+1]){ var w = (t - dcs[a]) / (dcs[a+1] - dcs[a]); return cs[a] + w * (cs[a+1] - cs[a]); }
+  }
+  return NaN;
+}
+// ERRADO: trata o cupom como taxa exponencial (convenção do DI) e faz flat-forward
+function interpFFExp(t, dcs, cs){
+  for (var a = 0; a < dcs.length - 1; a++){
+    if (t >= dcs[a] && t <= dcs[a+1]){
+      var fa = Math.pow(1 + cs[a], dcs[a] / 360), fb = Math.pow(1 + cs[a+1], dcs[a+1] / 360);
+      var ft = fa * Math.pow(fb / fa, (t - dcs[a]) / (dcs[a+1] - dcs[a]));
+      return Math.pow(ft, 360 / t) - 1;
+    }
+  }
+  return NaN;
+}
+// Monta a curva: âncora + FRCs empilhados
+function montaCurva(S, F1, di1, du1, dc1, dcs, frcs){
+  var cs = [cupomImplicito(S, F1, di1, du1, dc1)];
+  for (var i = 0; i < frcs.length; i++){
+    var fat = fatorCupom(cs[i], dcs[i]) * (1 + frcs[i] * (dcs[i+1] - dcs[i]) / 360);
+    cs.push((fat - 1) * 360 / dcs[i+1]);
+  }
+  return cs;
+}
+// ==CALC-END==
+
+/* ---------- formatação brasileira ---------- */
+function pct(x, d){ if (!isFinite(x)) return '–'; return (x * 100).toLocaleString('pt-BR', {minimumFractionDigits: d === undefined ? 2 : d, maximumFractionDigits: d === undefined ? 2 : d}) + '%'; }
+function num(x, d){ if (!isFinite(x)) return '–'; return x.toLocaleString('pt-BR', {minimumFractionDigits: d, maximumFractionDigits: d}); }
+function brl(x){ return 'R$ ' + num(x, 0); }
+function usd(x){ return 'US$ ' + num(x, 0); }
+function pp(x){ var s = (x >= 0 ? '+' : '−') + num(Math.abs(x * 100), 2); return s + ' p.p.'; }
+function bps(x){ return (x >= 0 ? '+' : '−') + num(Math.abs(x * 1e4), 1) + ' bps'; }
+
+/* ---------- cores lidas do CSS ---------- */
+function cor(nome){ return getComputedStyle(document.documentElement).getPropertyValue('--' + nome).trim(); }
+
+/* ---------- canvas com devicePixelRatio ---------- */
+function prepara(cv){
+  var dpr = window.devicePixelRatio || 1;
+  var w = cv.parentElement.clientWidth - 0;
+  var h = parseInt(cv.getAttribute('height'), 10);
+  cv.style.height = h + 'px';
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  var ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  return {ctx: ctx, w: w, h: h};
+}
+// eixos genéricos: devolve funções de escala
+function eixos(g, m, xmin, xmax, ymin, ymax, xticks, yticks, fx, fy, titulo){
+  var ctx = g.ctx, W = g.w - m.l - m.r, H = g.h - m.t - m.b;
+  var X = function(x){ return m.l + (x - xmin) / (xmax - xmin) * W; };
+  var Y = function(y){ return m.t + (1 - (y - ymin) / (ymax - ymin)) * H; };
+  ctx.font = '11px JetBrains Mono, monospace';
+  ctx.lineWidth = 1;
+  yticks.forEach(function(v){
+    ctx.strokeStyle = cor('grid-dim'); ctx.beginPath(); ctx.moveTo(m.l, Y(v)); ctx.lineTo(m.l + W, Y(v)); ctx.stroke();
+    ctx.fillStyle = cor('text-dim'); ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText(fy(v), m.l - 6, Y(v));
+  });
+  xticks.forEach(function(v){
+    ctx.fillStyle = cor('text-dim'); ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.fillText(fx(v), X(v), m.t + H + 6);
+  });
+  ctx.strokeStyle = cor('text-dim'); ctx.beginPath(); ctx.moveTo(m.l, m.t); ctx.lineTo(m.l, m.t + H); ctx.lineTo(m.l + W, m.t + H); ctx.stroke();
+  if (titulo){ ctx.fillStyle = cor('text'); ctx.font = '600 13px Instrument Sans, sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText(titulo, m.l + 8, 6); }
+  return {X: X, Y: Y, W: W, H: H};
+}
+
+/* =====================================================================
+   ② PARIDADE E ARBITRAGEM
+   ===================================================================== */
+var P = {S: 5.00, di: 0.1360, du: 252, dc: 365, N: 1000000};
+P.cMkt = cupomImplicito(P.S, 5.40, P.di, P.du, P.dc); // 5,1142% — o cupom de mercado do slide
+P.Fj = futuroJusto(P.S, P.cMkt, P.di, P.du, P.dc);   // 5,40
+
+function desenha2(){
+  var F = parseFloat(document.getElementById('sF').value);
+  document.getElementById('lF').textContent = num(F, 4);
+  var cImp = cupomImplicito(P.S, F, P.di, P.du, P.dc);
+  var L = lucroDireto(P.S, F, P.cMkt, P.di, P.du, P.dc, P.N);
+  var naParidade = Math.abs(L) < 500;
+
+  document.getElementById('st2a').textContent = num(P.Fj, 4);
+  document.getElementById('st2b').textContent = pct(cImp);
+  document.getElementById('st2c').textContent = bps(cImp - P.cMkt);
+  var st = document.getElementById('st2d');
+  st.textContent = naParidade ? 'R$ 0' : brl(Math.abs(L));
+  st.style.color = naParidade ? cor('text') : cor('ok');
+
+  // passo a passo
+  var fCup = fatorCupom(P.cMkt, P.dc), fDI = fatorDI(P.di, P.du);
+  var devUSD = P.N * fCup, reais = P.S * P.N, reaisFim = reais * fDI;
+  var li = [];
+  if (naParidade){
+    document.getElementById('tit2').textContent = 'Passo a passo — na paridade';
+    li = ['Capta ' + usd(P.N) + ' a 5,11% → deve <span class="valor">' + usd(devUSD) + '</span>',
+          'Vende o dólar no spot a 5,00 <span class="valor">' + brl(reais) + '</span>',
+          'Aplica no CDI a 13,60% <span class="valor">' + brl(reaisFim) + '</span>',
+          'Recompra ' + usd(devUSD) + ' no futuro a ' + num(F, 4) + ' <span class="valor">' + brl(F * devUSD) + '</span>'];
+  } else if (L > 0){
+    document.getElementById('tit2').textContent = 'Passo a passo — futuro barato: capta dólar';
+    li = ['Capta ' + usd(P.N) + ' a 5,11% → deve <span class="valor">' + usd(devUSD) + '</span>',
+          'Vende o dólar no spot a 5,00 <span class="valor">' + brl(reais) + '</span>',
+          'Aplica no CDI a 13,60% → recebe <span class="valor">' + brl(reaisFim) + '</span>',
+          'Recompra ' + usd(devUSD) + ' no futuro a ' + num(F, 4) + ' → paga <span class="valor">' + brl(F * devUSD) + '</span>'];
+  } else {
+    document.getElementById('tit2').textContent = 'Passo a passo — futuro caro: operação inversa';
+    li = ['Capta ' + brl(reais) + ' no CDI → deve <span class="valor">' + brl(reaisFim) + '</span>',
+          'Compra ' + usd(P.N) + ' no spot a 5,00 <span class="valor">' + usd(P.N) + '</span>',
+          'Aplica o dólar a 5,11% → recebe <span class="valor">' + usd(devUSD) + '</span>',
+          'Vende ' + usd(devUSD) + ' no futuro a ' + num(F, 4) + ' → recebe <span class="valor">' + brl(F * devUSD) + '</span>'];
+  }
+  document.getElementById('passos2').innerHTML = li.map(function(s){ return '<li>' + s + '</li>'; }).join('');
+
+  // texto condicionado
+  var t;
+  if (naParidade){
+    t = '<p>Com F = ' + num(F, 4) + ', o cupom implícito no futuro é igual ao cupom de mercado (' + pct(P.cMkt) + '). Os dois caminhos rendem o mesmo: <b>não há arbitragem</b>.</p>';
+  } else if (L > 0){
+    t = '<p>O futuro está <b>abaixo</b> do justo (' + num(P.Fj, 4) + '). Comprar dólar a termo ficou barato, o que equivale a um cupom implícito de ' + pct(cImp) + ' — acima dos ' + pct(P.cMkt) + ' que custa captar em dólar.</p><p>Quem capta dólar, troca por reais e aplica no CDI trava <b>' + brl(L) + '</b> no vencimento, sem risco de câmbio: o dólar devido já está comprado no futuro.</p>';
+  } else {
+    t = '<p>O futuro está <b>acima</b> do justo (' + num(P.Fj, 4) + '). O cupom implícito caiu para ' + pct(cImp) + ', abaixo dos ' + pct(P.cMkt) + ' que se ganha aplicando em dólar.</p><p>A operação inversa — capta reais, compra dólar, aplica em dólar e vende no futuro — trava <b>' + brl(-L) + '</b>. A pressão dessas operações empurra F de volta à paridade.</p>';
+  }
+  t += '<p style="font-size:13px;color:var(--text-dim)">Simplificação: capta e aplica às mesmas taxas, sem custos nem limites de balanço.</p>';
+  document.getElementById('txt2').innerHTML = t;
+
+  // gráfico: cupom implícito em função de F
+  var g = prepara(document.getElementById('cv2'));
+  var m = {l: 56, r: 18, t: 30, b: 34};
+  var e = eixos(g, m, 5.20, 5.60, 0, 0.10, [5.20, 5.30, 5.40, 5.50, 5.60], [0, 0.02, 0.04, 0.06, 0.08, 0.10],
+    function(v){ return num(v, 2); }, function(v){ return pct(v, 0); }, 'Cupom implícito no dólar futuro (eixo x: F)');
+  var ctx = g.ctx;
+  // cupom de mercado
+  ctx.strokeStyle = cor('ref'); ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(e.X(5.20), e.Y(P.cMkt)); ctx.lineTo(e.X(5.60), e.Y(P.cMkt)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(e.X(P.Fj), e.Y(0)); ctx.lineTo(e.X(P.Fj), e.Y(0.10)); ctx.stroke();
+  ctx.setLineDash([]);
+  var estreito = g.w < 520;
+  ctx.fillStyle = cor('ref'); ctx.font = '11px JetBrains Mono, monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.fillText(estreito ? 'mercado 5,11%' : 'cupom de mercado 5,11%', e.X(5.20) + 6, e.Y(P.cMkt) + 4);
+  ctx.textBaseline = 'bottom';
+  ctx.textAlign = 'left'; ctx.fillText('F justo', e.X(P.Fj) + 4, e.Y(0.10) + 14);
+  // rótulos das zonas
+  ctx.fillStyle = cor('text-dim'); ctx.textAlign = 'right';
+  ctx.fillText(estreito ? 'capta US$' : 'capta US$ → aplica CDI', e.X(P.Fj) - 6, e.Y(0.005));
+  ctx.fillText(estreito ? 'capta R$' : 'capta R$ → aplica em US$', e.X(5.60) - 4, e.Y(0.085));
+  // curva
+  ctx.strokeStyle = cor('accent'); ctx.lineWidth = 2.5; ctx.beginPath();
+  for (var x = 5.20; x <= 5.6001; x += 0.005){ var y = cupomImplicito(P.S, x, P.di, P.du, P.dc); if (x === 5.20) ctx.moveTo(e.X(x), e.Y(y)); else ctx.lineTo(e.X(x), e.Y(y)); }
+  ctx.stroke();
+  // ponto atual
+  ctx.fillStyle = naParidade ? cor('accent') : cor('ok');
+  ctx.beginPath(); ctx.arc(e.X(F), e.Y(cImp), 7, 0, 2 * Math.PI); ctx.fill();
+  if (!naParidade){
+    ctx.strokeStyle = cor('ok'); ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(e.X(F), e.Y(cImp)); ctx.lineTo(e.X(F), e.Y(P.cMkt)); ctx.stroke();
+  }
+}
+
+/* =====================================================================
+   ③ DDI → FRC
+   ===================================================================== */
+var D = {S: 5.00, c1: 0.0481, dc1: 30, c2: 0.0511, dc2: 365, qL: 100};
+D.frcLimpo = frc(D.c1, D.dc1, D.c2, D.dc2);
+
+function desenha3(){
+  var v = parseFloat(document.getElementById('sV').value) / 100;
+  document.getElementById('lV').textContent = (v > 0 ? '+' : v < 0 ? '−' : '') + num(Math.abs(v * 100), 2) + '%';
+  var ptax = D.S / (1 + v);
+  var s1 = sujo(D.c1, D.dc1, v), s2 = sujo(D.c2, D.dc2, v);
+  var frcSujo = frc(s1, D.dc1, s2, D.dc2);
+
+  document.getElementById('st3a').textContent = num(ptax, 4);
+  document.getElementById('st3b').textContent = pp(s1 - D.c1);
+  document.getElementById('st3c').textContent = pp(s2 - D.c2);
+  document.getElementById('st3d').textContent = pct(frcSujo, 3);
+  document.getElementById('st3b').style.color = Math.abs(s1 - D.c1) > 0.005 ? cor('bad') : cor('text');
+  document.getElementById('st3c').style.color = Math.abs(s2 - D.c2) > 0.005 ? cor('bad') : cor('text');
+  document.getElementById('st3d').style.color = cor('ok');
+
+  // texto condicionado
+  var t;
+  if (Math.abs(v) < 0.0002){
+    t = '<p>O dólar de hoje é igual à PTAX de ontem: <b>sujo = limpo</b> nas duas pernas. Mexa no slider para ver a sujeira aparecer.</p>';
+  } else {
+    var sobe = v > 0;
+    t = '<p>O dólar ' + (sobe ? 'subiu' : 'caiu') + ' ' + num(Math.abs(v * 100), 2) + '% desde a PTAX de ontem. Como o DDI é corrigido pela PTAX de D−1, esse ' + (sobe ? 'ganho' : 'perda') + ' cambial de um dia entra no preço e <b>contamina a taxa</b>.</p>';
+    t += '<p>No DDI de 30 dc a contaminação vira <b>' + pp(s1 - D.c1) + '</b> (cupom negociado ' + pct(s1) + '); no de 365 dc, só ' + pp(s2 - D.c2) + ' É o mesmo efeito cambial, diluído em mais dias — por isso o curto é o mais "sujo".</p>';
+    t += '<p>No FRC as duas pernas carregam a <b>mesma</b> correção pela PTAX, em sentidos opostos: ela se cancela e sobra ' + pct(frcSujo, 3) + ', igual ao FRC limpo.</p>';
+  }
+  document.getElementById('txt3').innerHTML = t;
+
+  // tabela das pernas (taxas negociadas = sujas)
+  var pu2 = puDDI(s2, D.dc2), pu1 = puDDI(s1, D.dc1);
+  var qC = D.qL * pu2 / pu1;
+  document.getElementById('tb3').innerHTML =
+    '<tr><td>DDI longo (365 dc)</td><td>' + pct(s2) + '</td><td>' + num(pu2, 2) + '</td><td>comprado em taxa<br>(vendido em PU)</td><td>' + num(D.qL, 0) + '</td></tr>' +
+    '<tr><td>DDI curto (30 dc)</td><td>' + pct(s1) + '</td><td>' + num(pu1, 2) + '</td><td>vendido em taxa<br>(comprado em PU)</td><td>' + num(qC, 1) + '</td></tr>';
+
+  // gráfico de barras
+  var g = prepara(document.getElementById('cv3'));
+  var m = {l: 56, r: 14, t: 34, b: 44};
+  var e = eixos(g, m, 0, 3, -0.15, 0.25, [], [-0.15, -0.10, -0.05, 0, 0.05, 0.10, 0.15, 0.20, 0.25],
+    function(){ return ''; }, function(x){ return pct(x, 0); }, 'Cupom: limpo × negociado no contrato');
+  var ctx = g.ctx;
+  ctx.strokeStyle = cor('text-dim'); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(m.l, e.Y(0)); ctx.lineTo(m.l + e.W, e.Y(0)); ctx.stroke();
+  var grupos = [
+    {nome: 'DDI curto · 30 dc', a: D.c1, b: s1, cb: 'warn', lb: 'sujo'},
+    {nome: 'DDI longo · 365 dc', a: D.c2, b: s2, cb: 'warn', lb: 'sujo'},
+    {nome: 'FRC 30→365', a: D.frcLimpo, b: frcSujo, cb: 'accent', lb: 'dos sujos'}
+  ];
+  var estreito = g.w < 520;
+  if (estreito){ grupos[0].nome = 'Curto 30dc'; grupos[1].nome = 'Longo 365dc'; grupos[2].nome = 'FRC'; grupos[2].lb = 'sujo'; }
+  var gw = e.W / 3, bw = Math.min(46, gw * 0.28);
+  grupos.forEach(function(gr, i){
+    var cx = m.l + gw * (i + 0.5);
+    [[gr.a, 'ref', 'limpo', -1], [gr.b, gr.cb, gr.lb, 1]].forEach(function(b){
+      var x0 = cx + (b[3] < 0 ? -bw - 4 : 4);
+      var yv = Math.max(-0.15, Math.min(0.25, b[0]));
+      ctx.fillStyle = cor(b[1]);
+      ctx.fillRect(x0, Math.min(e.Y(0), e.Y(yv)), bw, Math.abs(e.Y(yv) - e.Y(0)) || 1);
+      ctx.fillStyle = cor('text'); ctx.font = '11px JetBrains Mono, monospace'; ctx.textAlign = 'center';
+      ctx.textBaseline = yv >= 0 ? 'bottom' : 'top';
+      ctx.fillText(pct(b[0], 1), x0 + bw / 2, yv >= 0 ? e.Y(yv) - 3 : e.Y(yv) + 3);
+      ctx.fillStyle = cor('text-dim'); ctx.textBaseline = 'top';
+      if (estreito) ctx.font = '10px JetBrains Mono, monospace';
+      ctx.fillText(b[2], x0 + bw / 2, m.t + e.H + 4);
+    });
+    ctx.fillStyle = cor('text'); ctx.font = '600 12px Instrument Sans, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillText(gr.nome, cx, m.t + e.H + 22);
+  });
+}
+
+/* =====================================================================
+   ④ CURVA DO CUPOM
+   ===================================================================== */
+var C = {
+  S: 5.00, F1: 5.0325,
+  dcs: [30, 90, 180, 365, 730], dus: [21, 63, 125, 252, 504],
+  dis: [0.1340, 0.1345, 0.1350, 0.1360, 0.1370],
+  frcs: [0.0495, 0.0505, 0.0508, 0.0530],
+  Fmkt: [5.0325, 5.0976, 5.1939, 5.4000, 5.8319]  // dólar futuro de mercado (fictício)
+};
+C.cs = montaCurva(C.S, C.F1, C.dis[0], C.dus[0], C.dcs[0], C.dcs, C.frcs);
+var etapa = 1, mostraFF = false;
+
+function desenha4(){
+  // painel textual
+  var p = document.getElementById('painel4'), th = document.getElementById('th4'), tb = document.getElementById('tb4');
+  var i;
+  if (etapa === 1){
+    p.innerHTML = '<h3>1 · Ponto âncora</h3><p>O cupom curto limpo sai do <b>casado</b> (diferencial spot−futuro) e do DI curto, pela própria paridade:</p>' +
+      '<div class="formula" style="font-size:13px">S = 5,00 · 1º futuro de dólar = 5,0325<br>DI 30 dc (21 du) = 13,40%<br>cupom = [1,1340<sup>21/252</sup> × 5,00/5,0325 − 1] × 360/30<br><span class="big">= ' + pct(C.cs[0]) + '</span></div>' +
+      '<p style="font-size:14px;color:var(--text-dim)">Fontes: dólar spot/casado, 1º futuro de dólar, DI1.</p>';
+    th.innerHTML = '<tr><th>Prazo</th><th>Cupom</th><th>Origem</th></tr>';
+    tb.innerHTML = '<tr><td>30 dc</td><td>' + pct(C.cs[0]) + '</td><td>casado + DI</td></tr>';
+  } else if (etapa === 2){
+    p.innerHTML = '<h3>2 · Empilhar FRCs</h3><p>Cada FRC é o cupom <b>a termo</b> de um trecho. Compondo o fator da âncora com o FRC seguinte, chega-se ao vértice seguinte — e assim por diante:</p>' +
+      '<div class="formula" style="font-size:13px">(1 + c<sub>n</sub>·dc<sub>n</sub>/360) = (1 + c<sub>n−1</sub>·dc<sub>n−1</sub>/360) × (1 + FRC·Δdc/360)</div>' +
+      '<p style="font-size:14px;color:var(--text-dim)">Fonte: grade de FRC disponível na B3. Repare que o vértice de 1 ano reproduz o 5,11% do exemplo da paridade.</p>';
+    th.innerHTML = '<tr><th>Prazo</th><th>FRC do trecho</th><th>Cupom</th></tr>';
+    var r = '<tr><td>30 dc</td><td>âncora</td><td>' + pct(C.cs[0]) + '</td></tr>';
+    for (i = 1; i < C.dcs.length; i++) r += '<tr><td>' + C.dcs[i] + ' dc</td><td>' + C.dcs[i-1] + '→' + C.dcs[i] + ': ' + pct(C.frcs[i-1]) + '</td><td>' + pct(C.cs[i]) + '</td></tr>';
+    tb.innerHTML = r;
+  } else {
+    p.innerHTML = '<h3>3 · Verificar e interpolar</h3><p>Cada vértice tem de <b>fechar com o DI e o dólar futuro</b> pela paridade coberta. Se o futuro implícito não bate com o de mercado, há erro na grade (ou arbitragem).</p>' +
+      '<div class="formula" style="font-size:13px">F implícito = S × (1 + DI)<sup>du/252</sup> / (1 + c·dc/360)</div>' +
+      '<p style="font-size:14px;color:var(--text-dim)">Depois, os prazos entre vértices são interpolados <b>linearmente na taxa</b> (base 360 dc). Veja abaixo.</p>';
+    th.innerHTML = '<tr><th>Prazo</th><th>DI</th><th>Cupom</th><th>F impl.</th><th>F merc.</th><th></th></tr>';
+    var r3 = '';
+    for (i = 0; i < C.dcs.length; i++){
+      var Fi = futuroJusto(C.S, C.cs[i], C.dis[i], C.dus[i], C.dcs[i]);
+      var ok = Math.abs(Fi - C.Fmkt[i]) < 0.0005;
+      r3 += '<tr><td>' + C.dcs[i] + ' dc</td><td>' + pct(C.dis[i]) + '</td><td>' + pct(C.cs[i]) + '</td><td>' + num(Fi, 4) + '</td><td>' + num(C.Fmkt[i], 4) + '</td><td class="check">' + (ok ? '✓' : '✗') + '</td></tr>';
+    }
+    tb.innerHTML = r3;
+  }
+  document.getElementById('interp4').style.display = etapa === 3 ? 'block' : 'none';
+
+  // interpolação
+  var t = parseInt(document.getElementById('sT').value, 10);
+  var cl = interpLinear(t, C.dcs, C.cs), cf = interpFFExp(t, C.dcs, C.cs);
+  document.getElementById('lT').textContent = t + ' dc';
+  if (etapa === 3){
+    var a = 0; while (a < C.dcs.length - 2 && t > C.dcs[a+1]) a++;
+    document.getElementById('st4a').textContent = pct(cl, 3);
+    document.getElementById('st4b').textContent = mostraFF ? pct(cf, 3) : '—';
+    document.getElementById('st4c').textContent = mostraFF ? bps(cf - cl) : '—';
+    document.getElementById('st4c').style.color = mostraFF ? cor('bad') : cor('text');
+    document.getElementById('st4d').textContent = C.dcs[a] + '→' + C.dcs[a+1];
+    var box = document.getElementById('txt4');
+    if (mostraFF){
+      box.className = 'box bad';
+      box.innerHTML = '<b class="t">⚠️ Armadilha</b>Tratar o cupom como taxa exponencial e interpolar flat-forward (a convenção do DI) dá ' + pct(cf, 3) + ' em ' + t + ' dc, contra ' + pct(cl, 3) + ' pela convenção correta: erro de <b>' + bps(cf - cl) + '</b>. O cupom é linear e não capitaliza — sistemas que importam a convenção do DI sem ajuste erram assim em todo prazo entre vértices.';
+    } else {
+      box.className = 'box ref';
+      box.innerHTML = '<b class="t">Linear na taxa</b>Em ' + t + ' dc, entre os vértices de ' + C.dcs[a] + ' e ' + C.dcs[a+1] + ' dc, o cupom é ' + pct(cl, 3) + '. Clique em "Mostrar flat-forward exponencial" para ver o erro de quem importa a convenção do DI.';
+    }
+  }
+
+  // gráfico
+  var g = prepara(document.getElementById('cv4'));
+  var m = {l: 58, r: 18, t: 30, b: 34};
+  var estreito = g.w < 520;
+  var e = eixos(g, m, 0, 750, 0.046, 0.055, estreito ? [0, 180, 365, 730] : [0, 90, 180, 365, 540, 730], [0.046, 0.048, 0.050, 0.052, 0.054],
+    function(v){ return v + ' dc'; }, function(v){ return pct(v, 1); }, 'Curva de cupom cambial limpo');
+  var ctx = g.ctx;
+  var nPts = etapa === 1 ? 1 : C.dcs.length;
+  // linha linear (a partir da etapa 2)
+  if (etapa >= 2){
+    ctx.strokeStyle = cor('accent'); ctx.lineWidth = 2.5; ctx.beginPath();
+    for (i = 0; i < C.dcs.length; i++){ if (i === 0) ctx.moveTo(e.X(C.dcs[i]), e.Y(C.cs[i])); else ctx.lineTo(e.X(C.dcs[i]), e.Y(C.cs[i])); }
+    ctx.stroke();
+  }
+  // flat-forward exponencial (armadilha)
+  if (etapa === 3 && mostraFF){
+    ctx.strokeStyle = cor('bad'); ctx.lineWidth = 2; ctx.setLineDash([5, 4]); ctx.beginPath();
+    for (var x = 30; x <= 730; x += 2){ var y = interpFFExp(x, C.dcs, C.cs); if (x === 30) ctx.moveTo(e.X(x), e.Y(y)); else ctx.lineTo(e.X(x), e.Y(y)); }
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = cor('bad'); ctx.font = '11px JetBrains Mono, monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+    ctx.textAlign = estreito ? 'right' : 'left';
+    ctx.fillText(estreito ? 'flat-forward (errado)' : 'flat-forward exponencial (errado)', estreito ? e.X(730) : e.X(400), estreito ? e.Y(0.0548) : e.Y(0.0540));
+  }
+  // FRCs como degraus (etapa 2)
+  if (etapa === 2){
+    ctx.strokeStyle = cor('warn'); ctx.lineWidth = 2;
+    for (i = 0; i < C.frcs.length; i++){
+      ctx.beginPath(); ctx.moveTo(e.X(C.dcs[i]), e.Y(C.frcs[i])); ctx.lineTo(e.X(C.dcs[i+1]), e.Y(C.frcs[i])); ctx.stroke();
+    }
+    ctx.fillStyle = cor('warn'); ctx.font = '11px JetBrains Mono, monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+    if (estreito){ ctx.textAlign = 'left'; ctx.fillText('— FRCs por trecho', e.X(40), e.Y(0.0548)); } else ctx.fillText('FRCs (cupom a termo de cada trecho)', e.X(380), e.Y(0.0530) - 6);
+  }
+  // vértices
+  for (i = 0; i < nPts; i++){
+    ctx.fillStyle = i === 0 ? cor('ref') : cor('accent');
+    ctx.beginPath(); ctx.arc(e.X(C.dcs[i]), e.Y(C.cs[i]), 6, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = cor('text'); ctx.font = '11px JetBrains Mono, monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillText(pct(C.cs[i]), e.X(C.dcs[i]), e.Y(C.cs[i]) + 9);
+  }
+  if (etapa === 1){
+    ctx.fillStyle = cor('ref'); ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+    ctx.fillText('âncora: casado + DI curto', e.X(C.dcs[0]) + 10, e.Y(C.cs[0]) - 8);
+  }
+  // ponto interpolado
+  if (etapa === 3){
+    ctx.strokeStyle = cor('text-dim'); ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(e.X(t), e.Y(0.046)); ctx.lineTo(e.X(t), e.Y(0.055)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = cor('accent'); ctx.beginPath(); ctx.arc(e.X(t), e.Y(cl), 5, 0, 2 * Math.PI); ctx.fill();
+    if (mostraFF){ ctx.fillStyle = cor('bad'); ctx.beginPath(); ctx.arc(e.X(t), e.Y(cf), 5, 0, 2 * Math.PI); ctx.fill(); }
+  }
+}
+
+/* =====================================================================
+   ⑤ CENÁRIOS
+   ===================================================================== */
+var cenarios = [
+  {tipo: 'bad', s: 'O cupom de 1 ano está em 5,11% e a SOFR em torno de 4%. Um gestor propõe: "captamos lá fora, internalizamos e aplicamos em cupom — é arbitragem".',
+   r: 'Não é arbitragem. O spread onshore−offshore é o preço da fronteira: risco de conversibilidade, custos e restrições de fluxo, condições do balanço de pagamentos. A operação carrega exatamente esses riscos.'},
+  {tipo: 'ok', s: 'A mesa comprou 200 DDI de 1 ano em taxa, a 5,11%. No dia seguinte, o cupom limpo sobe para 5,30%. Ganhou ou perdeu?',
+   r: 'Ganhou. Comprado em taxa = vendido em PU. Com o cupom maior, o PU = 100.000/(1 + c·dc/360) cai — e quem está vendido em PU recebe o ajuste.'},
+  {tipo: 'bad', s: 'O dólar subiu 1% de ontem para hoje. Um trader vê o DDI de 30 dc negociando a −7% e conclui: "o cupom curto ficou negativo, juro em dólar no Brasil desabou".',
+   r: 'Leitura errada. O DDI é corrigido pela PTAX de D−1: a alta de 1% do dólar no dia entra na taxa. Em 30 dc isso vira ~12 p.p. de distorção. O cupom limpo continua perto de 4,8% — basta olhar o FRC ou o casado.'},
+  {tipo: 'ok', s: 'Um banco quer travar o juro em dólar entre 6 meses e 1 ano, sem ficar exposto à variação do dólar no dia. Usa FRC 180→365.',
+   r: 'Correto. O FRC é a estrutura de dois DDIs em sentidos opostos: as correções pela PTAX se cancelam e sobra só o cupom a termo do trecho. É ali que mora a liquidez do mercado de cupom.'},
+  {tipo: 'bad', s: 'O sistema de risco foi configurado copiando a curva de DI: lê o cupom como taxa exponencial e interpola flat-forward entre os vértices.',
+   r: 'Erro de convenção. O cupom é linear em dc/360 e não capitaliza. Com a curva da aba ④, o erro chega a alguns bps entre vértices — pequeno por contrato, relevante numa carteira grande e sistemático em todos os prazos.'},
+  {tipo: 'warn', s: 'Com S = 5,00, F = 5,40 e DI = 13,60% em 1 ano, um analista acha cupom de 5,19% e outro, 5,11%. Quem errou?',
+   r: 'Os dois usaram a fórmula certa; a diferença é a contagem de dias. 5,19% sai de dc = 360; 5,11% sai dos 365 dias corridos do ano. A convenção do cupom pede o número real de dias corridos: 5,11%.'}
+];
+function montaCenarios(){
+  var nomes = {ok: '✓ Está certo', bad: '✗ Problema', warn: '⚠️ Atenção'};
+  document.getElementById('cenarios').innerHTML = cenarios.map(function(c, i){
+    return '<div class="card cen" data-i="' + i + '"><div class="num">CENÁRIO ' + (i + 1) + '</div><p style="margin:6px 0 0">' + c.s + '</p>' +
+      '<div class="dica">Clique para ver a análise.</div><div class="resp box ' + c.tipo + '"><b class="t">' + nomes[c.tipo] + '</b>' + c.r + '</div></div>';
+  }).join('');
+  document.querySelectorAll('.cen').forEach(function(el){ el.addEventListener('click', function(){ el.classList.add('aberto'); }); });
+}
+
+/* =====================================================================
+   ⑥ TESTE
+   ===================================================================== */
+var questoes = [
+  {q: 'S = 5,00; dólar futuro de 1 ano = 5,40; DI = 13,60% a.a.; 252 du e 365 dc. Qual o cupom cambial?',
+   o: ['5,11% a.a.', '5,19% a.a.', '8,00% a.a.', '5,60% a.a.'], c: 0,
+   f: 'Certa: [1,136 × 5,00/5,40 − 1] × 360/365 = 5,11%. 5,19% usa dc = 360; 8% é só a variação F/S; 5,60% subtrai taxas (13,6 − 8), o que ignora a forma multiplicativa da paridade.'},
+  {q: 'Você está comprado em DDI (em taxa). O cupom cai. O que acontece com você?',
+   o: ['Ganho, porque comprado ganha quando o preço cai', 'Perco: o PU sobe e eu estou vendido em PU', 'Nada: o DDI só se ajusta pela PTAX', 'Ganho, porque o PU sobe'], c: 1,
+   f: 'Comprado em taxa = vendido em PU. Cupom menor → PU = 100.000/(1 + c·dc/360) maior → quem está vendido em PU paga o ajuste. O erro típico é aplicar a intuição do "comprado" em PU a uma posição registrada em taxa.'},
+  {q: 'Por que o FRC entrega o cupom "limpo"?',
+   o: ['Porque é corrigido pela PTAX do próprio dia', 'Porque é liquidado em dólar no exterior', 'Porque suas duas pernas de DDI têm a mesma correção pela PTAX D−1, em sentidos opostos, e ela se cancela', 'Porque a B3 desconta a variação cambial do preço'], c: 2,
+   f: 'O FRC não muda a PTAX usada: são dois DDIs, um comprado e outro vendido em taxa, com valores em PU igualados. A sujeira de um dia entra nas duas pernas e se anula, sobrando o cupom a termo do trecho.'},
+  {q: 'O dólar à vista subiu 1% em relação à PTAX de ontem. Qual o efeito no cupom negociado no DDI de 30 dc e no de 365 dc?',
+   o: ['Os dois mudam cerca de 1 p.p.', 'O de 365 dc muda mais, porque tem mais dias', 'Nenhum: o cupom não depende do câmbio', 'O de 30 dc cai cerca de 12 p.p.; o de 365 dc, cerca de 1 p.p.'], c: 3,
+   f: 'O mesmo 1% cambial é distribuído pelo prazo em base linear 360: em 30 dc vira ~12 p.p. (×360/30); em 365 dc, ~1 p.p. Por isso o DDI curto é o mais "sujo" — e a âncora da curva vem do casado, não do DDI curto.'},
+  {q: 'Você precisa do cupom para 270 dc, entre os vértices de 180 e 365 dc. Como interpolar?',
+   o: ['Linearmente na taxa, base 360 dc', 'Flat-forward exponencial, como na curva de DI', 'Linearmente em DU/252', 'Spline cúbica sobre fatores exponenciais'], c: 0,
+   f: 'O cupom é linear e não capitaliza: interpola-se linearmente na taxa (360 dc). Flat-forward exponencial é a convenção do DI — importá-la para o cupom é o erro clássico de sistemas configurados sem ajuste.'}
+];
+var acertos = 0, respondidas = 0;
+function montaQuiz(){
+  document.getElementById('quiz').innerHTML = questoes.map(function(q, i){
+    return '<div class="card q" data-i="' + i + '"><b>' + (i + 1) + '. ' + q.q + '</b><div class="opts">' +
+      q.o.map(function(o, j){ return '<button class="opt" data-j="' + j + '">' + String.fromCharCode(65 + j) + ') ' + o + '</button>'; }).join('') +
+      '</div><div class="fb box ref">' + q.f + '</div></div>';
+  }).join('');
+  document.querySelectorAll('.q').forEach(function(el){
+    var i = parseInt(el.dataset.i, 10);
+    el.querySelectorAll('.opt').forEach(function(b){
+      b.addEventListener('click', function(){
+        var j = parseInt(b.dataset.j, 10), certa = questoes[i].c;
+        el.querySelectorAll('.opt').forEach(function(x){ x.disabled = true; });
+        el.querySelectorAll('.opt')[certa].classList.add('certa');
+        if (j !== certa) b.classList.add('errada'); else acertos++;
+        respondidas++;
+        var fb = el.querySelector('.fb');
+        fb.className = 'fb box ' + (j === certa ? 'ok' : 'bad');
+        fb.innerHTML = '<b class="t">' + (j === certa ? 'Isso mesmo.' : 'Não é essa.') + '</b>' + questoes[i].f;
+        fb.style.display = 'block';
+        document.getElementById('placar').textContent = acertos + ' / ' + respondidas;
+      });
+    });
+  });
+}
+
+/* =====================================================================
+   NAVEGAÇÃO E EVENTOS
+   ===================================================================== */
+var abaAtual = 't1';
+function redesenha(){ if (abaAtual === 't2') desenha2(); if (abaAtual === 't3') desenha3(); if (abaAtual === 't4') desenha4(); }
+document.querySelectorAll('nav.tabs button').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('nav.tabs button').forEach(function(x){ x.classList.remove('active'); });
+    document.querySelectorAll('.panel').forEach(function(x){ x.classList.remove('active'); });
+    b.classList.add('active'); abaAtual = b.dataset.tab;
+    document.getElementById(abaAtual).classList.add('active');
+    redesenha();
+  });
+});
+document.getElementById('sF').addEventListener('input', desenha2);
+document.getElementById('bParidade').addEventListener('click', function(){ document.getElementById('sF').value = 5.40; desenha2(); });
+document.getElementById('sV').addEventListener('input', desenha3);
+document.getElementById('bZeroV').addEventListener('click', function(){ document.getElementById('sV').value = 0; desenha3(); });
+document.querySelectorAll('[data-etapa]').forEach(function(b){
+  b.addEventListener('click', function(){
+    etapa = parseInt(b.dataset.etapa, 10);
+    document.querySelectorAll('[data-etapa]').forEach(function(x){ x.classList.toggle('on', x === b); });
+    desenha4();
+  });
+});
+document.getElementById('sT').addEventListener('input', desenha4);
+document.getElementById('bFF').addEventListener('click', function(){
+  mostraFF = !mostraFF;
+  this.classList.toggle('on', mostraFF);
+  this.textContent = mostraFF ? 'Ocultar flat-forward exponencial' : 'Mostrar flat-forward exponencial';
+  desenha4();
+});
+var tmr; window.addEventListener('resize', function(){ clearTimeout(tmr); tmr = setTimeout(redesenha, 120); });
+montaCenarios(); montaQuiz();
+</script>
+</body>
+</html>

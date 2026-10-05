@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Movimentos da Curva de Juros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,600;0,700;1,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f4ef;
+  --bg-card:#ffffff;
+  --text:#1c2631;
+  --text-dim:#4d5966;
+  --acc:#0e5c6b;        /* azul-petróleo: identidade desta animação */
+  --ok:#1d7447;
+  --bad:#b0281f;
+  --ref:#2c5a9e;
+  --warn:#9a5800;       /* âmbar das setas, como no slide */
+  --grid-bg:#e7e3da;
+  --acc-bg:#e3f0f2;
+  --ok-bg:#e5f3ea;
+  --bad-bg:#fbe9e7;
+  --warn-bg:#fbf1e1;
+  --line-brd:#ddd8cd;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 'IBM Plex Sans',system-ui,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px 40px}
+header .tag{display:inline-block;font:500 12px 'IBM Plex Mono',monospace;letter-spacing:.04em;text-transform:uppercase;color:var(--acc);border:1.5px solid var(--acc);border-radius:999px;padding:3px 12px}
+h1{font:700 clamp(28px,5vw,44px)/1.1 'Bitter',serif;margin:14px 0 8px}
+h1 em{color:var(--acc);font-style:italic}
+.lead{color:var(--text-dim);max-width:760px;margin:0 0 20px}
+h2{font:700 22px/1.25 'Bitter',serif;margin:0 0 10px}
+h3{font:600 17px/1.3 'Bitter',serif;margin:0 0 6px}
+nav.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px}
+nav.tabs button{font:500 14px 'IBM Plex Sans',sans-serif;border:1.5px solid var(--line-brd);background:var(--bg-card);color:var(--text);border-radius:999px;padding:7px 15px;cursor:pointer}
+nav.tabs button:hover{border-color:var(--acc)}
+nav.tabs button.ativo{background:var(--acc);border-color:var(--acc);color:#fff}
+.aba{display:none;animation:entra .45s ease}
+.aba.ativa{display:block}
+@keyframes entra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--bg-card);border-radius:14px;box-shadow:0 1px 3px rgba(28,38,49,.08),0 6px 18px rgba(28,38,49,.05);padding:20px;margin-bottom:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media (max-width:760px){.grid3,.grid2{grid-template-columns:1fr}}
+@media (max-width:560px){.tab-wrap table{min-width:0;font-size:13px}.tab-wrap th,.tab-wrap td{padding:7px 6px}}
+.citacao{font:italic 600 18px/1.45 'Bitter',serif;color:var(--acc);border-left:4px solid var(--acc);padding:4px 0 4px 14px;margin:0 0 6px}
+.formula{font:500 15px/1.7 'IBM Plex Mono',monospace;background:var(--acc-bg);border-radius:10px;padding:12px 14px;overflow-x:auto}
+.mini canvas{width:100%;height:150px;display:block}
+.mini p{margin:6px 0 0;font-size:15px;color:var(--text-dim)}
+.box{border-radius:12px;padding:14px 16px;margin-top:12px;font-size:15px}
+.box.dica{background:var(--acc-bg)}
+.box.cuidado{background:var(--warn-bg)}
+.box.mundo{background:#eef2f8}
+.box b{color:var(--text)}
+.certo,.errado{border-radius:12px;padding:14px 16px;font-size:15px}
+.certo{background:var(--ok-bg);border-left:4px solid var(--ok)}
+.errado{background:var(--bad-bg);border-left:4px solid var(--bad)}
+.certo .rot{color:var(--ok);font-weight:600}
+.errado .rot{color:var(--bad);font-weight:600}
+.tab-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15px;min-width:520px}
+th{background:var(--acc);color:#fff;text-align:left;font-weight:600;padding:9px 12px}
+td{padding:9px 12px;border-bottom:1px solid var(--line-brd)}
+td.reg{font-weight:600;color:var(--acc)}
+td.num,th.num{text-align:right;font-family:'IBM Plex Mono',monospace}
+.controles{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;margin-bottom:12px}
+.ctl{min-width:200px;flex:1}
+.ctl label{display:flex;justify-content:space-between;font-size:14px;font-weight:500}
+.ctl label span{font-family:'IBM Plex Mono',monospace;color:var(--acc)}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.botoes{display:flex;flex-wrap:wrap;gap:8px}
+.btn{font:500 14px 'IBM Plex Sans',sans-serif;border:1.5px solid var(--acc);background:var(--bg-card);color:var(--acc);border-radius:10px;padding:7px 13px;cursor:pointer}
+.btn:hover{background:var(--acc-bg)}
+.btn.sel{background:var(--acc);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.tela canvas{width:100%;height:360px;display:block}
+@media (max-width:760px){.tela canvas{height:300px}}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+@media (max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--bg);border-radius:10px;padding:10px 12px}
+.stat .v{font:500 22px 'IBM Plex Mono',monospace}
+.stat .r{font-size:13px;color:var(--text-dim)}
+.diag{display:inline-block;margin-top:12px;font:600 16px 'Bitter',serif;color:#fff;background:var(--acc);border-radius:10px;padding:6px 14px}
+.oque{background:var(--bg);border-radius:12px;padding:14px 16px;margin-top:12px;font-size:15px}
+.oque h3{font-size:15px}
+.legenda{font-size:13px;color:var(--text-dim);margin-top:6px}
+.pos{color:var(--ok)} .neg{color:var(--bad)}
+.placar{font:500 15px 'IBM Plex Mono',monospace;color:var(--acc)}
+.resp{margin-top:12px;border-radius:12px;padding:14px 16px;font-size:15px;display:none}
+.resp.ok{display:block;background:var(--ok-bg);border-left:4px solid var(--ok)}
+.resp.erro{display:block;background:var(--bad-bg);border-left:4px solid var(--bad)}
+.cenario{cursor:pointer;border:1.5px solid transparent;transition:border-color .2s}
+.cenario:hover{border-color:var(--acc)}
+.cenario .num{font:500 12px 'IBM Plex Mono',monospace;color:var(--acc)}
+.cenario .dica-clique{font-size:13px;color:var(--text-dim);margin-top:8px}
+.cenario .revela{display:none;margin-top:10px;border-radius:10px;padding:12px 14px;font-size:15px}
+.cenario.aberto .revela{display:block}
+.cenario.aberto .dica-clique{display:none}
+.revela.ok{background:var(--ok-bg);border-left:4px solid var(--ok)}
+.revela.bad{background:var(--bad-bg);border-left:4px solid var(--bad)}
+.q{margin-bottom:16px}
+.q .ops{display:grid;gap:8px;margin-top:10px}
+.q .ops button{text-align:left;font:15px 'IBM Plex Sans',sans-serif;background:var(--bg-card);color:var(--text);border:1.5px solid var(--line-brd);border-radius:10px;padding:9px 12px;cursor:pointer}
+.q .ops button:hover:not(:disabled){border-color:var(--acc)}
+.q .ops button.certa{background:var(--ok);border-color:var(--ok);color:#fff}
+.q .ops button.errada{background:var(--bad);border-color:var(--bad);color:#fff}
+.q .fb{display:none;margin-top:10px;font-size:15px;border-radius:10px;padding:12px 14px;background:var(--bg)}
+footer{margin-top:26px;padding-top:14px;border-top:1px solid var(--line-brd);font-size:14px;color:var(--text-dim)}
+.mono{font-family:'IBM Plex Mono',monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="tag">Bloco 4 · A curva em movimento</span>
+  <h1>Os movimentos da <em>curva de juros</em></h1>
+  <p class="lead">Toda variação da curva DI se lê em três deformações — nível, inclinação e curvatura — e se classifica em quatro regimes. Saber <b>qual ponta se mexeu e para onde</b> é o que diz se a sua posição ganhou ou perdeu.</p>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="ativo" data-aba="conceito">① Conceito</button>
+  <button data-aba="deform">② Deformações</button>
+  <button data-aba="regimes">③ Regimes + P&amp;L</button>
+  <button data-aba="diag">④ Diagnóstico</button>
+  <button data-aba="cenarios">⑤ Cenários</button>
+  <button data-aba="teste">⑥ Teste</button>
+</nav>
+
+<!-- ============ ① CONCEITO ============ -->
+<section class="aba ativa" id="aba-conceito">
+  <div class="card">
+    <p class="citacao">“Toda variação de curva se decompõe em nível, inclinação e curvatura — e cada uma tem causas típicas diferentes.”</p>
+    <div class="grid3" style="margin-top:14px">
+      <div class="mini"><h3>Nível (paralelo)</h3><canvas id="mini-nivel"></canvas>
+        <p>A curva inteira sobe ou desce junto. Causa típica: revisão geral das expectativas de inflação ou da Selic terminal.</p></div>
+      <div class="mini"><h3>Inclinação</h3><canvas id="mini-incl"></canvas>
+        <p>As pontas se afastam ou se aproximam. Causa típica: mudança na leitura do ciclo monetário de curto prazo.</p></div>
+      <div class="mini"><h3>Curvatura (butterfly)</h3><canvas id="mini-curv"></canvas>
+        <p>A barriga se mexe contra as pontas. Causa típica: revisão de expectativas para um horizonte intermediário.</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Como medir — em pontos-base (bps)</h2>
+    <div class="formula">
+      Δnível&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= (Δcurto + Δlongo) / 2<br>
+      Δinclinação = Δlongo − Δcurto<br>
+      Δbutterfly&nbsp;&nbsp;= 2·Δmeio − Δcurto − Δlongo
+    </div>
+    <p class="legenda">Nesta animação: curto = vértice de 1 ano, meio = 5 anos, longo = 9 anos (na mesa, algo como DI jan/27 × jan/35). 1 bp = 0,01 ponto percentual.</p>
+  </div>
+
+  <div class="card">
+    <h2>Os quatro regimes</h2>
+    <p style="margin-top:0">“A curva empinou” é diagnóstico pela metade — falta dizer <b>qual ponta se mexeu e em que direção</b>.</p>
+    <div class="tab-wrap"><table>
+      <tr><th>Regime</th><th>O que se move</th><th>Assinatura típica</th></tr>
+      <tr><td class="reg">Bull steepening</td><td>Ponta curta cai mais</td><td>Ciclo de corte antecipado / precificado pelo mercado</td></tr>
+      <tr><td class="reg">Bear steepening</td><td>Ponta longa sobe sozinha</td><td><b>Prêmio fiscal/inflacionário — o regime perigoso</b></td></tr>
+      <tr><td class="reg">Bull flattening</td><td>Ponta longa cai</td><td>Compressão de prêmio, credibilidade, ambiente <i>risk-on</i></td></tr>
+      <tr><td class="reg">Bear flattening</td><td>Ponta curta sobe</td><td>Aperto-surpresa precificado pelo mercado</td></tr>
+    </table></div>
+    <div class="box dica"><b>💡 Regra de classificação usada aqui.</b> <i>Steepening</i> ou <i>flattening</i>: sinal da Δinclinação. <i>Bull</i> ou <i>bear</i>: direção da <b>ponta que mais se moveu</b>. Se a inclinação muda menos de 5 bps, o movimento é tratado como paralelo.</div>
+    <div class="box cuidado"><b>⚠️ Nomenclatura.</b> <b>Bull</b> = taxas caindo (preços dos títulos subindo). <b>Bear</b> = taxas subindo. A referência é o mercado de títulos, não o de ações.</div>
+  </div>
+
+  <div class="grid2">
+    <div class="certo"><span class="rot">✓ Diagnóstico completo</span><br>“Bear steepening: o longo subiu 40 bps e o curto ficou parado — o mercado está cobrando prêmio fiscal.”</div>
+    <div class="errado"><span class="rot">✗ Armadilha</span><br>“A curva empinou.” Pode ser o curto caindo (corte de juros, notícia boa) ou o longo subindo (prêmio fiscal, notícia ruim). Para quem está dado no longo, uma ganha e a outra perde.</div>
+  </div>
+
+  <div class="card box mundo" style="margin-top:16px">
+    <b>🌎 Janela para o mundo real — 23/03/2021.</b> No dia da ata do Copom, com piora fiscal e da pandemia, o DI jan/22 foi de 4,615% para 4,675% (+6 bps), o jan/25 de 7,735% para 7,91% (+17,5 bps) e o jan/27 de 8,224% para 8,43% (+20,6 bps). A inclinação jan/27 − jan/22 abriu cerca de 15 bps, com a ponta longa liderando: <b>bear steepening</b>, atribuído pelo mercado ao risco fiscal. <span class="legenda">Fonte: Agência Estado, via Mais Retorno, 23/03/2021.</span>
+  </div>
+</section>
+
+<!-- ============ ② DEFORMAÇÕES ============ -->
+<section class="aba" id="aba-deform">
+  <div class="card">
+    <h2>Monte o movimento</h2>
+    <p style="margin-top:0" class="legenda">Mexa nas três alavancas e veja a curva nova (cheia) contra a curva de hoje (tracejada). ▶ repete a transição.</p>
+    <div class="controles">
+      <div class="ctl"><label>Nível <span id="v-n">0 bps</span></label><input type="range" id="s-n" min="-200" max="200" step="5" value="0"></div>
+      <div class="ctl"><label>Inclinação <span id="v-i">0 bps</span></label><input type="range" id="s-i" min="-200" max="200" step="5" value="0"></div>
+      <div class="ctl"><label>Curvatura (barriga) <span id="v-c">0 bps</span></label><input type="range" id="s-c" min="-100" max="100" step="5" value="0"></div>
+    </div>
+    <div class="botoes" style="margin-bottom:10px">
+      <button class="btn" id="d-play">▶ Animar</button>
+      <button class="btn" id="d-pause">⏸ Pausar</button>
+      <button class="btn" id="d-reset">↺ Zerar</button>
+    </div>
+    <div class="tela"><canvas id="cv-deform"></canvas></div>
+    <div class="stats">
+      <div class="stat"><div class="v" id="d-dc">0</div><div class="r">Δ curto (1a), bps</div></div>
+      <div class="stat"><div class="v" id="d-dl">0</div><div class="r">Δ longo (9a), bps</div></div>
+      <div class="stat"><div class="v" id="d-di">0</div><div class="r">Δ inclinação, bps</div></div>
+      <div class="stat"><div class="v" id="d-db">0</div><div class="r">Δ butterfly, bps</div></div>
+    </div>
+    <div class="diag" id="d-diag">Sem movimento</div>
+    <div class="oque"><h3>🔍 O que está acontecendo</h3><div id="d-texto"></div></div>
+  </div>
+</section>
+
+<!-- ============ ③ REGIMES + P&L ============ -->
+<section class="aba" id="aba-regimes">
+  <div class="card">
+    <h2>Regime em ação — e no seu P&amp;L</h2>
+    <div class="controles">
+      <div><div class="legenda" style="margin:0 0 4px">Movimento da curva</div>
+        <div class="botoes" id="r-botoes">
+          <button class="btn" data-r="bull_steep">Bull steepening</button>
+          <button class="btn" data-r="bear_steep">Bear steepening</button>
+          <button class="btn" data-r="bull_flat">Bull flattening</button>
+          <button class="btn" data-r="bear_flat">Bear flattening</button>
+          <button class="btn" data-r="paralelo">Paralelo +100</button>
+        </div></div>
+      <div><div class="legenda" style="margin:0 0 4px">Sua trava (neutra em DV01)</div>
+        <div class="botoes" id="r-trava">
+          <button class="btn sel" data-t="steep">Steepener</button>
+          <button class="btn" data-t="flat">Flattener</button>
+        </div></div>
+    </div>
+    <div class="tela"><canvas id="cv-regime"></canvas></div>
+    <div class="stats">
+      <div class="stat"><div class="v" id="r-dc">—</div><div class="r">Δ curto (1a), bps</div></div>
+      <div class="stat"><div class="v" id="r-dl">—</div><div class="r">Δ longo (9a), bps</div></div>
+      <div class="stat"><div class="v" id="r-di">—</div><div class="r">Δ inclinação, bps</div></div>
+      <div class="stat"><div class="v" id="r-pl">—</div><div class="r">P&amp;L da trava</div></div>
+    </div>
+    <div class="tab-wrap" style="margin-top:14px"><table>
+      <tr><th>Perna</th><th>Posição</th><th class="num">Contratos</th><th class="num">Δ taxa</th><th class="num">P&amp;L</th></tr>
+      <tr><td>DI1 curto (1a)</td><td id="p-pc">—</td><td class="num" id="p-nc">—</td><td class="num" id="p-dc">—</td><td class="num" id="p-plc">—</td></tr>
+      <tr><td>DI1 longo (9a)</td><td id="p-pl">—</td><td class="num">100</td><td class="num" id="p-dl">—</td><td class="num" id="p-pll">—</td></tr>
+    </table></div>
+    <p class="legenda"><b>Tomado</b> = ganha se a taxa sobe; <b>dado</b> = ganha se a taxa cai. DI1: PU = 100.000 / (1 + taxa)<sup>DU/252</sup>, R$ 1 por ponto de PU. A quantidade no curto é escolhida para igualar o DV01 das duas pernas.</p>
+    <div class="oque"><h3>🔍 O que está acontecendo</h3><div id="r-texto">Escolha um movimento acima.</div></div>
+  </div>
+</section>
+
+<!-- ============ ④ DIAGNÓSTICO ============ -->
+<section class="aba" id="aba-diag">
+  <div class="card">
+    <h2>Diagnóstico: qual é o regime?</h2>
+    <p style="margin-top:0" class="legenda">A curva se mexe; você classifica antes de ver os números.</p>
+    <div class="botoes" style="margin-bottom:10px">
+      <button class="btn" id="g-sorteia">🎲 Sortear movimento</button>
+      <span class="placar" id="g-placar" style="align-self:center">Acertos: 0 de 0</span>
+    </div>
+    <div class="tela"><canvas id="cv-diag"></canvas></div>
+    <div class="botoes" id="g-opcoes" style="margin-top:12px">
+      <button class="btn" data-g="bull_steep" disabled>Bull steepening</button>
+      <button class="btn" data-g="bear_steep" disabled>Bear steepening</button>
+      <button class="btn" data-g="bull_flat" disabled>Bull flattening</button>
+      <button class="btn" data-g="bear_flat" disabled>Bear flattening</button>
+      <button class="btn" data-g="paralelo" disabled>Paralelo (só nível)</button>
+    </div>
+    <div class="resp" id="g-resp"></div>
+  </div>
+</section>
+
+<!-- ============ ⑤ CENÁRIOS ============ -->
+<section class="aba" id="aba-cenarios">
+  <p class="legenda">Clique em cada cartão para revelar o diagnóstico. Verde = leitura tranquila; vermelho = armadilha ou sinal de risco.</p>
+  <div class="grid2" id="lista-cenarios"></div>
+</section>
+
+<!-- ============ ⑥ TESTE ============ -->
+<section class="aba" id="aba-teste">
+  <div id="lista-q"></div>
+  <div class="card"><span class="placar" id="q-placar">Respondidas: 0 de 5 · Acertos: 0</span></div>
+</section>
+
+<footer>Operações de Tesouraria em IFs — FGV · Prof. José Américo · Curva fictícia, com níveis próximos aos do mercado em 2026.</footer>
+</div>
+
+<script>
+// <nucleo> ==== funções de cálculo (conferidas contra o Python) ====
+// Curva-base fictícia: r(t) = A + B·(1 − e^(−t/τ)), em % a.a., t em anos
+const TAU = 2.0, R1 = 14.00, R9 = 14.45;
+const fNS = t => 1 - Math.exp(-t / TAU);
+const B_ = (R9 - R1) / (fNS(9) - fNS(1));
+const A_ = R1 - B_ * fNS(1);
+function base(t) { return A_ + B_ * fNS(t); }
+
+// x = 0 no vértice curto (1a) e 1 no longo (9a)
+function xDe(t) { return (t - 1) / 8; }
+// Deslocamento em bps: nível N + inclinação I (gira em torno do meio) + curvatura C (só a barriga)
+function deltaBps(t, N, I, C) {
+  const x = xDe(t);
+  return N + I * (x - 0.5) + C * 4 * x * (1 - x);
+}
+// Converte um movimento dado pelas pontas (Δcurto, Δlongo) em nível e inclinação
+function deNiveis(dc, dl) { return { N: (dc + dl) / 2, I: dl - dc }; }
+
+function medidas(N, I, C) {
+  const dc = deltaBps(1, N, I, C), dm = deltaBps(5, N, I, C), dl = deltaBps(9, N, I, C);
+  return { dc, dm, dl, dincl: dl - dc, dbf: 2 * dm - dc - dl };
+}
+
+// Regra de classificação (a mesma mostrada na aba Conceito)
+function classifica(dc, dl) {
+  const dincl = dl - dc;
+  if (Math.max(Math.abs(dc), Math.abs(dl)) < 5) return 'parado';
+  if (Math.abs(dincl) < 5) return (dc + dl) / 2 > 0 ? 'paralelo_alta' : 'paralelo_baixa';
+  // torção pura: pontas em sentidos opostos e com o mesmo tamanho
+  if (dc * dl < 0 && Math.abs(Math.abs(dl) - Math.abs(dc)) < 2.5) return 'torcao';
+  const dominante = Math.abs(dl) > Math.abs(dc) ? dl : dc;
+  const touro = dominante < 0;                 // bull = taxas caindo
+  const empina = dincl > 0;
+  return (touro ? 'bull' : 'bear') + '_' + (empina ? 'steep' : 'flat');
+}
+
+// DI1
+const DU_C = 252, DU_L = 2268, NL = 100;
+function pu(rPct, du) { return 100000 / Math.pow(1 + rPct / 100, du / 252); }
+function dv01(rPct, du) { return pu(rPct, du) * (du / 252) / (1 + rPct / 100) * 1e-4; }
+const NC = Math.round(NL * dv01(base(9), DU_L) / dv01(base(1), DU_C));
+
+// P&L da trava. steepener: tomado no longo + dado no curto; flattener: o inverso
+function pnlTrava(dc, dl, tipo) {
+  const rc0 = base(1), rl0 = base(9);
+  const ganhoTomadoLongo = NL * (pu(rl0, DU_L) - pu(rl0 + dl / 100, DU_L));
+  const ganhoDadoCurto = NC * (pu(rc0 + dc / 100, DU_C) - pu(rc0, DU_C));
+  const s = tipo === 'steep' ? 1 : -1;
+  const curta = s * ganhoDadoCurto, longa = s * ganhoTomadoLongo;
+  return { curta, longa, total: curta + longa };
+}
+
+// Sorteio da aba Diagnóstico (u = número aleatório entre 0 e 1)
+function sorteiaMovimento(rand) {
+  const regs = ['bull_steep', 'bear_steep', 'bull_flat', 'bear_flat', 'paralelo'];
+  const k = regs[Math.floor(rand() * regs.length)];
+  const D = 40 + 5 * Math.floor(rand() * 23);          // 40 a 150 bps
+  const u = rand();
+  let dc, dl;
+  if (k === 'bull_steep') { dc = -D; dl = -Math.round(D * 0.5 * u); }
+  else if (k === 'bear_steep') { dl = D; dc = Math.round(D * 0.4 * u); }
+  else if (k === 'bull_flat') { dl = -D; dc = -Math.round(D * 0.4 * u); }
+  else if (k === 'bear_flat') { dc = D; dl = Math.round(D * 0.5 * u); }
+  else { const s = rand() < 0.5 ? -1 : 1; dc = s * D; dl = dc + Math.round(6 * u - 3); }
+  return { k, dc, dl };
+}
+// </nucleo>
+
+// ==== utilidades de formato (padrão brasileiro) ====
+const nf1 = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 });
+function fmtBps(v) { const r = Math.round(v * 10) / 10; return (r > 0 ? '+' : '') + nf1.format(r === 0 ? 0 : r); }
+function fmtRS(v) { const r = Math.round(v); return (r > 0 ? '+' : r < 0 ? '−' : '') + 'R$ ' + Math.abs(r).toLocaleString('pt-BR'); }
+function fmtPct(v) { return v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'; }
+function classeSinal(v) { return v > 0.5 ? 'pos' : v < -0.5 ? 'neg' : ''; }
+
+const NOMES = {
+  bull_steep: 'Bull steepening', bear_steep: 'Bear steepening', bull_flat: 'Bull flattening',
+  bear_flat: 'Bear flattening', paralelo_alta: 'Paralelo de alta (bear)', paralelo_baixa: 'Paralelo de baixa (bull)',
+  torcao: 'Torção pura (sem viés de alta ou baixa)', parado: 'Sem movimento relevante', paralelo: 'Paralelo (só nível)'
+};
+const ASSINATURA = {
+  bull_steep: 'ponta curta cai mais — ciclo de corte antecipado ou precificado pelo mercado.',
+  bear_steep: 'ponta longa sobe sozinha — prêmio fiscal/inflacionário, o regime perigoso.',
+  bull_flat: 'ponta longa cai — compressão de prêmio, credibilidade, ambiente risk-on.',
+  bear_flat: 'ponta curta sobe — aperto-surpresa precificado pelo mercado.',
+  paralelo_alta: 'a curva inteira sobe junto — revisão geral de inflação ou Selic terminal.',
+  paralelo_baixa: 'a curva inteira cai junto — revisão geral de inflação ou Selic terminal.',
+  torcao: 'as pontas andam em sentidos opostos, na mesma medida; o nível médio quase não muda.',
+  parado: 'as pontas andaram menos de 5 bps.'
+};
+
+// ==== cores lidas do CSS ====
+function cor(nome) { return getComputedStyle(document.documentElement).getPropertyValue('--' + nome).trim(); }
+
+// ==== canvas ====
+function prepara(canvas) {
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, w, h };
+}
+
+// Desenha a curva-base (tracejada) e a curva deslocada por fracao·Δ(t)
+// mov = {N, I, C}; fracao entre 0 e 1; mini = versão compacta sem eixos detalhados
+function desenhaCurva(canvas, mov, fracao, mini, ocultaBps) {
+  const { ctx, w, h } = prepara(canvas);
+  const estreito = w < 520;
+  const m = mini ? { e: 10, d: 10, t: 10, b: 10 } : { e: estreito ? 50 : 58, d: 14, t: estreito ? 46 : 30, b: 42 };
+  const ts = []; for (let t = 1; t <= 9.0001; t += 0.1) ts.push(t);
+  const nova = t => base(t) + fracao * deltaBps(t, mov.N, mov.I, mov.C) / 100;
+  const final = t => base(t) + deltaBps(t, mov.N, mov.I, mov.C) / 100;
+  // escala vertical fixa durante a animação (usa base e curva final)
+  let lo = Infinity, hi = -Infinity;
+  ts.forEach(t => { lo = Math.min(lo, base(t), final(t)); hi = Math.max(hi, base(t), final(t)); });
+  const meio = (lo + hi) / 2; let span = Math.max(hi - lo, 1.2) * 1.25;
+  lo = meio - span / 2; hi = meio + span / 2;
+  const X = t => m.e + (t - 0.5) / 9 * (w - m.e - m.d);
+  const Y = r => m.t + (hi - r) / (hi - lo) * (h - m.t - m.b);
+
+  ctx.clearRect(0, 0, w, h);
+  if (!mini) {
+    // grade e eixos
+    ctx.strokeStyle = cor('grid-bg'); ctx.lineWidth = 1;
+    ctx.font = "11px 'IBM Plex Mono', monospace"; ctx.fillStyle = cor('text-dim');
+    const passo = span > 4 ? 1 : span > 2 ? 0.5 : 0.25;
+    for (let r = Math.ceil(lo / passo) * passo; r <= hi; r += passo) {
+      ctx.beginPath(); ctx.moveTo(m.e, Y(r)); ctx.lineTo(w - m.d, Y(r)); ctx.stroke();
+      ctx.textAlign = 'right'; ctx.fillText(fmtPct(r), m.e - 6, Y(r) + 4);
+    }
+    ctx.textAlign = 'center';
+    for (let t = 1; t <= 9; t++) {
+      ctx.beginPath(); ctx.moveTo(X(t), m.t); ctx.lineTo(X(t), h - m.b); ctx.stroke();
+      ctx.fillText(t + 'a', X(t), h - m.b + 15);
+    }
+    ctx.fillText('prazo (anos)', (m.e + w - m.d) / 2, h - 6);
+    ctx.textAlign = 'left'; ctx.font = "600 13px 'IBM Plex Sans', sans-serif"; ctx.fillStyle = cor('text');
+    ctx.fillText('Curva DI pré (% a.a.)', m.e, 18);
+    // legenda
+    ctx.font = "12px 'IBM Plex Sans', sans-serif";
+    const yLeg = estreito ? 36 : 18;           // no celular a legenda vai para a 2ª linha
+    ctx.textAlign = estreito ? 'left' : 'right';
+    const xLeg = estreito ? m.e : w - m.d - 70;
+    ctx.fillStyle = cor('text-dim'); ctx.fillText('- - hoje', xLeg, yLeg);
+    ctx.fillStyle = cor('acc'); ctx.fillText('— depois', estreito ? m.e + 64 : w - m.d, yLeg);
+  }
+  // curva de hoje (tracejada)
+  ctx.setLineDash([6, 5]); ctx.strokeStyle = cor('text-dim'); ctx.lineWidth = mini ? 1.5 : 2;
+  ctx.beginPath(); ts.forEach((t, i) => i ? ctx.lineTo(X(t), Y(base(t))) : ctx.moveTo(X(t), Y(base(t)))); ctx.stroke();
+  ctx.setLineDash([]);
+  // curva nova
+  ctx.strokeStyle = cor('acc'); ctx.lineWidth = mini ? 2.5 : 3;
+  ctx.beginPath(); ts.forEach((t, i) => i ? ctx.lineTo(X(t), Y(nova(t))) : ctx.moveTo(X(t), Y(nova(t)))); ctx.stroke();
+  // setas nos vértices curto, meio e longo
+  [[1, 'curto'], [5, 'meio'], [9, 'longo']].forEach(([t, nome]) => {
+    const d = fracao * deltaBps(t, mov.N, mov.I, mov.C);
+    const x = X(t), y0 = Y(base(t)), y1 = Y(base(t) + d / 100);
+    if (Math.abs(d) >= 3) seta(ctx, x, y0, y1, cor('warn'), mini);
+    ctx.fillStyle = cor('acc'); ctx.beginPath(); ctx.arc(x, y1, mini ? 3 : 4.5, 0, 2 * Math.PI); ctx.fill();
+    if (!mini) {
+      ctx.font = "11px 'IBM Plex Mono', monospace"; ctx.fillStyle = cor('text');
+      ctx.textAlign = t === 1 ? 'left' : t === 9 ? 'right' : 'center';
+      const dx = t === 1 ? 8 : t === 9 ? -8 : 0;
+      const yl = d >= 3 ? Math.min(y0, y1) - 10 : Math.max(y0, y1) + 18;
+      ctx.fillText(ocultaBps ? nome : nome + ' ' + fmtBps(d) + ' bps', x + dx, yl);
+    }
+  });
+}
+
+function seta(ctx, x, y0, y1, c, mini) {
+  const dir = y1 < y0 ? -1 : 1, cab = mini ? 6 : 8;
+  ctx.strokeStyle = c; ctx.fillStyle = c; ctx.lineWidth = mini ? 2 : 2.5;
+  ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, y1 - dir * cab * 0.6); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x - cab * 0.6, y1 - dir * cab); ctx.lineTo(x + cab * 0.6, y1 - dir * cab); ctx.closePath(); ctx.fill();
+}
+
+// ==== animador simples: leva a fração de 0 a 1 em ~1,2 s ====
+function criaAnimador(desenha) {
+  const a = { f: 1, rodando: false, ultimo: 0 };
+  function passo(ts) {
+    if (!a.rodando) return;
+    const dt = a.ultimo ? (ts - a.ultimo) / 1200 : 0; a.ultimo = ts;
+    a.f = Math.min(1, a.f + dt);
+    desenha(easing(a.f));
+    if (a.f < 1) requestAnimationFrame(passo); else a.rodando = false;
+  }
+  a.play = () => { if (a.f >= 1) a.f = 0; a.rodando = true; a.ultimo = 0; requestAnimationFrame(passo); };
+  a.pause = () => { a.rodando = false; };
+  a.fim = () => { a.rodando = false; a.f = 1; desenha(1); };
+  a.redesenha = () => desenha(easing(a.f));
+  return a;
+}
+function easing(f) { return f < 0.5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2; }
+
+// ==== abas ====
+let abaAtual = 'conceito';
+document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('nav.tabs button').forEach(x => x.classList.toggle('ativo', x === b));
+  document.querySelectorAll('.aba').forEach(s => s.classList.remove('ativa'));
+  abaAtual = b.dataset.aba;
+  document.getElementById('aba-' + abaAtual).classList.add('ativa');
+  redesenhaAtual();
+}));
+function redesenhaAtual() {
+  if (abaAtual === 'conceito') desenhaMinis();
+  if (abaAtual === 'deform') animD.redesenha();
+  if (abaAtual === 'regimes') animR.redesenha();
+  if (abaAtual === 'diag') animG.redesenha();
+}
+window.addEventListener('resize', redesenhaAtual);
+
+// ==== ① mini-gráficos ====
+function desenhaMinis() {
+  desenhaCurva(document.getElementById('mini-nivel'), { N: 45, I: 0, C: 0 }, 1, true);
+  desenhaCurva(document.getElementById('mini-incl'), { N: 0, I: 70, C: 0 }, 1, true);
+  desenhaCurva(document.getElementById('mini-curv'), { N: 0, I: 0, C: 30 }, 1, true);
+}
+
+// ==== ② deformações ====
+const movD = { N: 0, I: 0, C: 0 };
+const animD = criaAnimador(f => desenhaCurva(document.getElementById('cv-deform'), movD, f, false));
+function atualizaD(animar) {
+  movD.N = +document.getElementById('s-n').value;
+  movD.I = +document.getElementById('s-i').value;
+  movD.C = +document.getElementById('s-c').value;
+  document.getElementById('v-n').textContent = fmtBps(movD.N) + ' bps';
+  document.getElementById('v-i').textContent = fmtBps(movD.I) + ' bps';
+  document.getElementById('v-c').textContent = fmtBps(movD.C) + ' bps';
+  const md = medidas(movD.N, movD.I, movD.C);
+  const put = (id, v) => { const el = document.getElementById(id); el.textContent = fmtBps(v); };  // taxa: sem cor de ganho/perda
+  put('d-dc', md.dc); put('d-dl', md.dl); put('d-di', md.dincl); put('d-db', md.dbf);
+  const cod = classifica(md.dc, md.dl);
+  let rot = NOMES[cod];
+  const temBarriga = Math.abs(md.dbf) >= 5;
+  if (cod === 'parado' && temBarriga) rot = 'Só curvatura (butterfly)';
+  document.getElementById('d-diag').textContent = rot;
+  // texto explicativo condicionado aos números calculados
+  const partes = [];
+  if (cod === 'parado') partes.push(temBarriga ? 'As pontas ficaram paradas; só a barriga se mexeu.' : 'Nada relevante mudou: a curva nova coincide com a de hoje.');
+  else {
+    partes.push(`O curto andou <b>${fmtBps(md.dc)} bps</b> e o longo <b>${fmtBps(md.dl)} bps</b>, então a inclinação mudou <b>${fmtBps(md.dincl)} bps</b>.`);
+    partes.push(`Leitura: <b>${NOMES[cod]}</b> — ${ASSINATURA[cod]}`);
+  }
+  if (temBarriga) partes.push(`A barriga (5a) ${md.dbf > 0 ? 'subiu' : 'caiu'} em relação às pontas: butterfly de <b>${fmtBps(md.dbf)} bps</b>.`);
+  if (cod !== 'parado' && Math.abs(md.dincl) >= 5 && Math.abs(movD.N) >= 5 && Math.abs(md.dc) > 0 && Math.sign(md.dc) !== Math.sign(md.dl))
+    partes.push('Repare: as pontas andaram em sentidos opostos — o rótulo bull/bear vem da ponta que mais se moveu.');
+  document.getElementById('d-texto').innerHTML = partes.join(' ');
+  if (animar) animD.play(); else animD.fim();
+}
+['s-n', 's-i', 's-c'].forEach(id => document.getElementById(id).addEventListener('input', () => atualizaD(false)));
+document.getElementById('d-play').addEventListener('click', () => animD.play());
+document.getElementById('d-pause').addEventListener('click', () => animD.pause());
+document.getElementById('d-reset').addEventListener('click', () => {
+  ['s-n', 's-i', 's-c'].forEach(id => document.getElementById(id).value = 0); atualizaD(false);
+});
+
+// ==== ③ regimes + P&L ====
+const REGIMES = { bull_steep: [-100, -30], bear_steep: [0, 100], bull_flat: [0, -80], bear_flat: [100, 0], paralelo: [100, 100] };
+let regAtual = null, travaAtual = 'steep';
+const movR = { N: 0, I: 0, C: 0 };
+const animR = criaAnimador(f => desenhaCurva(document.getElementById('cv-regime'), movR, f, false));
+function atualizaR(animar) {
+  document.querySelectorAll('#r-botoes .btn').forEach(b => b.classList.toggle('sel', b.dataset.r === regAtual));
+  document.querySelectorAll('#r-trava .btn').forEach(b => b.classList.toggle('sel', b.dataset.t === travaAtual));
+  const steep = travaAtual === 'steep';
+  document.getElementById('p-pc').textContent = steep ? 'Dado' : 'Tomado';
+  document.getElementById('p-pl').textContent = steep ? 'Tomado' : 'Dado';
+  document.getElementById('p-nc').textContent = NC.toLocaleString('pt-BR');
+  if (!regAtual) { animR.fim(); return; }
+  const [dc, dl] = REGIMES[regAtual];
+  Object.assign(movR, deNiveis(dc, dl), { C: 0 });
+  const p = pnlTrava(dc, dl, travaAtual);
+  const put = (id, txt, v) => { const el = document.getElementById(id); el.textContent = txt; el.className = (el.className.includes('num') ? 'num ' : 'v ') + classeSinal(v); };
+  put('r-dc', fmtBps(dc), 0); put('r-dl', fmtBps(dl), 0); put('r-di', fmtBps(dl - dc), 0);
+  put('r-pl', fmtRS(p.total), p.total);
+  put('p-dc', fmtBps(dc) + ' bps', 0); put('p-dl', fmtBps(dl) + ' bps', 0);
+  put('p-plc', fmtRS(p.curta), p.curta); put('p-pll', fmtRS(p.longa), p.longa);
+  // texto condicionado aos números
+  const cod = classifica(dc, dl);
+  const maiorPerna = Math.max(Math.abs(p.curta), Math.abs(p.longa));
+  const nomeTrava = steep ? 'steepener' : 'flattener';
+  let t = `<b>${NOMES[cod]}</b>: ${ASSINATURA[cod]} `;
+  if (maiorPerna > 0 && Math.abs(p.total) < 0.05 * maiorPerna) {
+    t += `As duas pernas se compensam: ${fmtRS(p.curta)} no curto e ${fmtRS(p.longa)} no longo. A trava ${nomeTrava} é neutra ao nível — o que sobra (${fmtRS(p.total)}) é resíduo de convexidade e de arredondamento.`;
+  } else {
+    t += `A inclinação mudou ${fmtBps(dl - dc)} bps e a trava ${nomeTrava} ${p.total > 0 ? 'ganhou' : 'perdeu'} ${fmtRS(Math.abs(p.total)).replace('+', '')}. `;
+    const pernaParada = Math.abs(dc) < 1 ? 'curto' : Math.abs(dl) < 1 ? 'longo' : null;
+    if (pernaParada) t += `Todo o resultado veio da perna do ${pernaParada === 'curto' ? 'longo' : 'curto'}, porque o ${pernaParada} não se mexeu.`;
+    else t += `As duas pontas andaram no mesmo sentido; o resultado é a diferença entre as pernas.`;
+  }
+  document.getElementById('r-texto').innerHTML = t;
+  if (animar) animR.play(); else animR.fim();
+}
+document.querySelectorAll('#r-botoes .btn').forEach(b => b.addEventListener('click', () => { regAtual = b.dataset.r; atualizaR(true); }));
+document.querySelectorAll('#r-trava .btn').forEach(b => b.addEventListener('click', () => { travaAtual = b.dataset.t; atualizaR(false); }));
+
+// ==== ④ diagnóstico ====
+let movG = { N: 0, I: 0, C: 0 }, atualG = null, acertos = 0, tentativas = 0, respondido = true;
+const animG = criaAnimador(f => desenhaCurva(document.getElementById('cv-diag'), movG, f, false, !respondido));
+// No Diagnóstico os rótulos de bps nas setas ficam ocultos até a resposta
+document.getElementById('g-sorteia').addEventListener('click', () => {
+  atualG = sorteiaMovimento(Math.random); respondido = false;
+  movG = Object.assign(deNiveis(atualG.dc, atualG.dl), { C: 0 });
+  document.querySelectorAll('#g-opcoes .btn').forEach(b => { b.disabled = false; b.classList.remove('sel'); });
+  const r = document.getElementById('g-resp'); r.className = 'resp'; r.innerHTML = '';
+  animG.play();
+});
+document.querySelectorAll('#g-opcoes .btn').forEach(b => b.addEventListener('click', () => {
+  if (!atualG || respondido) return;
+  respondido = true; animG.fim();
+  const cod = classifica(atualG.dc, atualG.dl);
+  const certo = cod.startsWith('paralelo') ? 'paralelo' : cod;
+  const acertou = b.dataset.g === certo;
+  tentativas++; if (acertou) acertos++;
+  document.getElementById('g-placar').textContent = `Acertos: ${acertos} de ${tentativas}`;
+  document.querySelectorAll('#g-opcoes .btn').forEach(x => { x.disabled = true; x.classList.toggle('sel', x.dataset.g === certo); });
+  const dincl = atualG.dl - atualG.dc;
+  const dom = Math.abs(atualG.dl) > Math.abs(atualG.dc) ? 'longo' : 'curto';
+  let ex = `Curto ${fmtBps(atualG.dc)} bps, longo ${fmtBps(atualG.dl)} bps, inclinação ${fmtBps(dincl)} bps. `;
+  if (certo === 'paralelo') ex += `A inclinação mudou menos de 5 bps: é movimento de nível (${NOMES[cod].toLowerCase()}).`;
+  else ex += `A ponta que mais andou foi o ${dom}, ${(dom === 'longo' ? atualG.dl : atualG.dc) < 0 ? 'caindo (bull)' : 'subindo (bear)'}; a inclinação ${dincl > 0 ? 'aumentou (steepening)' : 'diminuiu (flattening)'}.`;
+  const r = document.getElementById('g-resp');
+  r.className = 'resp ' + (acertou ? 'ok' : 'erro');
+  r.innerHTML = `<b>${acertou ? '✓ Isso mesmo' : '✗ Não foi dessa vez'} — ${NOMES[certo]}.</b> ${ex}`;
+}));
+
+// ==== ⑤ cenários ====
+const CENARIOS = [
+  { tom: 'ok', tit: 'Copom sinaliza cortes antes do esperado',
+    sit: 'Após um IPCA bem abaixo do consenso, o DI de 1 ano cai 60 bps e o de 9 anos cai 15 bps.',
+    resp: '<b>Bull steepening.</b> As duas pontas caem (bull), mas o curto cai muito mais: a inclinação sobe 45 bps. É a assinatura de ciclo de corte antecipado — leitura benigna.' },
+  { tom: 'ok', tit: 'Mundo real · 13/09/2021',
+    sit: 'Com redução da tensão política, o DI jan/23 vai de 9,172% para 9,15% e o jan/27 de 10,584% para 10,49%.',
+    resp: '<b>Bull flattening.</b> O curto fica praticamente parado (−2,2 bps) e o longo cai 9,4 bps: a inclinação diminui cerca de 7 bps. Compressão de prêmio de risco. <span class="legenda">Fonte: Agência Estado, via Mais Retorno.</span>' },
+  { tom: 'bad', tit: 'Mundo real · 28/11/2024 — pacote fiscal',
+    sit: 'No dia seguinte ao anúncio do pacote fiscal com a isenção de IR, no fim da tarde o DI jan/27 marcava 13,965% (ajuste anterior 13,657%) e o jan/33, 13,54% (antes 13,21%). Foi bear steepening?',
+    resp: '<b>Não — foi uma alta quase paralela.</b> O curto subiu cerca de 31 bps e o longo 33 bps: a inclinação mal se mexeu (+2 bps). O choque era fiscal, mas o mercado passou a precificar Selic mais alta, e a ponta curta acompanhou. Causa fiscal não garante bear steepening. <span class="legenda">Fonte: Reuters, 28/11/2024.</span>' },
+  { tom: 'ok', tit: 'Aperto-surpresa',
+    sit: 'O Copom sobe a Selic além do esperado e indica mais altas. O DI de 1 ano sobe 50 bps; o de 9 anos sobe 5 bps.',
+    resp: '<b>Bear flattening.</b> A ponta curta lidera a alta (bear) e a inclinação cai 45 bps. O mercado precifica o aperto agora e, com isso, inflação mais baixa no longo prazo — por isso o longo quase não se mexe.' },
+  { tom: 'bad', tit: '“A curva empinou 30 bps”',
+    sit: 'O boletim da manhã diz só isso. Sua mesa está <i>dada</i> no DI longo (ganha se a taxa longa cai). Você ganhou ou perdeu?',
+    resp: '<b>Não dá para saber.</b> Se foi bull steepening (curto −40, longo −10), você ganhou. Se foi bear steepening (curto 0, longo +30), você perdeu. Inclinação sozinha não diz o sinal do P&L de uma posição direcional — falta dizer qual ponta se mexeu.' },
+  { tom: 'bad', tit: 'Trava steepener e alta paralela',
+    sit: 'Você montou uma trava steepener neutra em DV01 (tomado no longo, dado no curto). A curva inteira sobe 50 bps. O operador comemora: “tomado ganha com alta!”',
+    resp: '<b>Comemoração errada.</b> O tomado no longo ganhou, mas o dado no curto perdeu praticamente o mesmo valor. Trava neutra em DV01 não aposta em nível; o resultado no paralelo é quase zero (só resíduo de convexidade). Ela ganha ou perde com a <i>inclinação</i>.' }
+];
+document.getElementById('lista-cenarios').innerHTML = CENARIOS.map((c, i) => `
+  <div class="card cenario" data-i="${i}">
+    <div class="num">CENÁRIO ${i + 1}</div><h3>${c.tit}</h3><div>${c.sit}</div>
+    <div class="dica-clique">Clique para revelar ▸</div>
+    <div class="revela ${c.tom}">${c.resp}</div>
+  </div>`).join('');
+document.querySelectorAll('.cenario').forEach(c => c.addEventListener('click', () => c.classList.add('aberto')));
+
+// ==== ⑥ teste ====
+const QUESTOES = [
+  { p: 'Na mesa de renda fixa, dizer que a curva teve um movimento “bull” significa que:',
+    o: ['As taxas caíram, e os preços dos títulos subiram', 'As taxas subiram, e o mercado está otimista, como na bolsa', 'A curva ficou mais inclinada', 'A ponta curta ficou acima da longa'], c: 0,
+    fb: 'Bull/bear vem do mercado de títulos: bull = preços subindo = taxas caindo. A armadilha é importar o sentido da bolsa e associar “bull” a taxas em alta.' },
+  { p: 'O DI de 1 ano subiu 10 bps e o de 9 anos subiu 60 bps. Qual é o regime?',
+    o: ['Bull steepening, porque a curva empinou', 'Bear steepening', 'Bear flattening', 'Paralelo de alta'], c: 1,
+    fb: 'A ponta que mais andou (o longo) subiu: bear. A inclinação aumentou 50 bps: steepening. “Empinou” não basta para dizer bull — é preciso olhar a direção da ponta.' },
+  { p: 'O DI de 1 ano caiu 80 bps e o de 9 anos caiu 20 bps. Qual é o regime?',
+    o: ['Bull flattening, porque o longo caiu', 'Bear steepening', 'Bull steepening', 'Paralelo de baixa'], c: 2,
+    fb: 'As duas pontas caíram (bull), e o curto caiu mais: a inclinação subiu 60 bps (steepening). É a assinatura de corte de juros antecipado.' },
+  { p: 'Uma trava steepener neutra em DV01 (tomado no longo, dado no curto) enfrenta uma alta paralela de 100 bps. O resultado é:',
+    o: ['Ganho, porque o tomado no longo ganha com a alta', 'Perda, porque a curva toda subiu', 'Aproximadamente zero, sobrando só um pequeno resíduo de convexidade', 'Ganho em dobro, porque as duas pernas ganham'], c: 2,
+    fb: 'Neutra em DV01 significa que um bp em cada ponta mexe o mesmo valor nas duas pernas, com sinais opostos. No paralelo elas se anulam; o que resta é convexidade. A trava só responde à inclinação.' },
+  { p: 'Por que o bear steepening é chamado de “o regime perigoso”?',
+    o: ['Porque a ponta longa sobe sozinha, sinal de que o mercado cobra mais prêmio fiscal ou inflacionário', 'Porque indica que o Copom vai cortar juros mais rápido', 'Porque é o aperto-surpresa do Banco Central', 'Porque a ponta longa cai e reduz o prêmio de risco'], c: 0,
+    fb: 'No bear steepening a ponta curta (ancorada na política monetária) fica parada e a longa sobe: o mercado exige mais prêmio para carregar risco fiscal/inflacionário. Aperto-surpresa é bear flattening; corte antecipado é bull steepening.' }
+];
+let qResp = 0, qOk = 0;
+document.getElementById('lista-q').innerHTML = QUESTOES.map((q, i) => `
+  <div class="card q" data-i="${i}">
+    <h3>${i + 1}. ${q.p}</h3>
+    <div class="ops">${q.o.map((o, j) => `<button data-j="${j}">${String.fromCharCode(65 + j)}) ${o}</button>`).join('')}</div>
+    <div class="fb"></div>
+  </div>`).join('');
+document.querySelectorAll('.q').forEach(card => {
+  const q = QUESTOES[+card.dataset.i];
+  card.querySelectorAll('.ops button').forEach(b => b.addEventListener('click', () => {
+    const j = +b.dataset.j, ok = j === q.c;
+    card.querySelectorAll('.ops button').forEach(x => {
+      x.disabled = true;
+      if (+x.dataset.j === q.c) x.classList.add('certa'); else if (x === b) x.classList.add('errada');
+    });
+    const fb = card.querySelector('.fb'); fb.style.display = 'block';
+    fb.innerHTML = `<b>${ok ? '✓ Correto.' : '✗ Não é essa.'}</b> ${q.fb}`;
+    qResp++; if (ok) qOk++;
+    document.getElementById('q-placar').textContent = `Respondidas: ${qResp} de 5 · Acertos: ${qOk}`;
+  }));
+});
+
+// ==== início ====
+atualizaD(false);
+atualizaR(false);
+desenhaMinis();
+animG.fim();
+</script>
+</body>
+</html>

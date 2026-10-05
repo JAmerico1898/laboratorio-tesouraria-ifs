@@ -272,20 +272,22 @@ describe("painel e payload", () => {
 });
 
 describe("registro do módulo", () => {
-  it("mercado-hoje entra como número 5, entre o módulo 4 e os estudos de caso", () => {
+  it("animações e simulações entram entre o módulo 4 e o mercado-hoje (nº 7), antes dos estudos de caso", () => {
     const slugs = MODULES.map((m) => m.slug);
-    expect(slugs.indexOf("mercado-hoje")).toBe(slugs.indexOf("modulo-4") + 1);
+    expect(slugs.indexOf("animacoes")).toBe(slugs.indexOf("modulo-4") + 1);
+    expect(slugs.indexOf("simulacoes")).toBe(slugs.indexOf("animacoes") + 1);
+    expect(slugs.indexOf("mercado-hoje")).toBe(slugs.indexOf("simulacoes") + 1);
     expect(slugs.indexOf("estudos-de-caso")).toBe(slugs.indexOf("mercado-hoje") + 1);
   });
 
-  it("estudos-de-caso vira número 6 e mantém o slug", () => {
+  it("estudos-de-caso vira número 8 e mantém o slug", () => {
     const ec = MODULES.find((m) => m.slug === "estudos-de-caso")!;
-    expect(ec.numero).toBe(6);
+    expect(ec.numero).toBe(8);
     expect(ec.slug).toBe("estudos-de-caso");
   });
 
   it("a numeração continua sem buracos nem repetições", () => {
-    expect(MODULES.map((m) => m.numero)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(MODULES.map((m) => m.numero)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
     expect(new Set(MODULES.map((m) => m.id)).size).toBe(MODULES.length);
   });
 

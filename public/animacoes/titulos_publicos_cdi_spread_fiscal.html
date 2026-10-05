@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quanto rende de verdade?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,500&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBF8F4;
+  --bg2:#F3EEE7;
+  --bg-card:#FFFFFF;
+  --text:#231A20;
+  --text-dim:#5E5258;
+  --accent:#7A2650;      /* vinho — identidade desta animação */
+  --ok:#1F7A4D;          /* verde: correto */
+  --bad:#B3261E;         /* vermelho: problema */
+  --ref:#2F5D9E;         /* azul: referência */
+  --warn:#9A5B00;        /* âmbar: atenção */
+  --accent-bg:#F6E9EF;
+  --ok-bg:#E7F3EC;
+  --bad-bg:#FBEAE8;
+  --ref-bg:#E8EEF7;
+  --warn-bg:#FBF1DF;
+  --line-brd:#E4DAD1;
+  --grid-brd:#EFE8E1;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Instrument Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 40px}
+header{margin-bottom:18px;animation:sobe .6s ease both}
+.tag{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-bg);padding:4px 10px;border-radius:999px;margin-bottom:10px}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.6vw,48px);line-height:1.1;letter-spacing:-.01em}
+h1 em{color:var(--accent);font-style:italic;font-weight:500}
+.lead{color:var(--text-dim);max-width:820px;margin-top:10px;font-size:17px}
+h2{font-family:var(--serif);font-weight:600;font-size:26px;margin-bottom:6px}
+h3{font-family:var(--serif);font-weight:600;font-size:20px;margin-bottom:6px}
+p+p{margin-top:8px}
+.mono{font-family:var(--mono)}
+
+/* abas */
+nav.abas{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 20px;position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0}
+nav.abas button{font-family:var(--sans);font-weight:600;font-size:14px;border:1.5px solid var(--line-brd);background:var(--bg-card);color:var(--text);padding:8px 14px;border-radius:999px;cursor:pointer;transition:all .2s}
+nav.abas button:hover{border-color:var(--accent)}
+nav.abas button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+section.aba{display:none}
+section.aba.ativa{display:block;animation:sobe .45s ease both}
+@keyframes sobe{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.card{background:var(--bg-card);border:1px solid var(--line-brd);border-radius:14px;padding:18px 20px;box-shadow:0 1px 2px rgba(35,26,32,.04),0 6px 18px rgba(35,26,32,.05)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.stack>*+*{margin-top:16px}
+
+.formula{font-family:var(--mono);font-size:15px;background:var(--bg2);border-radius:10px;padding:12px 14px;margin:10px 0;overflow-x:auto;white-space:nowrap}
+.formula.grande{font-size:17px;text-align:center;padding:16px;background:var(--accent-bg);color:var(--accent);font-weight:600}
+.titcard h3{display:flex;align-items:baseline;gap:8px}
+.titcard .sig{font-family:var(--mono);font-size:12px;color:var(--text-dim);font-weight:400}
+.titcard p{font-size:14.5px;color:var(--text-dim)}
+
+.certo,.errado{border-radius:12px;padding:14px 16px;border:1.5px solid}
+.certo{background:var(--ok-bg);border-color:var(--ok)}
+.errado{background:var(--bad-bg);border-color:var(--bad)}
+.certo b{color:var(--ok)} .errado b{color:var(--bad)}
+.caixa{border-radius:12px;padding:14px 16px;border-left:4px solid}
+.caixa.dica{background:var(--accent-bg);border-color:var(--accent)}
+.caixa.cuidado{background:var(--warn-bg);border-color:var(--warn)}
+.caixa.mundo{background:var(--ref-bg);border-color:var(--ref)}
+.caixa.lupa{background:var(--bg2);border-color:var(--text-dim)}
+.caixa b.t{display:block;margin-bottom:4px}
+
+/* controles */
+.controles{display:flex;flex-wrap:wrap;gap:18px 26px;align-items:flex-end}
+.ctl{min-width:200px;flex:1}
+.ctl label{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--text-dim);margin-bottom:4px}
+.ctl label output{font-family:var(--mono);color:var(--accent);font-size:14px}
+input[type=range]{width:100%;accent-color:var(--accent);height:24px}
+.seg{display:inline-flex;border:1.5px solid var(--line-brd);border-radius:999px;overflow:hidden;background:var(--bg-card)}
+.seg button{font-family:var(--sans);font-weight:600;font-size:14px;border:0;background:transparent;color:var(--text);padding:8px 14px;cursor:pointer}
+.seg button+button{border-left:1.5px solid var(--line-brd)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.btn{font-family:var(--sans);font-weight:600;font-size:14px;border:1.5px solid var(--accent);background:var(--bg-card);color:var(--accent);padding:8px 14px;border-radius:10px;cursor:pointer}
+.btn.cheio{background:var(--accent);color:#fff}
+.btn:hover{filter:brightness(.95)}
+.botoes{display:flex;gap:8px;flex-wrap:wrap}
+select{font-family:var(--sans);font-size:14px;padding:7px 10px;border-radius:10px;border:1.5px solid var(--line-brd);background:var(--bg-card);color:var(--text)}
+
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.stat{background:var(--bg-card);border:1px solid var(--line-brd);border-radius:12px;padding:12px 14px}
+.stat .rot{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-dim);font-weight:600}
+.stat .val{font-family:var(--mono);font-size:22px;font-weight:600;margin-top:2px;white-space:nowrap}
+.stat .sub{font-size:12px;color:var(--text-dim);font-family:var(--mono)}
+.val.ac{color:var(--accent)} .val.ok{color:var(--ok)} .val.bad{color:var(--bad)} .val.ref{color:var(--ref)}
+
+canvas{display:block;width:100%;border-radius:10px;background:var(--bg-card)}
+.cvbox{background:var(--bg-card);border:1px solid var(--line-brd);border-radius:14px;padding:10px}
+
+/* passo a passo */
+.passos{counter-reset:p}
+.passo{display:grid;grid-template-columns:30px 1fr;gap:10px;padding:10px 0;border-top:1px dashed var(--line-brd)}
+.passo:first-child{border-top:0}
+.passo>div{min-width:0}
+.pcard{min-width:0}
+.passo .n{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:13px;display:grid;place-items:center;font-family:var(--mono)}
+.passo .eq{font-family:var(--mono);font-size:14px;overflow-x:auto;white-space:nowrap}
+.passo .ex{font-size:13px;color:var(--text-dim)}
+.trunc{font-family:var(--mono);font-size:11.5px;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:1px 6px;margin-left:6px;white-space:nowrap}
+table.fluxos{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px;margin-top:6px}
+table.fluxos th{font-family:var(--sans);font-size:12px;text-align:right;color:var(--text-dim);font-weight:600;border-bottom:1.5px solid var(--line-brd);padding:4px 6px}
+table.fluxos td{text-align:right;padding:3px 6px;border-bottom:1px solid var(--grid-brd)}
+table.fluxos tr.tot td{font-weight:600;border-top:1.5px solid var(--line-brd);color:var(--accent)}
+.tabscroll{max-height:290px;overflow:auto}
+
+/* sim B passos em cartões */
+.pcard{background:var(--bg-card);border:1px solid var(--line-brd);border-radius:12px;padding:14px;position:relative}
+.pcard .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.05em}
+.pcard .tit{font-weight:700;margin:2px 0 6px}
+.pcard .eq{font-family:var(--mono);font-size:13px;color:var(--text-dim);overflow-x:auto;white-space:nowrap}
+.pcard .res{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--accent);margin-top:6px}
+.manchete{font-family:var(--serif);font-size:clamp(22px,3vw,30px);line-height:1.25}
+.manchete b{color:var(--accent);font-weight:600}
+
+/* cenários */
+.cen{cursor:pointer;transition:transform .2s,border-color .2s}
+.cen:hover{transform:translateY(-2px);border-color:var(--accent)}
+.cen .q{font-weight:600;margin-top:8px}
+.cen .resp{display:none;margin-top:10px;border-radius:10px;padding:10px 12px;font-size:14.5px}
+.cen.aberto .resp{display:block;animation:sobe .35s ease both}
+.cen .resp.ok{background:var(--ok-bg);border-left:4px solid var(--ok)}
+.cen .resp.bad{background:var(--bad-bg);border-left:4px solid var(--bad)}
+.cen .dica-clique{font-size:12px;color:var(--text-dim);margin-top:8px;font-family:var(--mono)}
+.cen.aberto .dica-clique{display:none}
+.cen .rot{font-family:var(--mono);font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
+
+/* teste */
+.questao .alts{display:grid;gap:8px;margin-top:10px}
+.questao .alts button{text-align:left;font-family:var(--sans);font-size:15px;border:1.5px solid var(--line-brd);background:var(--bg-card);color:var(--text);padding:10px 12px;border-radius:10px;cursor:pointer}
+.questao .alts button:hover:not(:disabled){border-color:var(--accent)}
+.questao .alts button.certa{background:var(--ok-bg);border-color:var(--ok)}
+.questao .alts button.errada{background:var(--bad-bg);border-color:var(--bad)}
+.questao .alts button:disabled{cursor:default}
+.questao .fb{display:none;margin-top:10px;font-size:14.5px;padding:10px 12px;border-radius:10px;background:var(--bg2)}
+.questao.respondida .fb{display:block;animation:sobe .35s ease both}
+.placar{font-family:var(--mono);font-size:15px;color:var(--accent);font-weight:600}
+
+footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line-brd);font-size:13px;color:var(--text-dim)}
+details{margin-top:8px} summary{cursor:pointer;font-weight:600;color:var(--accent)}
+
+@media (max-width:900px){
+  .grid4,.stats,.grid3{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:640px){
+  .wrap{padding:18px 14px 30px}
+  .grid2,.grid3,.grid4{grid-template-columns:minmax(0,1fr)}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat .val{font-size:18px}
+  nav.abas{position:static}
+  nav.abas button{font-size:13px;padding:7px 11px}
+  .ctl{min-width:100%}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="tag">Tesouraria · Renda fixa · Títulos públicos</span>
+  <h1>Quanto rende <em>de verdade?</em></h1>
+  <p class="lead">Do PU dos títulos públicos à conversão de % do CDI em CDI + spread e ao gross-up da isenção: toda taxa é uma promessa sobre um <b>fator</b>. Para comparar promessas, compare fatores — no mesmo prazo e depois do imposto.</p>
+</header>
+
+<nav class="abas" role="tablist">
+  <button role="tab" aria-selected="true" data-aba="conceito">① Conceito</button>
+  <button role="tab" aria-selected="false" data-aba="simA">② Apreçamento</button>
+  <button role="tab" aria-selected="false" data-aba="simB">③ % do CDI → CDI + s</button>
+  <button role="tab" aria-selected="false" data-aba="simC">④ Spread fiscal</button>
+  <button role="tab" aria-selected="false" data-aba="cenarios">⑤ Cenários</button>
+  <button role="tab" aria-selected="false" data-aba="teste">⑥ Teste</button>
+</nav>
+
+<!-- ============ ① CONCEITO ============ -->
+<section class="aba ativa" id="conceito">
+  <div class="stack">
+    <div class="card">
+      <h2>Uma ideia só: preço = fluxo ÷ fator</h2>
+      <p>No mercado brasileiro, taxa é sempre anual, base 252 dias úteis, capitalização exponencial. Tudo nesta animação sai de uma única peça:</p>
+      <div class="formula grande">fator = (1 + taxa)<sup>DU/252</sup> &nbsp;&nbsp;→&nbsp;&nbsp; PU = Σ fluxo ÷ fator</div>
+      <p>O que muda de um título para o outro é <b>qual fluxo</b> (fixo em R$ ou indexado) e <b>qual taxa</b> (nominal, real ou só um ágio sobre a Selic).</p>
+    </div>
+
+    <div class="grid4">
+      <div class="card titcard">
+        <h3>LTN <span class="sig">prefixado, sem cupom</span></h3>
+        <div class="formula">PU = 1.000 ÷ (1+i)<sup>DU/252</sup></div>
+        <p>Paga R$ 1.000 no vencimento. Todo o retorno vem do desconto.</p>
+      </div>
+      <div class="card titcard">
+        <h3>NTN-F <span class="sig">prefixado, cupom 10%</span></h3>
+        <div class="formula">PU = Σ 48,80885 ÷ (1+i)<sup>DU<sub>k</sub>/252</sup> + 1.000 ÷ (1+i)<sup>DU<sub>n</sub>/252</sup></div>
+        <p>Cupom semestral = 1.000 × (1,10<sup>½</sup> − 1) = <b>48,80885</b>, não 50.</p>
+      </div>
+      <div class="card titcard">
+        <h3>LFT <span class="sig">pós-fixado (Selic)</span></h3>
+        <div class="formula">PU = VNA × cotação ÷ 100<br>cotação = 100 ÷ (1+ágio)<sup>DU/252</sup></div>
+        <p>O VNA já carrega a Selic. A taxa negociada é só o <b>ágio/deságio</b> — e ele mexe no preço.</p>
+      </div>
+      <div class="card titcard">
+        <h3>NTN-B <span class="sig">IPCA + cupom 6%</span></h3>
+        <div class="formula">PU = VNA × cotação ÷ 100<br>cotação = Σ 2,956301 ÷ (1+r)<sup>DU<sub>k</sub>/252</sup> + 100 ÷ …</div>
+        <p>VNA corrigido pelo IPCA; cupom de 2,9563% do VNA por semestre, descontado pela taxa <b>real</b>.</p>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>% do CDI ↔ CDI + spread</h3>
+        <p>O % incide sobre o DI <b>diário</b>; o spread se soma ao CDI de forma <b>multiplicativa</b>. Igualando os fatores de um ano:</p>
+        <div class="formula">(1 + p · d)<sup>252</sup> = (1 + CDI) × (1 + s), &nbsp; d = (1+CDI)<sup>1/252</sup> − 1</div>
+        <p>Com CDI de 13,53% a.a., 108% do CDI ≡ CDI + 1,02%. Com outro CDI, outro spread.</p>
+      </div>
+      <div class="card">
+        <h3>Spread fiscal: a isenção como taxa invisível</h3>
+        <p>Um papel isento (LCI/LCA) rende o que mostra. Um tributado (CDB, título público) precisa render mais para entregar o mesmo líquido:</p>
+        <div class="formula">% tributado equivalente ≈ % isento ÷ (1 − IR)</div>
+        <p>90% do CDI isento ≈ 90% ÷ 0,85 = <b>105,9%</b> do CDI tributado. Os 15,9 p.p. de diferença são a taxa que não aparece no papel.</p>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="certo"><b>✓ Certo</b><br>108% do CDI vale CDI + s com s = (1+p·d)<sup>252</sup> ÷ (1+CDI) − 1. A equivalência <b>depende do nível do CDI</b> e só vale naquele dia.</div>
+      <div class="errado"><b>✗ Armadilha</b><br>"108% do CDI = CDI + 8% × CDI, para sempre." Soma linear, ignora a capitalização e congela uma relação que muda quando o CDI muda.</div>
+    </div>
+
+    <div class="grid3">
+      <div class="caixa dica"><b class="t">💡 Consequências</b>Preço e taxa andam em sentidos opostos — até na LFT, se o deságio mudar. E duas taxas só são comparáveis depois de convertidas para o mesmo indexador, o mesmo prazo e o mesmo tratamento de imposto.</div>
+      <div class="caixa cuidado"><b class="t">⚠️ Truncamento</b>O PU oficial segue a convenção do Tesouro/Anbima: taxa com 6 casas (fração), cotação truncada em 4, PU truncado em 6, valor presente de cada fluxo arredondado (9 casas na NTN-F, 10 na NTN-B). Por isso dois cálculos "certos" podem diferir em centavos.</div>
+      <div class="caixa mundo"><b class="t">🌎 Janela para o mundo real</b>As funções desta animação reproduzem os exemplos oficiais da <i>Metodologia de Cálculo dos Títulos Públicos Federais</i> do Tesouro (versão de 29/04/2024): LTN a 14,36% com 532 DU → PU 753,315323; NTN-F a 13,66% → 903,075616; NTN-B a 8,29% → cotação 97,0813.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ② SIM A — APREÇAMENTO ============ -->
+<section class="aba" id="simA">
+  <div class="stack">
+    <div class="card">
+      <div class="controles">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text-dim);margin-bottom:4px">Título</div>
+          <div class="seg" id="aTipo">
+            <button data-t="LTN" aria-pressed="true">LTN</button>
+            <button data-t="NTNF" aria-pressed="false">NTN-F</button>
+            <button data-t="LFT" aria-pressed="false">LFT</button>
+            <button data-t="NTNB" aria-pressed="false">NTN-B</button>
+          </div>
+        </div>
+        <div class="ctl"><label for="aTaxa"><span id="aTaxaRot">Taxa (% a.a.)</span><output id="aTaxaOut"></output></label>
+          <input type="range" id="aTaxa" min="5" max="20" step="0.01" value="13.5"></div>
+        <div class="ctl"><label for="aAnos"><span>Prazo até o vencimento</span><output id="aAnosOut"></output></label>
+          <input type="range" id="aAnos" min="0.5" max="10" step="0.5" value="2"></div>
+        <div class="botoes">
+          <button class="btn cheio" id="aChoque">▶ Choque +100 bp</button>
+          <button class="btn" id="aReset">↺</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="rot">PU</div><div class="val ac" id="aPU">—</div><div class="sub" id="aPUsub"></div></div>
+      <div class="stat"><div class="rot" id="aS2rot">Cotação</div><div class="val" id="aS2">—</div><div class="sub" id="aS2sub"></div></div>
+      <div class="stat"><div class="rot">Duration</div><div class="val ref" id="aDur">—</div><div class="sub">Macaulay, anos</div></div>
+      <div class="stat"><div class="rot">DV01</div><div class="val bad" id="aDV">—</div><div class="sub">R$ por +1 bp na taxa</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="cvbox"><canvas id="cvA1"></canvas></div>
+      <div class="cvbox"><canvas id="cvA2"></canvas></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>A conta, passo a passo</h3>
+        <div class="passos" id="aPassos"></div>
+      </div>
+      <div class="stack">
+        <div class="caixa lupa"><b class="t">🔍 O que está acontecendo</b><span id="aLupa"></span></div>
+        <div class="caixa cuidado"><b class="t">⚠️ Simplificações desta simulação</b>Os fluxos caem a cada 126 DU contados de hoje (como se a liquidação fosse num dia de cupom). Na vida real o DU de cada fluxo sai do calendário de feriados da Anbima. VNA fictícios: LFT = R$ 16.000,00 e NTN-B = R$ 4.500,00 — o VNA oficial do dia está no site da Anbima e do Tesouro.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ③ SIM B — % DO CDI ============ -->
+<section class="aba" id="simB">
+  <div class="stack">
+    <div class="card">
+      <div class="controles">
+        <div class="ctl"><label for="bCDI"><span>CDI (% a.a.)</span><output id="bCDIOut"></output></label>
+          <input type="range" id="bCDI" min="5" max="20" step="0.01" value="13.53"></div>
+        <div class="ctl"><label for="bP"><span>Papel paga (% do CDI)</span><output id="bPOut"></output></label>
+          <input type="range" id="bP" min="70" max="130" step="1" value="108"></div>
+      </div>
+    </div>
+
+    <div class="card"><p class="manchete" id="bManchete"></p></div>
+
+    <div class="grid4" id="bPassos"></div>
+
+    <div class="grid2">
+      <div class="errado" id="bErrado"></div>
+      <div class="certo" id="bCerto"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="cvbox"><canvas id="cvB1"></canvas></div>
+      <div class="cvbox">
+        <div class="controles" style="padding:6px 6px 10px">
+          <div><label for="bCen" style="font-size:13px;font-weight:600;color:var(--text-dim)">E se o CDI mudar no ano?</label><br>
+            <select id="bCen">
+              <option value="0">CDI constante</option>
+              <option value="-3" selected>CDI cai 3 p.p. em 6 meses</option>
+              <option value="3">CDI sobe 3 p.p. em 6 meses</option>
+            </select></div>
+          <div class="botoes">
+            <button class="btn cheio" id="bPlay">▶</button>
+            <button class="btn" id="bPause">⏸</button>
+            <button class="btn" id="bRst">↺</button>
+          </div>
+        </div>
+        <canvas id="cvB2"></canvas>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="rot" id="bR1rot">R$ 1 mi a 108% CDI</div><div class="val ac" id="bR1">—</div><div class="sub">saldo no dia</div></div>
+      <div class="stat"><div class="rot" id="bR2rot">R$ 1 mi a CDI + s</div><div class="val ref" id="bR2">—</div><div class="sub">spread travado no dia 0</div></div>
+      <div class="stat"><div class="rot">Diferença</div><div class="val" id="bR3">—</div><div class="sub">% do CDI − (CDI + s)</div></div>
+      <div class="stat"><div class="rot">Dia útil</div><div class="val" id="bR4">0</div><div class="sub" id="bR4sub">de 252</div></div>
+    </div>
+
+    <div class="caixa lupa"><b class="t">🔍 O que está acontecendo</b><span id="bLupa"></span></div>
+  </div>
+</section>
+
+<!-- ============ ④ SIM C — SPREAD FISCAL ============ -->
+<section class="aba" id="simC">
+  <div class="stack">
+    <div class="card">
+      <div class="controles">
+        <div class="ctl"><label for="cP"><span>Papel isento paga (% do CDI)</span><output id="cPOut"></output></label>
+          <input type="range" id="cP" min="70" max="105" step="1" value="90"></div>
+        <div class="ctl"><label for="cDC"><span>Prazo (dias corridos)</span><output id="cDCOut"></output></label>
+          <input type="range" id="cDC" min="30" max="1500" step="1" value="731"></div>
+        <div class="ctl"><label for="cCDI"><span>CDI (% a.a.)</span><output id="cCDIOut"></output></label>
+          <input type="range" id="cCDI" min="5" max="20" step="0.01" value="13.53"></div>
+      </div>
+    </div>
+
+    <div class="card"><p class="manchete" id="cManchete"></p></div>
+
+    <div class="grid4" id="cPassos"></div>
+
+    <div class="grid2">
+      <div class="errado" id="cErrado"></div>
+      <div class="certo" id="cCerto"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="cvbox"><canvas id="cvC1"></canvas></div>
+      <div class="cvbox"><canvas id="cvC2"></canvas></div>
+    </div>
+
+    <div class="grid2">
+      <div class="caixa lupa"><b class="t">🔍 O que está acontecendo</b><span id="cLupa"></span></div>
+      <div class="caixa mundo"><b class="t">🌎 Quem fica com a isenção?</b>A isenção de IR para pessoa física em LCI/LCA é um benefício fiscal: o governo abre mão de arrecadar. Se o equivalente tributado é 105,9% do CDI e o banco paga só 90%, parte do benefício fica com o investidor e parte vira <b>funding barato</b> para o banco emissor — esse é o spread fiscal. Regras de isenção e prazos mínimos mudam por lei e por resolução do CMN: confira a regra vigente antes de usar números em sala.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ⑤ CENÁRIOS ============ -->
+<section class="aba" id="cenarios">
+  <p style="margin-bottom:14px;color:var(--text-dim)">Clique em cada cartão para revelar a resposta.</p>
+  <div class="grid3" id="cenGrid"></div>
+</section>
+
+<!-- ============ ⑥ TESTE ============ -->
+<section class="aba" id="teste">
+  <div class="stack">
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <p>Cinco questões. Os distratores são os erros que mais aparecem em sala.</p>
+      <span class="placar" id="placar">0 / 5</span>
+    </div>
+    <div id="testeLista" class="stack"></div>
+  </div>
+</section>
+
+<footer>Operações de Tesouraria em Instituições Financeiras — FGV · Prof. José Américo</footer>
+</div>
+
+<script>
+/* ==========================================================
+   NÚCLEO DE CÁLCULO — mesmas fórmulas conferidas em Python
+   (verifica.py) contra os exemplos oficiais do Tesouro.
+   ========================================================== */
+// <nucleo>
+const VNA_LFT = 16000;        // VNA fictício (didático)
+const VNA_NTNB = 4500;        // VNA fictício (didático)
+const CUP_F = 48.80885;       // 1000 × (1,10^0,5 − 1), 5 casas
+const CUP_B = 2.956301;       // 100 × (1,06^0,5 − 1), 6 casas
+
+// trunca na n-ésima casa decimal (folga contra erro de ponto flutuante)
+function trunc(x, n){ const f = Math.pow(10, n); return Math.floor(x * f + 1e-7) / f; }
+// arredonda na n-ésima casa
+function rnd(x, n){ const f = Math.pow(10, n); return Math.floor(x * f + 0.5) / f; }
+// fator de capitalização: (1+taxa)^(du/252)
+function fator(taxa, du){ return Math.pow(1 + taxa, du / 252); }
+
+// Apreça um título. taxa em fração (0.135 = 13,5%), du = dias úteis até o vencimento
+// (múltiplo de 126 para títulos com cupom). Devolve PU, cotação, fluxos e duration.
+function precificar(tipo, taxa, du){
+  const t = trunc(taxa, 6);
+  const fluxos = [];
+  let pu, cot = null, soma;
+  if (tipo === 'LTN'){
+    const vp = 1000 / fator(t, du);
+    fluxos.push({du: du, fl: 1000, vp: vp});
+    soma = vp; pu = trunc(vp, 6);
+  } else if (tipo === 'NTNF' || tipo === 'NTNB'){
+    const n = Math.round(du / 126);
+    const cup = tipo === 'NTNF' ? CUP_F : CUP_B;
+    const prin = tipo === 'NTNF' ? 1000 : 100;
+    const casas = tipo === 'NTNF' ? 9 : 10;
+    soma = 0;
+    for (let k = 1; k <= n; k++){
+      const d = 126 * k;
+      const fl = cup + (k === n ? prin : 0);
+      const vp = rnd(fl / fator(t, d), casas);
+      fluxos.push({du: d, fl: fl, vp: vp});
+      soma += vp;
+    }
+    if (tipo === 'NTNF'){ pu = trunc(soma, 6); }
+    else { cot = trunc(soma, 4); pu = trunc(VNA_NTNB * cot / 100, 6); }
+  } else { // LFT
+    const c = 100 / fator(t, du);
+    fluxos.push({du: du, fl: 100, vp: c});
+    soma = c; cot = trunc(c, 4); pu = trunc(VNA_LFT * cot / 100, 6);
+  }
+  // duration de Macaulay (anos) — média dos prazos ponderada pelos VP
+  let num = 0, den = 0;
+  for (const f of fluxos){ num += (f.du / 252) * f.vp; den += f.vp; }
+  return {pu: pu, cot: cot, soma: soma, fluxos: fluxos, dur: num / den, taxaT: t};
+}
+
+// % do CDI -> taxa anual equivalente e spread sobre o CDI
+function pctParaSpread(p, cdi){
+  const d = Math.pow(1 + cdi, 1 / 252) - 1;      // DI diário
+  const fd = 1 + p * d;                           // fator diário do papel
+  const taxa = Math.pow(fd, 252) - 1;             // anualizado
+  const s = (1 + taxa) / (1 + cdi) - 1;           // spread multiplicativo
+  return {d: d, fd: fd, taxa: taxa, s: s};
+}
+// CDI + spread -> % do CDI (a volta)
+function spreadParaPct(s, cdi){
+  const d = Math.pow(1 + cdi, 1 / 252) - 1;
+  const taxa = (1 + cdi) * (1 + s) - 1;
+  return (Math.pow(1 + taxa, 1 / 252) - 1) / d;
+}
+
+// IR regressivo da renda fixa (dias corridos)
+function aliquotaIR(dc){ return dc <= 180 ? 0.225 : dc <= 360 ? 0.20 : dc <= 720 ? 0.175 : 0.15; }
+
+// Gross-up: % do CDI tributado que entrega o mesmo líquido do isento
+function grossup(pIso, dc, cdi){
+  const ir = aliquotaIR(dc);
+  const du = Math.max(1, Math.round(dc * 252 / 365));   // aproximação DC -> DU
+  const d = Math.pow(1 + cdi, 1 / 252) - 1;
+  const rIso = Math.pow(1 + pIso * d, du) - 1;           // rendimento isento no prazo
+  const atalho = pIso / (1 - ir);
+  const rBruto = rIso / (1 - ir);                        // bruto que o tributado precisa
+  const exato = (Math.pow(1 + rBruto, 1 / du) - 1) / d;
+  return {ir: ir, du: du, d: d, rIso: rIso, rBruto: rBruto, atalho: atalho, exato: exato};
+}
+
+// Trajetória de R$ 1 mi em p% do CDI e em CDI + s (s travado no dia 0),
+// com o CDI andando 'delta' em rampa nos primeiros 126 DU.
+function trajetoria(p, cdi0, delta, nDias){
+  const s = pctParaSpread(p, cdi0).s;
+  const A = [1e6], B = [1e6], C = [cdi0];
+  for (let t = 1; t <= nDias; t++){
+    const cdi = cdi0 + delta * Math.min(t, 126) / 126;
+    const d = Math.pow(1 + cdi, 1 / 252) - 1;
+    A.push(A[t - 1] * (1 + p * d));
+    B.push(B[t - 1] * (1 + d) * Math.pow(1 + s, 1 / 252));
+    C.push(cdi);
+  }
+  return {A: A, B: B, C: C, s: s};
+}
+// </nucleo>
+
+/* ==========================================================
+   UTILITÁRIOS DE TELA
+   ========================================================== */
+const $ = id => document.getElementById(id);
+function fmt(x, dec){ return x.toLocaleString('pt-BR', {minimumFractionDigits: dec, maximumFractionDigits: dec}); }
+function pct(x, dec){ return fmt(x * 100, dec) + '%'; }
+function brl(x, dec){ return 'R$ ' + fmt(x, dec === undefined ? 2 : dec); }
+function cor(nome){ return getComputedStyle(document.documentElement).getPropertyValue('--' + nome).trim(); }
+
+// prepara o canvas com devicePixelRatio; devolve contexto e dimensões em px CSS
+function prepCanvas(cv, altura){
+  const dpr = window.devicePixelRatio || 1;
+  const w = cv.parentElement.clientWidth - 20;
+  cv.style.height = altura + 'px';
+  cv.width = Math.round(w * dpr); cv.height = Math.round(altura * dpr);
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, altura);
+  return {ctx: ctx, w: w, h: altura};
+}
+// desenha eixos, grade e título; devolve funções de escala
+function eixos(c, o){
+  const {ctx, w, h} = c;
+  const m = {l: 64, r: 16, t: 34, b: 40};
+  const X = v => m.l + (v - o.x0) / (o.x1 - o.x0) * (w - m.l - m.r);
+  const Y = v => h - m.b - (v - o.y0) / (o.y1 - o.y0) * (h - m.t - m.b);
+  ctx.font = '11px "IBM Plex Mono", monospace';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++){
+    const yv = o.y0 + (o.y1 - o.y0) * i / 5, yp = Y(yv);
+    ctx.strokeStyle = cor('grid-brd'); ctx.beginPath(); ctx.moveTo(m.l, yp); ctx.lineTo(w - m.r, yp); ctx.stroke();
+    ctx.fillStyle = cor('text-dim'); ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.fy(yv), m.l - 6, yp);
+  }
+  const nx = w < 420 ? 4 : 6;
+  for (let i = 0; i <= nx; i++){
+    const xv = o.x0 + (o.x1 - o.x0) * i / nx, xp = X(xv);
+    ctx.fillStyle = cor('text-dim'); ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillText(o.fx(xv), xp, h - m.b + 6);
+  }
+  ctx.strokeStyle = cor('text-dim');
+  ctx.beginPath(); ctx.moveTo(m.l, m.t - 4); ctx.lineTo(m.l, h - m.b); ctx.lineTo(w - m.r, h - m.b); ctx.stroke();
+  ctx.fillStyle = cor('text'); ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.font = '600 13px "Instrument Sans", sans-serif';
+  ctx.fillText(o.titulo, m.l, 8);
+  ctx.font = '11px "IBM Plex Mono", monospace'; ctx.fillStyle = cor('text-dim'); ctx.textAlign = 'right';
+  ctx.fillText(o.rotx, w - m.r, h - 14);
+  return {X: X, Y: Y, m: m};
+}
+function linha(ctx, pts, X, Y, cr, larg, tracejado){
+  ctx.strokeStyle = cr; ctx.lineWidth = larg || 2; ctx.setLineDash(tracejado ? [6, 5] : []);
+  ctx.beginPath();
+  pts.forEach((p, i) => { const xp = X(p[0]), yp = Y(p[1]); i ? ctx.lineTo(xp, yp) : ctx.moveTo(xp, yp); });
+  ctx.stroke(); ctx.setLineDash([]);
+}
+function ponto(ctx, x, y, cr, r){ ctx.fillStyle = cr; ctx.beginPath(); ctx.arc(x, y, r || 6, 0, 2 * Math.PI); ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke(); }
+function legenda(ctx, itens, x, y){
+  ctx.font = '11px "IBM Plex Mono", monospace'; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+  itens.forEach((it, i) => {
+    const yy = y + i * 16;
+    ctx.strokeStyle = it.cor; ctx.lineWidth = 2.5; ctx.setLineDash(it.tr ? [5, 4] : []);
+    ctx.beginPath(); ctx.moveTo(x, yy); ctx.lineTo(x + 18, yy); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = cor('text'); ctx.fillText(it.txt, x + 24, yy);
+  });
+}
+
+/* ==========================================================
+   ABAS
+   ========================================================== */
+let abaAtiva = 'conceito';
+document.querySelectorAll('nav.abas button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('nav.abas button').forEach(x => x.setAttribute('aria-selected', x === b ? 'true' : 'false'));
+  document.querySelectorAll('section.aba').forEach(s => s.classList.toggle('ativa', s.id === b.dataset.aba));
+  abaAtiva = b.dataset.aba;
+  desenharAtiva();
+}));
+function desenharAtiva(){
+  if (abaAtiva === 'simA') desenharA();
+  if (abaAtiva === 'simB') desenharB();
+  if (abaAtiva === 'simC') desenharC();
+}
+window.addEventListener('resize', desenharAtiva);
+
+/* ==========================================================
+   ② SIM A — APREÇAMENTO
+   ========================================================== */
+const CFG_A = {
+  LTN:  {min: 5, max: 20, taxa: 13.50, anos: 2, maxAnos: 10, rot: 'Taxa prefixada (% a.a.)', choque: 1.00},
+  NTNF: {min: 5, max: 20, taxa: 13.80, anos: 5, maxAnos: 10, rot: 'Taxa prefixada (% a.a.)', choque: 1.00},
+  LFT:  {min: -0.30, max: 0.50, taxa: 0.10, anos: 4, maxAnos: 6, rot: 'Ágio (−) / deságio (+) (% a.a.)', choque: 0.10},
+  NTNB: {min: 2, max: 10, taxa: 7.50, anos: 5, maxAnos: 10, rot: 'Taxa real (% a.a.)', choque: 1.00}
+};
+const estA = {tipo: 'LTN', taxa: {}, anos: {}, base: null, anim: null};
+for (const k in CFG_A){ estA.taxa[k] = CFG_A[k].taxa; estA.anos[k] = CFG_A[k].anos; }
+
+function aplicarControlesA(){
+  const c = CFG_A[estA.tipo];
+  const s = $('aTaxa'); s.min = c.min; s.max = c.max; s.value = estA.taxa[estA.tipo];
+  const a = $('aAnos'); a.max = c.maxAnos; a.value = estA.anos[estA.tipo];
+  $('aTaxaRot').textContent = c.rot;
+  $('aChoque').textContent = '▶ Choque +' + Math.round(c.choque * 100) + ' bp';
+}
+document.querySelectorAll('#aTipo button').forEach(b => b.addEventListener('click', () => {
+  pararAnimA();
+  estA.tipo = b.dataset.t; estA.base = null;
+  document.querySelectorAll('#aTipo button').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+  aplicarControlesA(); atualizarA();
+}));
+$('aTaxa').addEventListener('input', () => { pararAnimA(); estA.base = null; estA.taxa[estA.tipo] = +$('aTaxa').value; atualizarA(); });
+$('aAnos').addEventListener('input', () => { pararAnimA(); estA.base = null; estA.anos[estA.tipo] = +$('aAnos').value; atualizarA(); });
+
+function pararAnimA(){ if (estA.anim){ cancelAnimationFrame(estA.anim); estA.anim = null; } }
+// choque: a taxa sobe suavemente; o ponto escorrega pela curva e a reta da duration fica parada
+$('aChoque').addEventListener('click', () => {
+  pararAnimA();
+  const c = CFG_A[estA.tipo];
+  const ini = estA.taxa[estA.tipo];
+  const fim = Math.min(c.max, ini + c.choque);
+  estA.base = {taxa: ini, anos: estA.anos[estA.tipo]};
+  const t0 = performance.now();
+  const passo = agora => {
+    const u = Math.min(1, (agora - t0) / 1200);
+    const e = u < .5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+    estA.taxa[estA.tipo] = rnd(ini + (fim - ini) * e, 4);
+    $('aTaxa').value = estA.taxa[estA.tipo];
+    atualizarA();
+    if (u < 1) estA.anim = requestAnimationFrame(passo); else estA.anim = null;
+  };
+  estA.anim = requestAnimationFrame(passo);
+});
+$('aReset').addEventListener('click', () => {
+  pararAnimA();
+  if (estA.base){ estA.taxa[estA.tipo] = estA.base.taxa; estA.anos[estA.tipo] = estA.base.anos; }
+  else { estA.taxa[estA.tipo] = CFG_A[estA.tipo].taxa; estA.anos[estA.tipo] = CFG_A[estA.tipo].anos; }
+  estA.base = null; aplicarControlesA(); atualizarA();
+});
+
+function calcA(){
+  const tipo = estA.tipo;
+  const taxa = estA.taxa[tipo] / 100;
+  const du = Math.round(estA.anos[tipo] * 252);
+  const r = precificar(tipo, taxa, du);
+  const r1 = precificar(tipo, taxa + 0.0001, du);
+  r.dv01 = r1.pu - r.pu;
+  r.du = du; r.taxa = taxa; r.tipo = tipo;
+  return r;
+}
+
+function atualizarA(){
+  const r = calcA();
+  const tipo = r.tipo;
+  $('aTaxaOut').textContent = fmt(r.taxa * 100, 2) + '%';
+  $('aAnosOut').textContent = fmt(estA.anos[tipo], 1).replace(',0', '') + ' ano(s) · ' + r.du + ' DU';
+  $('aPU').textContent = brl(r.pu, 6);
+  $('aPUsub').textContent = tipo === 'LFT' ? 'VNA ' + brl(VNA_LFT) + ' (fictício)' : tipo === 'NTNB' ? 'VNA ' + brl(VNA_NTNB) + ' (fictício)' : 'valor de face R$ 1.000,00';
+  if (r.cot !== null){
+    $('aS2rot').textContent = 'Cotação';
+    $('aS2').textContent = fmt(r.cot, 4) + '%';
+    $('aS2sub').textContent = r.cot >= 100 ? 'acima do par (ágio)' : 'abaixo do par (deságio)';
+  } else if (tipo === 'NTNF'){
+    const dif = r.pu - 1000;
+    $('aS2rot').textContent = 'PU − par';
+    $('aS2').textContent = (dif < 0 ? '−' : '+') + brl(Math.abs(dif), 2);
+    $('aS2sub').textContent = r.taxaT > 0.10 ? 'taxa > cupom 10%: deságio' : r.taxaT < 0.10 ? 'taxa < cupom 10%: ágio' : 'taxa = cupom: perto do par';
+  } else {
+    $('aS2rot').textContent = 'Taxa no período';
+    $('aS2').textContent = pct(fator(r.taxaT, r.du) - 1, 2);
+    $('aS2sub').textContent = '(1+i)^(DU/252) − 1';
+  }
+  $('aDur').textContent = fmt(r.dur, 2);
+  $('aDV').textContent = (r.dv01 < 0 ? '−' : '+') + brl(Math.abs(r.dv01), 2);
+  passosA(r);
+  lupaA(r);
+  if (abaAtiva === 'simA') desenharA();
+}
+
+function passosA(r){
+  const t = r.taxaT, du = r.du;
+  const P = (n, eq, ex) => '<div class="passo"><div class="n">' + n + '</div><div><div class="eq">' + eq + '</div>' + (ex ? '<div class="ex">' + ex + '</div>' : '') + '</div></div>';
+  const tx = fmt(t, 6);
+  let h = P(1, 'taxa = ' + fmt(t * 100, 4) + '% → ' + tx + '<span class="trunc">T-6 (fração)</span>', 'A taxa entra na conta truncada na 6ª casa da fração (4ª do percentual).');
+  if (r.tipo === 'LTN'){
+    const f = fator(t, du);
+    h += P(2, 'fator = (1 + ' + tx + ')^(' + du + '/252) = ' + fmt(f, 9));
+    h += P(3, 'PU = 1.000 ÷ ' + fmt(f, 9) + ' = ' + fmt(1000 / f, 9));
+    h += P(4, 'PU = <b>' + fmt(r.pu, 6) + '</b><span class="trunc">T-6</span>', 'Trunca (não arredonda) na 6ª casa.');
+  } else if (r.tipo === 'LFT'){
+    const c = 100 / fator(t, du);
+    h += P(2, 'cotação = 100 ÷ (1 + ' + tx + ')^(' + du + '/252) = ' + fmt(c, 8), r.taxa > 0 ? 'Taxa positiva = deságio: cotação abaixo de 100.' : r.taxa < 0 ? 'Taxa negativa = ágio: cotação acima de 100.' : 'Taxa zero: cotação no par.');
+    h += P(3, 'cotação = <b>' + fmt(r.cot, 4) + '%</b><span class="trunc">T-4</span>');
+    h += P(4, 'PU = ' + fmt(VNA_LFT, 2) + ' × ' + fmt(r.cot, 4) + '% = <b>' + fmt(r.pu, 6) + '</b><span class="trunc">T-6</span>', 'O VNA já embute a Selic acumulada desde a emissão.');
+  } else {
+    const ntnf = r.tipo === 'NTNF';
+    h += P(2, ntnf ? 'cupom = 1.000 × (1,10^0,5 − 1) = 48,80885' : 'cupom = 100 × (1,06^0,5 − 1) = 2,956301 (por 100 de VNA)', ntnf ? 'Não é 50: 10% a.a. composto vira 4,8809% ao semestre.' : 'Não é 3: 6% a.a. composto vira 2,9563% ao semestre.');
+    let tb = '<div class="tabscroll"><table class="fluxos"><tr><th>#</th><th>DU</th><th>fluxo</th><th>VP (' + (ntnf ? '9' : '10') + ' casas)</th></tr>';
+    r.fluxos.forEach((f, i) => { tb += '<tr><td>' + (i + 1) + '</td><td>' + f.du + '</td><td>' + fmt(f.fl, ntnf ? 5 : 6) + '</td><td>' + fmt(f.vp, ntnf ? 9 : 10) + '</td></tr>'; });
+    tb += '<tr class="tot"><td colspan="3">Σ VP</td><td>' + fmt(r.soma, ntnf ? 9 : 10) + '</td></tr></table></div>';
+    h += P(3, 'VP de cada fluxo = fluxo ÷ (1 + ' + tx + ')^(DU/252)<span class="trunc">arredonda ' + (ntnf ? '9' : '10') + '</span>', tb);
+    if (ntnf) h += P(4, 'PU = Σ VP = <b>' + fmt(r.pu, 6) + '</b><span class="trunc">T-6</span>');
+    else h += P(4, 'cotação = Σ VP = <b>' + fmt(r.cot, 4) + '%</b><span class="trunc">T-4</span> → PU = ' + fmt(VNA_NTNB, 2) + ' × ' + fmt(r.cot, 4) + '% = <b>' + fmt(r.pu, 6) + '</b><span class="trunc">T-6</span>');
+  }
+  $('aPassos').innerHTML = h;
+}
+
+function lupaA(r){
+  const dmod = r.dur / (1 + r.taxaT);
+  let txt = '';
+  if (estA.base && estA.base.anos === estA.anos[r.tipo] && Math.abs(estA.base.taxa / 100 - r.taxa) > 1e-9){
+    const r0 = precificar(r.tipo, estA.base.taxa / 100, r.du);
+    const dTaxa = r.taxa - estA.base.taxa / 100;
+    const real = r.pu / r0.pu - 1;
+    const prev = -(r0.dur / (1 + r0.taxaT)) * dTaxa;
+    txt = 'A taxa subiu ' + fmt(dTaxa * 10000, 0) + ' bp e o PU ' + (real < 0 ? 'caiu ' : 'subiu ') + pct(Math.abs(real), 3) + ' (' + (r.pu < r0.pu ? '−' : '+') + brl(Math.abs(r.pu - r0.pu)) + '). A duration modificada previa ' + pct(prev, 3) + '. ';
+    txt += Math.abs(real) < Math.abs(prev) ? 'A queda real foi <b>menor</b> que a prevista: é a convexidade — a curva PU × taxa se afasta da reta tangente (tracejada).' : 'Real e previsto praticamente coincidem: para choques pequenos a reta tangente é uma boa aproximação.';
+  } else if (r.tipo === 'LFT'){
+    const perda10 = Math.abs(r.dv01) * 10;
+    txt = 'Mesmo pós-fixada, a LFT tem risco de preço: o VNA acompanha a Selic, mas o <b>ágio/deságio</b> é descontado por ' + fmt(r.dur, 2) + ' anos. Cada +10 bp de deságio custam cerca de ' + brl(perda10) + ' por título (' + pct(perda10 / r.pu, 3) + ' do PU). Essa sensibilidade é a <b>spread duration</b>.';
+  } else if (r.tipo === 'NTNB'){
+    txt = 'A taxa negociada é <b>real</b>: desconta fluxos medidos em % do VNA. O PU = VNA × cotação; se o IPCA sobe e a taxa real fica parada, a cotação não se mexe mas o PU sobe junto com o VNA. Duration de ' + fmt(r.dur, 2) + ' anos: +1 bp na taxa real tira ' + brl(Math.abs(r.dv01)) + ' do PU.';
+  } else if (r.tipo === 'NTNF'){
+    txt = 'Os cupons antecipam caixa, então a duration (' + fmt(r.dur, 2) + ' anos) é menor que o prazo (' + fmt(r.du / 252, 1) + ' anos). ' + (r.taxaT > 0.10 ? 'Com taxa acima do cupom de 10%, o PU fica abaixo de R$ 1.000 (deságio).' : r.taxaT < 0.10 ? 'Com taxa abaixo do cupom de 10%, o PU fica acima de R$ 1.000 (ágio).' : 'Com taxa igual ao cupom, o PU fica próximo de R$ 1.000.') + ' +1 bp tira ' + brl(Math.abs(r.dv01)) + ' do PU.';
+  } else {
+    txt = 'Sem cupom, a duration é o próprio prazo (' + fmt(r.dur, 2) + ' anos). Cada +1 bp tira ' + brl(Math.abs(r.dv01)) + ' do PU — ' + pct(Math.abs(r.dv01) / r.pu, 4) + ' do preço. Use ▶ para ver o choque.';
+  }
+  $('aLupa').innerHTML = txt;
+}
+
+function desenharA(){
+  const r = calcA(), c = CFG_A[r.tipo];
+  // --- gráfico 1: PU × taxa
+  const g = prepCanvas($('cvA1'), 300);
+  const pts = [];
+  for (let i = 0; i <= 80; i++){
+    const tx = (c.min + (c.max - c.min) * i / 80) / 100;
+    pts.push([tx * 100, precificar(r.tipo, tx, r.du).pu]);
+  }
+  let y0 = Math.min(...pts.map(p => p[1])), y1 = Math.max(...pts.map(p => p[1]));
+  const pad = (y1 - y0) * 0.08 || 1; y0 -= pad; y1 += pad;
+  const E = eixos(g, {x0: c.min, x1: c.max, y0: y0, y1: y1, fx: v => fmt(v, c.max - c.min < 2 ? 2 : 1) + '%', fy: v => fmt(v, 0),
+    titulo: 'PU × taxa (' + ({LTN:'LTN',NTNF:'NTN-F',LFT:'LFT',NTNB:'NTN-B'})[r.tipo] + ', ' + r.du + ' DU)', rotx: 'taxa % a.a.'});
+  const ctx = g.ctx;
+  linha(ctx, pts, E.X, E.Y, cor('accent'), 2.5);
+  // reta tangente (duration) no ponto-base do choque
+  const baseT = estA.base && estA.base.anos === estA.anos[r.tipo] ? estA.base.taxa / 100 : r.taxa;
+  const rb = precificar(r.tipo, baseT, r.du);
+  const incl = -rb.dur / (1 + rb.taxaT) * rb.pu;          // dPU/dtaxa
+  ctx.save(); ctx.beginPath(); ctx.rect(E.m.l, E.m.t, g.w - E.m.l - E.m.r, g.h - E.m.t - E.m.b); ctx.clip();
+  linha(ctx, [[c.min, rb.pu + incl * (c.min / 100 - baseT)], [c.max, rb.pu + incl * (c.max / 100 - baseT)]], E.X, E.Y, cor('ref'), 1.5, true);
+  ctx.restore();
+  if (estA.base && Math.abs(baseT - r.taxa) > 1e-9) ponto(ctx, E.X(baseT * 100), E.Y(rb.pu), cor('ref'), 5);
+  ponto(ctx, E.X(r.taxa * 100), E.Y(r.pu), cor('accent'), 6.5);
+  legenda(ctx, [{cor: cor('accent'), txt: 'PU verdadeiro'}, {cor: cor('ref'), txt: 'aprox. pela duration', tr: true}], g.w - 190, 44);
+
+  // --- gráfico 2: linha do tempo dos fluxos (nominal × valor presente)
+  const g2 = prepCanvas($('cvA2'), 300);
+  const emR = (r.tipo === 'LTN' || r.tipo === 'NTNF');
+  const ymax = Math.max(...r.fluxos.map(f => f.fl)) * 1.12;
+  const anosV = r.du / 252;
+  const E2 = eixos(g2, {x0: 0, x1: Math.max(anosV, 0.5) * 1.06, y0: 0, y1: ymax, fx: v => fmt(v, 1), fy: v => fmt(v, 0),
+    titulo: emR ? 'Fluxos em R$: nominal × valor presente' : 'Fluxos em % do VNA: nominal × valor presente', rotx: 'anos'});
+  const c2 = g2.ctx;
+  const larg = Math.max(4, Math.min(22, (g2.w - 90) / (r.fluxos.length * 2.6)));
+  r.fluxos.forEach(f => {
+    const xp = E2.X(f.du / 252);
+    c2.fillStyle = cor('accent-bg'); c2.strokeStyle = cor('accent'); c2.lineWidth = 1;
+    c2.fillRect(xp - larg, E2.Y(f.fl), larg, E2.Y(0) - E2.Y(f.fl)); c2.strokeRect(xp - larg, E2.Y(f.fl), larg, E2.Y(0) - E2.Y(f.fl));
+    c2.fillStyle = cor('accent');
+    c2.fillRect(xp, E2.Y(f.vp), larg, E2.Y(0) - E2.Y(f.vp));
+  });
+  c2.font = '11px "IBM Plex Mono", monospace'; c2.textBaseline = 'middle';
+  c2.fillStyle = cor('accent-bg'); c2.fillRect(E2.m.l + 10, 44, 14, 10); c2.strokeStyle = cor('accent'); c2.strokeRect(E2.m.l + 10, 44, 14, 10);
+  c2.fillStyle = cor('text'); c2.textAlign = 'left'; c2.fillText('fluxo nominal', E2.m.l + 30, 49);
+  c2.fillStyle = cor('accent'); c2.fillRect(E2.m.l + 10, 62, 14, 10);
+  c2.fillStyle = cor('text'); c2.fillText('valor presente → Σ = ' + (emR ? brl(r.soma, 2) : fmt(r.soma, 4) + '%'), E2.m.l + 30, 67);
+}
+
+/* ==========================================================
+   ③ SIM B — % DO CDI → CDI + SPREAD
+   ========================================================== */
+const estB = {dia: 0, anim: null, traj: null};
+['bCDI', 'bP'].forEach(id => $(id).addEventListener('input', () => { pararB(); estB.dia = 0; atualizarB(); }));
+$('bCen').addEventListener('change', () => { pararB(); estB.dia = 0; atualizarB(); });
+function pararB(){ if (estB.anim){ cancelAnimationFrame(estB.anim); estB.anim = null; } }
+$('bPlay').addEventListener('click', () => {
+  if (estB.anim) return;
+  if (estB.dia >= 252) estB.dia = 0;
+  let ult = performance.now();
+  const passo = agora => {
+    const dt = agora - ult;
+    if (dt > 16){ estB.dia = Math.min(252, estB.dia + Math.max(1, Math.round(dt / 16))); ult = agora; atualizarB(); }
+    if (estB.dia < 252) estB.anim = requestAnimationFrame(passo); else estB.anim = null;
+  };
+  estB.anim = requestAnimationFrame(passo);
+});
+$('bPause').addEventListener('click', pararB);
+$('bRst').addEventListener('click', () => { pararB(); estB.dia = 0; atualizarB(); });
+
+function atualizarB(){
+  const cdi = +$('bCDI').value / 100, p = +$('bP').value / 100;
+  $('bCDIOut').textContent = fmt(cdi * 100, 2) + '%';
+  $('bPOut').textContent = fmt(p * 100, 0) + '%';
+  const r = pctParaSpread(p, cdi);
+  const volta = spreadParaPct(r.s, cdi);
+  $('bManchete').innerHTML = 'Com CDI de ' + pct(cdi, 2) + ', <b>' + fmt(p * 100, 0) + '% do CDI</b> rende ' + pct(r.taxa, 2) + ' a.a. = <b>CDI ' + (r.s >= 0 ? '+ ' : '− ') + pct(Math.abs(r.s), 2) + '</b>. E a volta: CDI ' + (r.s >= 0 ? '+ ' : '− ') + pct(Math.abs(r.s), 2) + ' = ' + fmt(volta * 100, 1) + '% do CDI.';
+  const C = (n, tit, eq, res) => '<div class="pcard"><div class="num">PASSO ' + n + '</div><div class="tit">' + tit + '</div><div class="eq">' + eq + '</div><div class="res">' + res + '</div></div>';
+  $('bPassos').innerHTML =
+    C(1, 'DI diário', 'd = (1 + ' + fmt(cdi, 4) + ')^(1/252) − 1', fmt(r.d * 100, 6) + '% a.d.') +
+    C(2, 'Fator diário do papel', '1 + ' + fmt(p, 2) + ' × ' + fmt(r.d, 8), fmt(r.fd, 8)) +
+    C(3, 'Anualiza (252 DU)', '(' + fmt(r.fd, 8) + ')^252 − 1', pct(r.taxa, 4) + ' a.a.') +
+    C(4, 'Tira o CDI (divide!)', '(1 + ' + fmt(r.taxa, 6) + ') ÷ (1 + ' + fmt(cdi, 4) + ') − 1', 'CDI ' + (r.s >= 0 ? '+ ' : '− ') + pct(Math.abs(r.s), 4));
+  const lin = (p - 1) * cdi, adit = r.taxa - cdi;
+  $('bErrado').innerHTML = '<b>✗ Atalhos tentadores</b><br>' +
+    '• "' + fmt((p - 1) * 100, 0) + '% × CDI" = ' + fmt(lin * 100, 2) + ' p.p. — linear, ignora a capitalização diária.<br>' +
+    '• "taxa − CDI" = ' + fmt(r.taxa * 100, 2) + ' − ' + fmt(cdi * 100, 2) + ' = ' + fmt(adit * 100, 2) + ' p.p. — soma o que deveria multiplicar.';
+  $('bCerto').innerHTML = '<b>✓ Spread correto: ' + pct(r.s, 2) + '</b><br>Para "CDI + s" o mercado compõe: (1 + CDI) × (1 + s). Por isso se divide: (1 + ' + pct(r.taxa, 2) + ') ÷ (1 + ' + pct(cdi, 2) + ') − 1. Erro do atalho linear: ' + fmt((lin - r.s) * 10000, 1) + ' bp.';
+  estB.traj = trajetoria(p, cdi, +$('bCen').value / 100, 252);
+  const t = estB.traj, dia = estB.dia;
+  $('bR1rot').textContent = 'R$ 1 mi a ' + fmt(p * 100, 0) + '% CDI';
+  $('bR2rot').textContent = 'R$ 1 mi a CDI ' + (t.s >= 0 ? '+ ' : '− ') + pct(Math.abs(t.s), 2);
+  $('bR1').textContent = brl(t.A[dia], 0);
+  $('bR2').textContent = brl(t.B[dia], 0);
+  const dif = t.A[dia] - t.B[dia];
+  $('bR3').textContent = (dif < 0 ? '−' : '+') + brl(Math.abs(dif), 0);
+  $('bR3').className = 'val ' + (Math.abs(dif) < 1 ? '' : dif > 0 ? 'ok' : 'bad');
+  $('bR4').textContent = dia;
+  $('bR4sub').textContent = 'de 252 · CDI ' + pct(t.C[dia], 2);
+  lupaB(p, cdi, t, dia);
+  if (abaAtiva === 'simB') desenharB();
+}
+
+function lupaB(p, cdi, t, dia){
+  const delta = +$('bCen').value / 100;
+  let txt;
+  if (delta === 0 || dia === 0){
+    txt = 'Com o CDI parado, os dois papéis têm o <b>mesmo fator diário</b> todos os dias — as linhas se sobrepõem. A equivalência é uma foto: escolha "CDI cai" ou "CDI sobe" e aperte ▶.';
+  } else {
+    const sFim = pctParaSpread(p, t.C[dia]).s;
+    const dif = t.A[dia] - t.B[dia];
+    const quem = Math.abs(dif) < 1 ? 'Por ora estão praticamente empatados.' : (dif > 0 ? 'Até aqui o ' + fmt(p * 100, 0) + '% do CDI ganha por ' + brl(dif, 0) + '.' : 'Até aqui o CDI + spread ganha por ' + brl(-dif, 0) + '.');
+    txt = 'O CDI foi para ' + pct(t.C[dia], 2) + '. Com ele, ' + fmt(p * 100, 0) + '% do CDI agora equivale a CDI ' + (sFim >= 0 ? '+ ' : '− ') + pct(Math.abs(sFim), 2) + ', mas o outro papel continua com o spread travado de ' + pct(t.s, 2) + '. ' + quem +
+      (p > 1 ? ' Para quem tem % do CDI acima de 100%, o spread embutido encolhe quando o CDI cai e cresce quando sobe.' : p < 1 ? ' Abaixo de 100% a lógica se inverte: o "spread" é negativo e fica menos negativo com CDI menor.' : ' Com 100% do CDI não há spread a ganhar ou perder.');
+  }
+  $('bLupa').innerHTML = txt;
+}
+
+function desenharB(){
+  const cdi = +$('bCDI').value / 100, p = +$('bP').value / 100;
+  // --- gráfico 1: spread equivalente × nível do CDI
+  const g = prepCanvas($('cvB1'), 320);
+  const pts = [], lin = [];
+  for (let i = 0; i <= 60; i++){
+    const c = 0.05 + 0.15 * i / 60;
+    pts.push([c * 100, pctParaSpread(p, c).s * 100]);
+    lin.push([c * 100, (p - 1) * c * 100]);
+  }
+  const todos = pts.concat(lin).map(q => q[1]);
+  let y0 = Math.min(0, ...todos), y1 = Math.max(0, ...todos);
+  const pad = (y1 - y0) * 0.1 || 0.1; y0 -= pad; y1 += pad;
+  const E = eixos(g, {x0: 5, x1: 20, y0: y0, y1: y1, fx: v => fmt(v, 0) + '%', fy: v => fmt(v, 2) + '%',
+    titulo: 'Spread equivalente a ' + fmt(p * 100, 0) + '% do CDI', rotx: 'CDI % a.a.'});
+  const ctx = g.ctx;
+  ctx.strokeStyle = cor('text-dim'); ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(E.m.l, E.Y(0)); ctx.lineTo(g.w - E.m.r, E.Y(0)); ctx.stroke(); ctx.setLineDash([]);
+  linha(ctx, lin, E.X, E.Y, cor('bad'), 1.8, true);
+  linha(ctx, pts, E.X, E.Y, cor('accent'), 2.5);
+  const s = pctParaSpread(p, cdi).s;
+  ponto(ctx, E.X(cdi * 100), E.Y(s * 100), cor('accent'), 6.5);
+  ctx.font = '600 12px "IBM Plex Mono", monospace'; ctx.fillStyle = cor('accent'); ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+  // rótulo à esquerda do ponto, com fundo branco para não brigar com as linhas
+  const rotB = 'CDI ' + (s >= 0 ? '+' : '−') + ' ' + pct(Math.abs(s), 2);
+  const lw = ctx.measureText(rotB).width;
+  const lx = Math.max(E.m.l + 4, E.X(cdi * 100) - 14 - lw), ly = E.Y(s * 100) - 12;
+  ctx.fillStyle = cor('bg-card'); ctx.fillRect(lx - 3, ly - 16, lw + 6, 19);
+  ctx.fillStyle = cor('accent'); ctx.fillText(rotB, lx, ly);
+  legenda(ctx, [{cor: cor('accent'), txt: 'spread correto'}, {cor: cor('bad'), txt: 'atalho linear', tr: true}], E.m.l + 12, 46);
+
+  // --- gráfico 2: corrida de 252 dias
+  // os dois saldos ficam quase colados; por isso o gráfico mostra a DIFERENÇA em R$
+  const g2 = prepCanvas($('cvB2'), 262);
+  const t = estB.traj;
+  const difs = t.A.map((a, i) => a - t.B[i]);
+  let z0 = Math.min(0, ...difs), z1 = Math.max(0, ...difs);
+  if (z1 - z0 < 200){ z0 -= 100; z1 += 100; }          // CDI constante: escala mínima em torno de zero
+  const pz = (z1 - z0) * 0.12; z0 -= pz; z1 += pz;
+  const E2 = eixos(g2, {x0: 0, x1: 252, y0: z0, y1: z1, fx: v => fmt(v, 0), fy: v => fmt(v, 0),
+    titulo: g2.w < 480 ? 'Diferença em R$ (sobre R$ 1 mi)' : fmt(p * 100, 0) + '% do CDI menos CDI + s (R$, sobre R$ 1 mi)', rotx: 'dia útil'});
+  const c2 = g2.ctx;
+  c2.strokeStyle = cor('ref'); c2.setLineDash([6, 5]); c2.lineWidth = 1.5;
+  c2.beginPath(); c2.moveTo(E2.m.l, E2.Y(0)); c2.lineTo(g2.w - E2.m.r, E2.Y(0)); c2.stroke(); c2.setLineDash([]);
+  if (estB.dia > 0){
+    const nD = [];
+    for (let i = 0; i <= estB.dia; i++) nD.push([i, difs[i]]);
+    const dFim = difs[estB.dia];
+    linha(c2, nD, E2.X, E2.Y, Math.abs(dFim) < 1 ? cor('accent') : dFim > 0 ? cor('ok') : cor('bad'), 2.5);
+    ponto(c2, E2.X(estB.dia), E2.Y(dFim), cor('accent'), 5);
+  } else {
+    c2.font = '13px "Instrument Sans", sans-serif'; c2.fillStyle = cor('text-dim'); c2.textAlign = 'center'; c2.textBaseline = 'middle';
+    c2.fillText('Aperte ▶ para acumular dia a dia', (E2.m.l + g2.w) / 2, E2.Y(0) - 18);
+  }
+  c2.font = '11px "IBM Plex Mono", monospace'; c2.fillStyle = cor('ref'); c2.textAlign = 'left'; c2.textBaseline = 'bottom';
+  c2.fillText('zero = empate', E2.m.l + 8, E2.Y(0) - 4);
+}
+
+/* ==========================================================
+   ④ SIM C — SPREAD FISCAL (GROSS-UP)
+   ========================================================== */
+['cP', 'cDC', 'cCDI'].forEach(id => $(id).addEventListener('input', atualizarC));
+const PRINC = 100000;
+
+function atualizarC(){
+  const p = +$('cP').value / 100, dc = +$('cDC').value, cdi = +$('cCDI').value / 100;
+  $('cPOut').textContent = fmt(p * 100, 0) + '%';
+  $('cDCOut').textContent = dc + ' dias';
+  $('cCDIOut').textContent = fmt(cdi * 100, 2) + '%';
+  const g = grossup(p, dc, cdi);
+  const faixa = dc <= 180 ? 'até 180 dias' : dc <= 360 ? '181 a 360 dias' : dc <= 720 ? '361 a 720 dias' : 'acima de 720 dias';
+  $('cManchete').innerHTML = '<b>' + fmt(p * 100, 0) + '% do CDI isento</b> ≡ <b>' + fmt(g.atalho * 100, 1) + '% do CDI tributado</b> (IR ' + fmt(g.ir * 100, 1) + '%, ' + faixa + '). A taxa invisível: ' + fmt((g.atalho - p) * 100, 1) + ' p.p. do CDI.';
+  const C = (n, tit, eq, res) => '<div class="pcard"><div class="num">PASSO ' + n + '</div><div class="tit">' + tit + '</div><div class="eq">' + eq + '</div><div class="res">' + res + '</div></div>';
+  const irEvit = PRINC * g.rBruto * g.ir;
+  $('cPassos').innerHTML =
+    C(1, 'Alíquota pelo prazo', dc + ' dias → ' + faixa, 'IR = ' + fmt(g.ir * 100, 1) + '%') +
+    C(2, 'Atalho de mercado', fmt(p * 100, 0) + '% ÷ (1 − ' + fmt(g.ir, 3) + ')', fmt(g.atalho * 100, 2) + '% do CDI') +
+    C(3, 'Conta exata no prazo', '(1+X·d)^' + g.du + ' − 1 = R<sub>isento</sub> ÷ (1 − IR)', fmt(g.exato * 100, 2) + '% do CDI') +
+    C(4, 'Taxa invisível em R$', 'IR que o tributado pagaria sobre ' + brl(PRINC, 0), brl(irEvit, 2));
+  const errado = p * (1 + g.ir);
+  $('cErrado').innerHTML = '<b>✗ Multiplicar pela alíquota</b><br>' + fmt(p * 100, 0) + '% × (1 + ' + fmt(g.ir, 3) + ') = ' + fmt(errado * 100, 2) + '% do CDI. Fica curto: tirando ' + fmt(g.ir * 100, 1) + '% de IR de ' + fmt(errado * 100, 2) + '% sobram só ' + fmt(errado * (1 - g.ir) * 100, 2) + '% — menos que os ' + fmt(p * 100, 0) + '% do isento.';
+  $('cCerto').innerHTML = '<b>✓ Dividir por (1 − IR)</b><br>' + fmt(p * 100, 0) + '% ÷ ' + fmt(1 - g.ir, 3) + ' = ' + fmt(g.atalho * 100, 2) + '%. Conferindo: ' + fmt(g.atalho * 100, 2) + '% × ' + fmt(1 - g.ir, 3) + ' = ' + fmt(p * 100, 0) + '%. O líquido bate.';
+  const gap = (g.atalho - g.exato) * 100;
+  let txt = 'Em ' + dc + ' dias (≈' + g.du + ' DU), ' + fmt(p * 100, 0) + '% do CDI isento acumula ' + pct(g.rIso, 2) + '. Um CDB precisa render ' + pct(g.rBruto, 2) + ' bruto para sobrar o mesmo depois do IR. ';
+  txt += gap > 0.5 ? 'Aqui o atalho exagera em ' + fmt(gap, 1) + ' p.p.: o imposto incide sobre o rendimento <b>acumulado</b>, que cresce mais que proporcionalmente ao % do CDI (juros sobre juros) — então basta um % menor que o atalho. Quanto mais longo o prazo e maior o CDI, maior a diferença.'
+                   : 'Atalho e conta exata diferem só ' + fmt(gap, 2) + ' p.p.: em prazos curtos a capitalização pesa pouco e o atalho serve bem.';
+  txt += ' Note os <b>degraus</b> no gráfico: o equivalente cai cada vez que o prazo cruza uma faixa da tabela regressiva.';
+  $('cLupa').innerHTML = txt;
+  if (abaAtiva === 'simC') desenharC();
+}
+
+function desenharC(){
+  const p = +$('cP').value / 100, dc = +$('cDC').value, cdi = +$('cCDI').value / 100;
+  const g = grossup(p, dc, cdi);
+  // --- gráfico 1: equivalente tributado × prazo (degraus)
+  const c = prepCanvas($('cvC1'), 320);
+  const at = [], ex = [];
+  for (let d = 30; d <= 1500; d += 5){ const q = grossup(p, d, cdi); at.push([d, q.atalho * 100]); ex.push([d, q.exato * 100]); }
+  const ys = at.concat(ex).map(q => q[1]).concat([p * 100]);
+  let y0 = Math.min(...ys), y1 = Math.max(...ys); const pad = (y1 - y0) * 0.1 || 1; y0 -= pad; y1 += pad;
+  const E = eixos(c, {x0: 30, x1: 1500, y0: y0, y1: y1, fx: v => fmt(v, 0), fy: v => fmt(v, 0) + '%',
+    titulo: 'Equivalente tributado de ' + fmt(p * 100, 0) + '% do CDI isento', rotx: 'dias corridos'});
+  const ctx = c.ctx;
+  [180, 360, 720].forEach(v => { ctx.strokeStyle = cor('grid-brd'); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(E.X(v), E.m.t); ctx.lineTo(E.X(v), c.h - E.m.b); ctx.stroke(); });
+  // faixa isenta (referência)
+  ctx.fillStyle = cor('ok-bg'); ctx.fillRect(E.m.l, E.Y(p * 100), c.w - E.m.l - E.m.r, E.Y(y0) - E.Y(p * 100));
+  linha(ctx, [[30, p * 100], [1500, p * 100]], E.X, E.Y, cor('ok'), 1.8);
+  // desenha atalho em segmentos por faixa (sem ligar os degraus por linhas inclinadas)
+  const faixas = [[30, 180], [181, 360], [361, 720], [721, 1500]];
+  faixas.forEach(f => linha(ctx, at.filter(q => q[0] >= f[0] && q[0] <= f[1]), E.X, E.Y, cor('accent'), 2.5));
+  faixas.forEach(f => linha(ctx, ex.filter(q => q[0] >= f[0] && q[0] <= f[1]), E.X, E.Y, cor('ref'), 2, true));
+  ponto(ctx, E.X(dc), E.Y(g.atalho * 100), cor('accent'), 6);
+  ponto(ctx, E.X(dc), E.Y(g.exato * 100), cor('ref'), 5);
+  legenda(ctx, [{cor: cor('accent'), txt: 'atalho ÷ (1−IR)'}, {cor: cor('ref'), txt: 'conta exata', tr: true}, {cor: cor('ok'), txt: 'isento (o que o papel mostra)'}], c.w - 230, 46);
+
+  // --- gráfico 2: barras — CDB tributado × LCI isenta, em R$ sobre R$ 100 mil
+  const c2 = prepCanvas($('cvC2'), 320);
+  const bruto = PRINC * g.rBruto, ir = bruto * g.ir, liq = PRINC * g.rIso;
+  const E2 = eixos(c2, {x0: 0, x1: 2, y0: 0, y1: bruto * 1.18, fx: () => '', fy: v => fmt(v / 1000, 1) + ' mil',
+    titulo: 'Rendimento sobre R$ 100 mil em ' + dc + ' dias', rotx: ''});
+  const x2 = c2.ctx;
+  const bw = Math.min(110, (c2.w - 120) / 4);
+  const bar = (cx, base, topo, cr) => { x2.fillStyle = cr; x2.fillRect(cx - bw / 2, E2.Y(topo), bw, E2.Y(base) - E2.Y(topo)); };
+  const xa = E2.X(0.55), xb = E2.X(1.45);
+  bar(xa, 0, bruto - ir, cor('ref'));
+  bar(xa, bruto - ir, bruto, cor('bad'));
+  bar(xb, 0, liq, cor('ok'));
+  x2.font = '600 12px "IBM Plex Mono", monospace'; x2.textAlign = 'center'; x2.textBaseline = 'bottom';
+  x2.fillStyle = cor('bad'); x2.fillText('IR ' + brl(ir, 0), xa, E2.Y(bruto) - 4);
+  x2.fillStyle = cor('ok'); x2.fillText(brl(liq, 0), xb, E2.Y(liq) - 4);
+  x2.fillStyle = '#ffffff'; x2.textBaseline = 'middle';
+  if (E2.Y(0) - E2.Y(bruto - ir) > 30) x2.fillText(brl(bruto - ir, 0), xa, (E2.Y(0) + E2.Y(bruto - ir)) / 2);
+  x2.fillStyle = cor('text'); x2.font = '600 12px "Instrument Sans", sans-serif'; x2.textBaseline = 'top';
+  x2.fillText('CDB a ' + fmt(g.exato * 100, 1) + '% CDI', xa, E2.Y(0) + 6);
+  x2.fillText('LCI a ' + fmt(p * 100, 0) + '% CDI', xb, E2.Y(0) + 6);
+  // linha do líquido igual
+  x2.strokeStyle = cor('text-dim'); x2.setLineDash([4, 4]); x2.lineWidth = 1;
+  x2.beginPath(); x2.moveTo(xa - bw / 2, E2.Y(liq)); x2.lineTo(xb + bw / 2, E2.Y(liq)); x2.stroke(); x2.setLineDash([]);
+}
+
+/* ==========================================================
+   ⑤ CENÁRIOS
+   ========================================================== */
+const CENARIOS = [
+  {rot: 'Tesouraria · LFT', sit: 'Um diretor diz no comitê: "nossa carteira de LFT 2030 é caixa, não tem risco de mercado nenhum". Na semana seguinte o deságio das LFT longas abre de 0,05% para 0,20% a.a.', q: 'O diretor está certo?', ok: false,
+   r: 'Não. O VNA acompanha a Selic, mas o deságio é descontado pelo prazo restante: com ~4 anos, +15 bp tiram cerca de 0,6% do PU. É a <b>spread duration</b> da LFT — pequena por bp, relevante em carteiras grandes. Teste na aba ②.'},
+  {rot: 'Captação · % do CDI', sit: 'Com CDI de 13,53%, um banco oferece CDB a 108% do CDI e outro a CDI + 1,02%. O cliente acha que o CDI vai cair bastante no próximo ano.', q: 'Se ele estiver certo, qual papel é melhor para ele?', ok: true,
+   r: 'Hoje são equivalentes, mas o CDI + 1,02% <b>trava o spread</b>. Se o CDI cair, 108% do CDI passa a valer menos de CDI + 1% (a 10,5% de CDI, ≈ CDI + 0,80%). Quem espera queda prefere o spread fixo. Veja a corrida na aba ③.'},
+  {rot: 'Assessoria · gross-up', sit: 'Um assessor compara uma LCA de 92% do CDI (prazo de 2 anos e 1 dia) com um CDB e calcula o equivalente: 92% × 1,15 = 105,8% do CDI.', q: 'A conta está certa?', ok: false,
+   r: 'Não. Multiplicar por (1 + IR) fica curto. O certo é dividir: 92% ÷ 0,85 = <b>108,2%</b> do CDI. Um CDB a 106% perderia para a LCA, e o assessor recomendaria o contrário.'},
+  {rot: 'Back office · NTN-F', sit: 'Um estagiário monta a planilha de fluxo de uma NTN-F com cupom de R$ 50,00 por semestre ("10% ao ano dividido por dois").', q: 'O fluxo está certo?', ok: false,
+   r: 'Não. O cupom de 10% a.a. é composto: 1.000 × (1,10<sup>½</sup> − 1) = <b>R$ 48,80885</b>. Com R$ 50 cada fluxo fica superestimado em R$ 1,19 e o PU sai alto demais. Na NTN-B vale o mesmo: 2,956301 por 100, não 3.'},
+  {rot: 'Carteira · NTN-B', sit: 'Em um mês de IPCA de 0,40%, a taxa real da NTN-B 2035 fecha exatamente igual ao mês anterior. O gestor diz: "taxa parada, PU parado".', q: 'Ele está certo?', ok: false,
+   r: 'Não. Com taxa real parada a <b>cotação</b> mal se mexe (só o carrego), mas o PU = VNA × cotação. O VNA subiu com o IPCA, então o PU subiu também. Confundir cotação com PU é erro clássico na NTN-B.'},
+  {rot: 'Tesouraria · LTN', sit: 'O banco comprou LTN a 13,50% a.a. e, um mês depois, a taxa de mercado foi a 14,50%. A marcação a mercado mostra prejuízo. O tesoureiro diz: "se eu carregar até o vencimento, ganho os 13,50% contratados".', q: 'O raciocínio está certo?', ok: true,
+   r: 'Sim, para a LTN carregada até o vencimento (sem risco de crédito, recebe R$ 1.000): o prejuízo de marcação se reverte com o tempo. O custo é de oportunidade — o mercado hoje paga 14,50% — e o efeito no resultado contábil depende da classificação do ativo.'}
+];
+$('cenGrid').innerHTML = CENARIOS.map((c, i) =>
+  '<div class="card cen" data-i="' + i + '" tabindex="0" role="button"><div class="rot">' + c.rot + '</div><p style="margin-top:6px">' + c.sit + '</p><p class="q">' + c.q + '</p><div class="dica-clique">clique para revelar →</div>' +
+  '<div class="resp ' + (c.ok ? 'ok' : 'bad') + '"><b>' + (c.ok ? '✓ Sim. ' : '✗ Problema. ') + '</b>' + c.r + '</div></div>').join('');
+document.querySelectorAll('.cen').forEach(el => {
+  const abre = () => el.classList.add('aberto');
+  el.addEventListener('click', abre);
+  el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); abre(); } });
+});
+
+/* ==========================================================
+   ⑥ TESTE
+   ========================================================== */
+const QUESTOES = [
+  {q: 'Com CDI de 13,53% a.a., um CDB a 108% do CDI equivale a:', alts: ['CDI + 1,08% (8% × CDI)', 'CDI + 1,02%', 'CDI + 8%', 'CDI + 1,16% (taxa − CDI)'], c: 1,
+   fb: 'O spread é multiplicativo: (1 + p·d)<sup>252</sup> ÷ (1 + CDI) − 1 = 1,02%. "8% × CDI" ignora a capitalização; "taxa − CDI" (1,16 p.p.) soma o que deveria dividir.'},
+  {q: 'Uma LCI isenta paga 90% do CDI, prazo de 800 dias (IR 15%). Pelo atalho de mercado, o CDB equivalente paga:', alts: ['103,5% do CDI', '90% do CDI — isenção não muda a comparação', '105,9% do CDI', '76,5% do CDI'], c: 2,
+   fb: 'Divide-se por (1 − IR): 90 ÷ 0,85 = 105,9%. 103,5% é o erro de multiplicar por 1,15. 76,5% aplica o IR a quem não paga IR.'},
+  {q: 'Qual é o cupom semestral da NTN-B, por 100 de VNA?', alts: ['2,956301', '3,000000', '6,000000', '3,044031'], c: 0,
+   fb: '6% a.a. composto: 100 × (1,06<sup>½</sup> − 1) = 2,956301. 3,00 é o erro de dividir a taxa anual por dois; o cupom ainda incide sobre o VNA, não sobre R$ 1.000.'},
+  {q: 'Uma LFT com 4 anos até o vencimento tem o deságio aumentado em 10 bp. O PU:', alts: ['Não muda: LFT é pós-fixada', 'Sobe cerca de 0,4%', 'Cai cerca de 10%', 'Cai cerca de 0,4%'], c: 3,
+   fb: 'O VNA segue a Selic, mas o deságio é descontado por ~4 anos: −10 bp × 4 ≈ −0,4%. "Não muda" é a armadilha da LFT sem risco; 10% confunde bp com p.p.'},
+  {q: 'Hoje 108% do CDI ≡ CDI + 1,02% (CDI 13,53%). Se o CDI cair para 10,5% e ficar lá:', alts: ['108% do CDI segue valendo CDI + 1,02%', 'Os dois rendem igual para qualquer CDI', '108% do CDI passa a valer ≈ CDI + 0,80%, e o CDI + 1,02% passa a render mais', '108% do CDI passa a render mais que CDI + 1,02%'], c: 2,
+   fb: 'O spread embutido em 108% do CDI é proporcional ao nível do CDI: cai junto com ele (≈ 0,80% a 10,5%). O papel com spread fixo preserva 1,02%. A equivalência é uma foto, não um contrato.'}
+];
+let acertos = 0, respondidas = 0;
+$('testeLista').innerHTML = QUESTOES.map((q, i) =>
+  '<div class="card questao" id="q' + i + '"><h3>' + (i + 1) + '. ' + q.q + '</h3><div class="alts">' +
+  q.alts.map((a, j) => '<button data-q="' + i + '" data-j="' + j + '">' + String.fromCharCode(65 + j) + ') ' + a + '</button>').join('') +
+  '</div><div class="fb"></div></div>').join('');
+document.querySelectorAll('.questao .alts button').forEach(b => b.addEventListener('click', () => {
+  const i = +b.dataset.q, j = +b.dataset.j, q = QUESTOES[i], el = $('q' + i);
+  if (el.classList.contains('respondida')) return;
+  el.classList.add('respondida'); respondidas++;
+  el.querySelectorAll('button').forEach((x, k) => { x.disabled = true; if (k === q.c) x.classList.add('certa'); });
+  const certo = j === q.c;
+  if (!certo) b.classList.add('errada'); else acertos++;
+  el.querySelector('.fb').innerHTML = '<b>' + (certo ? '✓ Correto. ' : '✗ Não. ') + '</b>' + q.fb;
+  $('placar').textContent = acertos + ' / 5' + (respondidas === 5 ? (acertos === 5 ? ' · gabaritou!' : ' · revise as abas ② a ④') : '');
+}));
+
+/* inicialização */
+aplicarControlesA(); atualizarA(); atualizarB(); atualizarC();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(desenharAtiva);
+</script>
+</body>
+</html>

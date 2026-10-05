@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Duration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f5f0;
+  --bg2:#efece4;
+  --bg-card:#ffffff;
+  --text:#1d2329;
+  --text-dim:#545c66;
+  --accent:#0b6b66;
+  --ok:#276b2b;
+  --bad:#b83227;
+  --ref:#1f5fa8;
+  --warn:#9a5a00;
+  --roxo:#6b3fa0;
+  --grid-dim:#e4e0d6;
+  --accent-bg:#e3f1ef;
+  --ok-bg:#e8f3e8;
+  --bad-bg:#fbeceb;
+  --warn-bg:#fdf3e2;
+  --ref-bg:#e8eff9;
+  --accent-brd:#b5d8d4;
+  --ok-brd:#b9dbba;
+  --bad-brd:#efc2bd;
+  --warn-brd:#f0d3a3;
+  --ref-brd:#bccfeb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:16px;line-height:1.6}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 20px 40px}
+header{margin-bottom:22px;animation:sobe .6s ease both}
+.tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-bg);border:1px solid var(--accent-brd);border-radius:999px;padding:3px 12px;margin-bottom:12px}
+h1{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:clamp(30px,5vw,46px);line-height:1.1;letter-spacing:-.01em}
+h1 em{color:var(--accent);font-style:italic;font-weight:500}
+.lead{color:var(--text-dim);max-width:760px;margin-top:10px;font-size:17px}
+nav{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 18px}
+nav button{font:500 14px 'IBM Plex Sans',sans-serif;color:var(--text);background:var(--bg-card);border:1px solid var(--grid-dim);border-radius:999px;padding:8px 16px;cursor:pointer;transition:background .2s,border-color .2s}
+nav button:hover{border-color:var(--accent)}
+nav button.ativo{background:var(--accent);border-color:var(--accent);color:#fff}
+.aba{display:none;animation:sobe .45s ease both}
+.aba.ativa{display:block}
+@keyframes sobe{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{background:var(--bg-card);border-radius:14px;box-shadow:0 1px 2px rgba(30,30,20,.05),0 6px 22px rgba(30,30,20,.06);padding:22px;margin-bottom:18px}
+h2{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:25px;margin-bottom:8px}
+h3{font-size:16px;font-weight:600;margin-bottom:6px}
+p+p{margin-top:10px}
+.mono{font-family:'IBM Plex Mono',monospace}
+.formula{font-family:'Newsreader',Georgia,serif;font-size:clamp(19px,2.6vw,24px);text-align:center;background:var(--bg2);border-radius:10px;padding:16px 12px;margin:12px 0;line-height:1.5;overflow-x:auto}
+.formula small{display:block;font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--text-dim);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.par{border-radius:12px;padding:16px;border:1px solid}
+.par.certo{background:var(--ok-bg);border-color:var(--ok-brd)}
+.par.errado{background:var(--bad-bg);border-color:var(--bad-brd)}
+.par .rot{font:600 13px 'IBM Plex Mono',monospace;letter-spacing:.04em;margin-bottom:6px}
+.par.certo .rot{color:var(--ok)}
+.par.errado .rot{color:var(--bad)}
+.caixa{border-radius:12px;padding:14px 16px;margin-top:14px;border-left:4px solid}
+.caixa.dica{background:var(--accent-bg);border-color:var(--accent)}
+.caixa.cuidado{background:var(--warn-bg);border-color:var(--warn)}
+.caixa.mundo{background:var(--ref-bg);border-color:var(--ref)}
+details{margin-top:14px;background:var(--bg2);border-radius:10px;padding:10px 14px}
+summary{cursor:pointer;font-weight:500;color:var(--accent)}
+details .formula{background:var(--bg-card)}
+.controles{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;margin-bottom:14px}
+.ctrl{display:flex;flex-direction:column;gap:4px;min-width:170px;flex:1}
+.ctrl label{font-size:13px;color:var(--text-dim)}
+.ctrl label b{font-family:'IBM Plex Mono',monospace;color:var(--text);font-weight:500}
+input[type=range]{accent-color:var(--accent);width:100%}
+select{font:14px 'IBM Plex Sans',sans-serif;padding:7px 10px;border-radius:8px;border:1px solid var(--grid-dim);background:var(--bg-card);color:var(--text)}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text)}
+.chk input{accent-color:var(--warn);width:16px;height:16px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font:500 14px 'IBM Plex Sans',sans-serif;border-radius:8px;padding:8px 14px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:#fff}
+.btn.sec{background:var(--bg-card);color:var(--accent)}
+.btn:hover{filter:brightness(1.08)}
+canvas{display:block;width:100%;border-radius:10px;background:var(--bg-card)}
+.cv-box{border:1px solid var(--grid-dim);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:6px 0 4px}
+.stat{background:var(--bg2);border-radius:10px;padding:10px 12px}
+.stat .n{font:500 clamp(18px,2.4vw,24px) 'IBM Plex Mono',monospace;color:var(--text)}
+.stat .l{font-size:12px;color:var(--text-dim);line-height:1.3}
+.stat.destaque .n{color:var(--accent)}
+.oque{margin-top:14px;background:var(--accent-bg);border:1px solid var(--accent-brd);border-radius:12px;padding:14px 16px}
+.oque h3{color:var(--accent)}
+.legenda{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--text-dim);margin:2px 0 10px}
+.legenda span::before{content:'';display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;background:var(--c,#000);border-radius:2px}
+.legenda span.tr::before{background:repeating-linear-gradient(90deg,var(--c) 0 5px,transparent 5px 9px)}
+.legenda span.pt::before{width:10px;height:10px;border-radius:50%}
+.cv-box.hover-box{position:relative}
+.tip{position:absolute;pointer-events:none;background:var(--bg-card);border:1px solid var(--accent-brd);border-radius:10px;box-shadow:0 6px 20px rgba(30,30,20,.14);padding:9px 12px;font-size:13px;line-height:1.45;min-width:200px;opacity:0;transition:opacity .15s;z-index:5}
+.tip.on{opacity:1}
+.tip .tt{font-weight:600;color:var(--text);margin-bottom:4px}
+.tip .lin{display:flex;justify-content:space-between;gap:14px}
+.tip .lin span:last-child{font-family:'IBM Plex Mono',monospace;color:var(--text)}
+.tip .lin.vp span:first-child{color:var(--accent);font-weight:500}
+.tip .lin.nom span:first-child{color:var(--text-dim)}
+.tip .rod{margin-top:4px;padding-top:4px;border-top:1px solid var(--grid-dim);color:var(--text-dim);font-size:12px}
+.nota{font-size:13px;color:var(--text-dim);margin-top:8px}
+/* Teste */
+.q{border:1px solid var(--grid-dim);border-radius:12px;padding:16px;margin-bottom:14px}
+.q .enun{font-weight:500;margin-bottom:10px}
+.q .num{font:500 13px 'IBM Plex Mono',monospace;color:var(--accent);margin-right:6px}
+.alt{display:block;width:100%;text-align:left;font:15px 'IBM Plex Sans',sans-serif;color:var(--text);background:var(--bg-card);border:1px solid var(--grid-dim);border-radius:9px;padding:9px 12px;margin-bottom:7px;cursor:pointer}
+.alt:hover:not(:disabled){border-color:var(--accent)}
+.alt:disabled{cursor:default}
+.alt.certa{background:var(--ok-bg);border-color:var(--ok)}
+.alt.errada{background:var(--bad-bg);border-color:var(--bad)}
+.fb{display:none;margin-top:8px;padding:12px 14px;border-radius:10px;font-size:15px}
+.fb.on{display:block}
+.fb.ok{background:var(--ok-bg);border:1px solid var(--ok-brd)}
+.fb.no{background:var(--bad-bg);border:1px solid var(--bad-brd)}
+.placar{font:500 15px 'IBM Plex Mono',monospace;color:var(--accent);margin-top:6px}
+footer{margin-top:26px;padding-top:14px;border-top:1px solid var(--grid-dim);font-size:13px;color:var(--text-dim)}
+@media (max-width:760px){
+  .grid2{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .wrap{padding:20px 14px 30px}
+  .card{padding:16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="tag">Tesouraria de IFs · Renda fixa</span>
+  <h1>Duration: <em>Macaulay</em> e <em>Modificada</em></h1>
+  <p class="lead">A Duration de Macaulay diz <b>onde fica o “centro de gravidade”</b> dos fluxos de um título. A Duration Modificada diz <b>quanto o PU muda</b> quando a taxa se mexe. São parentes, mas não são a mesma coisa.</p>
+</header>
+
+<nav id="nav">
+  <button data-aba="conceito" class="ativo">① Conceito</button>
+  <button data-aba="macaulay">② Duration de Macaulay</button>
+  <button data-aba="modificada">③ Duration Modificada</button>
+  <button data-aba="cupom">④ Cupom e taxa</button>
+  <button data-aba="teste">⑤ Teste</button>
+</nav>
+
+<!-- ============ ABA 1: CONCEITO ============ -->
+<section class="aba ativa" id="aba-conceito">
+  <div class="card">
+    <h2>Duas perguntas, duas durations</h2>
+    <p><b>Macaulay:</b> em média, <i>quando</i> eu recebo o dinheiro do título? Cada fluxo pesa pelo seu valor presente. É uma medida de <b>tempo</b>, em anos.</p>
+    <div class="formula">D<sub>Mac</sub> = Σ t<sub>i</sub> · VP<sub>i</sub> / PU
+      <small>VP<sub>i</sub> = F<sub>i</sub> / (1+y)<sup>t<sub>i</sub></sup> &nbsp;·&nbsp; t<sub>i</sub> = DU<sub>i</sub>/252 &nbsp;·&nbsp; PU = Σ VP<sub>i</sub></small>
+    </div>
+    <p><b>Modificada:</b> se a taxa subir um pouquinho, <i>quanto</i> o PU cai, em %? É uma medida de <b>sensibilidade</b>.</p>
+    <div class="formula">D<sub>Mod</sub> = D<sub>Mac</sub> / (1+y) &nbsp;&nbsp;⇒&nbsp;&nbsp; ΔPU ≈ −D<sub>Mod</sub> · PU · Δy
+      <small>DV01 = D<sub>Mod</sub> · PU · 0,0001 &nbsp;(R$ por 1 ponto-base)</small>
+    </div>
+    <details>
+      <summary>De onde sai o “dividir por (1+y)”? (derivação)</summary>
+      <p style="margin-top:10px">Derive o PU em relação à taxa. Cada termo F<sub>i</sub>(1+y)<sup>−t<sub>i</sub></sup> vira −t<sub>i</sub>·F<sub>i</sub>(1+y)<sup>−t<sub>i</sub>−1</sup>:</p>
+      <div class="formula">dPU/dy = −(1/(1+y)) · Σ t<sub>i</sub>·VP<sub>i</sub> = −(D<sub>Mac</sub>/(1+y)) · PU = −D<sub>Mod</sub> · PU</div>
+      <p>O (1+y) aparece porque o expoente desce um grau. Com capitalização exponencial anual (DU/252), essa é a relação exata.</p>
+    </details>
+  </div>
+
+  <div class="grid2">
+    <div class="par certo">
+      <div class="rot">✓ CERTO</div>
+      <p>Para estimar a variação do PU, use a <b>Modificada</b>: NTN-F com PU 1.000, D<sub>Mod</sub> 3,70 e alta de 50 bp ⇒ ΔPU ≈ −3,70 × 1.000 × 0,005 = <b>−R$ 18,51</b>.</p>
+    </div>
+    <div class="par errado">
+      <div class="rot">✗ ARMADILHA</div>
+      <p>Usar a <b>Macaulay</b> direto (4,07) dá −R$ 20,36; usar o <b>prazo</b> (5 anos) dá −R$ 25,00. Os dois exageram a perda. A variação exata é −R$ 18,28.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <div class="caixa dica"><b>💡 Consequências que a animação vai mostrar</b><br>
+      • Título <b>zero-cupom</b> (LTN): um único fluxo ⇒ D<sub>Mac</sub> = prazo, exatamente.<br>
+      • Título <b>com cupom</b> (NTN-F): os cupons puxam o centro de gravidade para perto ⇒ D<sub>Mac</sub> &lt; prazo.<br>
+      • <b>Cupom maior</b> ou <b>taxa maior</b> ⇒ duration menor (os fluxos distantes pesam menos).</div>
+    <div class="caixa cuidado"><b>⚠️ Cuidado</b><br>
+      A D<sub>Mod</sub> é uma <b>reta tangente</b> à curva PU × taxa. Para choques pequenos ela acerta; para choques de centenas de pontos-base a curvatura (convexidade) aparece e a reta erra, sempre para o mesmo lado: exagera a perda na alta e subestima o ganho na queda.</div>
+    <div class="caixa mundo"><b>🌎 Janela para o mundo real</b><br>
+      A NTN-F paga cupom de 10% a.a., em duas parcelas semestrais (1º de janeiro e 1º de julho), e o mercado a negocia por taxa em DU/252. Nas mesas, a exposição de um book prefixado é falada em <b>DV01</b>, que nada mais é que a Duration Modificada traduzida em reais por ponto-base.</div>
+    <p class="nota">Convenções desta animação: DU/252, capitalização exponencial, valor de face R$ 1.000,00. Para simplificar, cada semestre da NTN-F tem 126 DU.</p>
+  </div>
+</section>
+
+<!-- ============ ABA 2: MACAULAY ============ -->
+<section class="aba" id="aba-macaulay">
+  <div class="card">
+    <h2>A gangorra dos fluxos</h2>
+    <p>Cada barra é um fluxo do título, com altura igual ao seu valor presente. O triângulo é o ponto onde a gangorra fica em equilíbrio: <b>a Duration de Macaulay</b>. Aperte <b>▶ Descontar</b> e veja o ponto andar para a esquerda quando os fluxos nominais viram valor presente.</p>
+  </div>
+  <div class="card">
+    <div class="controles">
+      <div class="ctrl" style="max-width:200px"><label for="m-tit">Título</label>
+        <select id="m-tit"><option value="ntnf">NTN-F (com cupom)</option><option value="ltn">LTN (zero-cupom)</option></select></div>
+      <div class="ctrl"><label for="m-taxa">Taxa: <b id="m-taxa-v"></b></label><input type="range" id="m-taxa" min="2" max="25" step="0.25" value="12"></div>
+      <div class="ctrl" id="m-cupom-box"><label for="m-cupom">Cupom: <b id="m-cupom-v"></b></label><input type="range" id="m-cupom" min="2" max="16" step="1" value="10"></div>
+      <div class="ctrl"><label for="m-prazo">Prazo: <b id="m-prazo-v"></b></label><input type="range" id="m-prazo" min="1" max="10" step="0.5" value="5"></div>
+      <div class="btns"><button class="btn" id="m-play">▶ Descontar</button><button class="btn sec" id="m-reset">↺</button></div>
+    </div>
+    <div class="legenda">
+      <span class="pt" style="--c:var(--accent)">valor presente de cada fluxo</span>
+      <span class="tr" style="--c:var(--text-dim)">fluxo nominal (antes de descontar)</span>
+      <span class="tr" style="--c:var(--ref)">vencimento</span>
+    </div>
+    <div class="cv-box hover-box"><canvas id="cv-gangorra"></canvas><div class="tip" id="m-tip"></div></div>
+    <p class="nota" style="margin-top:-4px">Passe o mouse (ou toque) sobre uma barra para ver o fluxo nominal e o valor presente daquele pagamento.</p>
+    <div class="stats">
+      <div class="stat"><div class="n" id="m-s-pu"></div><div class="l">PU (R$)</div></div>
+      <div class="stat destaque"><div class="n" id="m-s-dmac"></div><div class="l">Duration de Macaulay (anos)</div></div>
+      <div class="stat"><div class="n" id="m-s-rel"></div><div class="l">D<sub>Mac</sub> ÷ prazo</div></div>
+      <div class="stat"><div class="n" id="m-s-princ"></div><div class="l">parcela do PU vinda do último fluxo</div></div>
+    </div>
+    <div class="oque"><h3>🔍 O que está acontecendo</h3><p id="m-txt"></p></div>
+  </div>
+</section>
+
+<!-- ============ ABA 3: MODIFICADA ============ -->
+<section class="aba" id="aba-modificada">
+  <div class="card">
+    <h2>A tangente que vira DV01</h2>
+    <p>A curva mostra o PU do título para cada taxa. A reta tangente no ponto atual tem inclinação <b>−D<sub>Mod</sub> × PU</b>: é a estimativa da Duration Modificada. Aplique um choque e compare a estimativa com o PU de verdade.</p>
+  </div>
+  <div class="card">
+    <div class="controles">
+      <div class="ctrl" style="max-width:200px"><label for="d-tit">Título</label>
+        <select id="d-tit"><option value="ntnf">NTN-F (cupom 10%)</option><option value="ltn">LTN (zero-cupom)</option></select></div>
+      <div class="ctrl"><label for="d-taxa">Taxa atual: <b id="d-taxa-v"></b></label><input type="range" id="d-taxa" min="6" max="20" step="0.25" value="13"></div>
+      <div class="ctrl"><label for="d-prazo">Prazo: <b id="d-prazo-v"></b></label><input type="range" id="d-prazo" min="1" max="10" step="0.5" value="10"></div>
+      <div class="ctrl"><label for="d-choque">Choque: <b id="d-choque-v"></b></label><input type="range" id="d-choque" min="-500" max="500" step="25" value="100"></div>
+    </div>
+    <div class="controles" style="margin-top:-4px">
+      <label class="chk"><input type="checkbox" id="d-erro-mac"> Mostrar o erro de usar a Macaulay no lugar da Modificada</label>
+      <div class="btns"><button class="btn" id="d-play">▶ Varrer choques</button><button class="btn sec" id="d-reset">↺</button></div>
+    </div>
+    <div class="legenda">
+      <span style="--c:var(--ref)">PU verdadeiro (curva)</span>
+      <span style="--c:var(--accent)">estimativa pela D<sub>Mod</sub> (tangente)</span>
+      <span class="tr" id="d-leg-mac" style="--c:var(--warn);display:none">estimativa usando D<sub>Mac</sub> (errada)</span>
+      <span style="--c:var(--bad)">erro da estimativa</span>
+    </div>
+    <div class="cv-box"><canvas id="cv-tangente"></canvas></div>
+    <div class="stats">
+      <div class="stat destaque"><div class="n" id="d-s-dmod"></div><div class="l">D<sub>Mod</sub> (D<sub>Mac</sub> = <span id="d-s-dmac"></span>)</div></div>
+      <div class="stat"><div class="n" id="d-s-dv01"></div><div class="l">DV01 (R$ por bp, por título)</div></div>
+      <div class="stat"><div class="n" id="d-s-est"></div><div class="l">ΔPU estimado pela D<sub>Mod</sub></div></div>
+      <div class="stat"><div class="n" id="d-s-real"></div><div class="l">ΔPU verdadeiro (erro: <span id="d-s-err"></span>)</div></div>
+    </div>
+    <div class="oque"><h3>🔍 O que está acontecendo</h3><p id="d-txt"></p></div>
+  </div>
+</section>
+
+<!-- ============ ABA 4: CUPOM E TAXA ============ -->
+<section class="aba" id="aba-cupom">
+  <div class="card">
+    <h2>O que encurta a duration</h2>
+    <p>À esquerda, a Duration de Macaulay contra o prazo, para quatro cupons. A LTN (zero-cupom) é a diagonal: duration = prazo. À direita, a mesma duration contra a taxa. Aperte <b>▶ Subir a taxa</b> e veja todas as curvas com cupom cederem.</p>
+  </div>
+  <div class="card">
+    <div class="controles">
+      <div class="ctrl"><label for="c-taxa">Taxa: <b id="c-taxa-v"></b></label><input type="range" id="c-taxa" min="2" max="25" step="0.25" value="12"></div>
+      <div class="ctrl"><label for="c-prazo">Prazo (gráfico da direita): <b id="c-prazo-v"></b></label><input type="range" id="c-prazo" min="1" max="10" step="0.5" value="8"></div>
+      <div class="ctrl" style="max-width:220px"><label for="c-cup">Cupom em destaque</label>
+        <select id="c-cup"><option value="0">0% (LTN)</option><option value="0.06">6% a.a.</option><option value="0.10" selected>10% a.a. (NTN-F)</option><option value="0.14">14% a.a.</option></select></div>
+      <div class="btns"><button class="btn" id="c-play">▶ Subir a taxa</button><button class="btn sec" id="c-reset">↺</button></div>
+    </div>
+    <div class="grid2">
+      <div class="cv-box"><canvas id="cv-prazo"></canvas></div>
+      <div class="cv-box"><canvas id="cv-taxa"></canvas></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="c-s-ltn"></div><div class="l">D<sub>Mac</sub> da LTN (anos)</div></div>
+      <div class="stat destaque"><div class="n" id="c-s-dmac"></div><div class="l">D<sub>Mac</sub> com o cupom em destaque</div></div>
+      <div class="stat"><div class="n" id="c-s-enc"></div><div class="l">quanto o cupom encurtou</div></div>
+      <div class="stat"><div class="n" id="c-s-dmod"></div><div class="l">D<sub>Mod</sub> correspondente</div></div>
+    </div>
+    <div class="oque"><h3>🔍 O que está acontecendo</h3><p id="c-txt"></p></div>
+  </div>
+</section>
+
+<!-- ============ ABA 5: TESTE ============ -->
+<section class="aba" id="aba-teste">
+  <div class="card">
+    <h2>Teste rápido</h2>
+    <p>Cinco questões. Os erros mais comuns estão entre as alternativas.</p>
+    <div id="quiz" style="margin-top:14px"></div>
+    <div class="placar" id="placar"></div>
+  </div>
+</section>
+
+<footer>Laboratório de Tesouraria de IFs — Simulações · Prof. José Américo</footer>
+</div>
+
+<script>
+// ===MOTOR-INICIO===
+// Motor de cálculo — mesmas fórmulas conferidas em Python (duration_ref.py)
+// Convenção: DU/252, capitalização exponencial, face R$ 1.000,00.
+// NTN-F simplificada: cupom semestral a cada 126 DU.
+const FACE = 1000;
+
+// Fluxos do título: lista de {t (anos), v (R$)}. cupomAA = 0 => LTN.
+function fluxos(cupomAA, nSem) {
+  const c = FACE * (Math.pow(1 + cupomAA, 0.5) - 1);   // cupom semestral equivalente
+  const out = [];
+  for (let i = 1; i <= nSem; i++) {
+    const t = 126 * i / 252;
+    const v = c + (i === nSem ? FACE : 0);
+    if (v > 0) out.push({ t: t, v: v });
+  }
+  return out;
+}
+// PU = soma dos valores presentes
+function pu(fl, y) {
+  let s = 0;
+  for (const f of fl) s += f.v / Math.pow(1 + y, f.t);
+  return s;
+}
+// Duration de Macaulay: média dos prazos ponderada pelo VP
+function dmac(fl, y) {
+  const p = pu(fl, y);
+  if (p <= 0) return 0;
+  let s = 0;
+  for (const f of fl) s += f.t * f.v / Math.pow(1 + y, f.t);
+  return s / p;
+}
+// Duration Modificada
+function dmod(fl, y) { return dmac(fl, y) / (1 + y); }
+// DV01: R$ de variação do PU para 1 ponto-base
+function dv01(fl, y) { return dmod(fl, y) * pu(fl, y) * 1e-4; }
+// ===MOTOR-FIM===
+
+/* ---------- utilidades ---------- */
+const $ = id => document.getElementById(id);
+const cor = nome => getComputedStyle(document.documentElement).getPropertyValue('--' + nome).trim();
+const fmt = (x, d) => x.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const pct = (x, d) => fmt(x * 100, d) + '%';
+const reais = (x, d = 2) => (x < 0 ? '−R$ ' : 'R$ ') + fmt(Math.abs(x), d);
+const sinalR = (x, d = 2) => (x > 0 ? '+' : '') + (x < 0 ? '−' : '') + 'R$ ' + fmt(Math.abs(x), d);
+const nSem = prazoAnos => Math.round(prazoAnos * 2);
+const MONO = "11px 'IBM Plex Mono', monospace";
+const SANS = "13px 'IBM Plex Sans', sans-serif";
+
+// Prepara o canvas para telas de alta densidade; devolve contexto e tamanho
+function prepara(cv, altura) {
+  const dpr = window.devicePixelRatio || 1;
+  const w = cv.parentElement.clientWidth;
+  cv.style.height = altura + 'px';
+  cv.width = Math.round(w * dpr);
+  cv.height = Math.round(altura * dpr);
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, altura);
+  return { ctx, w, h: altura };
+}
+// Grade + eixos genéricos. Devolve funções de escala X e Y.
+function eixos(ctx, w, h, m, xMin, xMax, yMin, yMax, xTicks, yTicks, fx, fy, titulo, rotX, rotY) {
+  const X = v => m.l + (v - xMin) / (xMax - xMin) * (w - m.l - m.r);
+  const Y = v => h - m.b - (v - yMin) / (yMax - yMin) * (h - m.t - m.b);
+  ctx.lineWidth = 1;
+  ctx.font = MONO;
+  ctx.fillStyle = cor('text-dim');
+  ctx.strokeStyle = cor('grid-dim');
+  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  for (const v of yTicks) {
+    ctx.beginPath(); ctx.moveTo(m.l, Y(v)); ctx.lineTo(w - m.r, Y(v)); ctx.stroke();
+    ctx.fillText(fy(v), m.l - 6, Y(v));
+  }
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  for (const v of xTicks) {
+    ctx.beginPath(); ctx.moveTo(X(v), m.t); ctx.lineTo(X(v), h - m.b); ctx.stroke();
+    ctx.fillText(fx(v), X(v), h - m.b + 6);
+  }
+  ctx.strokeStyle = cor('text-dim');
+  ctx.beginPath(); ctx.moveTo(m.l, m.t); ctx.lineTo(m.l, h - m.b); ctx.lineTo(w - m.r, h - m.b); ctx.stroke();
+  if (titulo) { ctx.font = "600 13px 'IBM Plex Sans', sans-serif"; ctx.fillStyle = cor('text'); ctx.textAlign = 'left'; ctx.fillText(titulo, m.l + 4, 8); }
+  ctx.font = MONO; ctx.fillStyle = cor('text-dim');
+  if (rotX) { ctx.textAlign = 'right'; ctx.textBaseline = 'bottom'; ctx.fillText(rotX, w - m.r, h - 4); }
+  if (rotY) { ctx.save(); ctx.translate(12, m.t + (h - m.t - m.b) / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(rotY, 0, 0); ctx.restore(); }
+  return { X, Y };
+}
+function passos(a, b, n) { const out = []; const s = (b - a) / n; for (let i = 0; i <= n; i++) out.push(a + s * i); return out; }
+function tickBonito(min, max, alvo) {
+  const bruto = (max - min) / alvo;
+  const p = Math.pow(10, Math.floor(Math.log10(bruto)));
+  const r = bruto / p;
+  const s = (r < 1.5 ? 1 : r < 3 ? 2 : r < 7 ? 5 : 10) * p;
+  const out = [];
+  for (let v = Math.ceil(min / s) * s; v <= max + 1e-9; v += s) out.push(+v.toFixed(10));
+  return out;
+}
+// Texto com fundo branco (para rótulos sobre o gráfico)
+function rotulo(ctx, txt, x, y, corTxt, alinh = 'center', base = 'middle', fonte = MONO) {
+  ctx.font = fonte; ctx.textAlign = alinh; ctx.textBaseline = base;
+  const lw = ctx.measureText(txt).width;
+  let x0 = alinh === 'center' ? x - lw / 2 : alinh === 'right' ? x - lw : x;
+  let y0 = base === 'middle' ? y - 8 : base === 'top' ? y - 2 : y - 14;
+  ctx.fillStyle = 'rgba(255,255,255,0.88)'; ctx.fillRect(x0 - 3, y0, lw + 6, 17);
+  ctx.fillStyle = corTxt; ctx.fillText(txt, x, y);
+}
+
+/* ---------- navegação ---------- */
+let abaAtual = 'conceito';
+const desenhos = {};          // função de redesenho por aba
+const paradas = {};           // função que para a animação da aba
+document.querySelectorAll('#nav button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('#nav button').forEach(x => x.classList.toggle('ativo', x === b));
+  document.querySelectorAll('.aba').forEach(s => s.classList.remove('ativa'));
+  if (paradas[abaAtual]) paradas[abaAtual]();
+  abaAtual = b.dataset.aba;
+  $('aba-' + abaAtual).classList.add('ativa');
+  if (desenhos[abaAtual]) desenhos[abaAtual]();
+}));
+window.addEventListener('resize', () => { if (desenhos[abaAtual]) desenhos[abaAtual](); });
+
+/* =========================================================
+   ABA 2 — GANGORRA (Duration de Macaulay)
+   ========================================================= */
+const G = { s: 1, anim: null, hover: -1, geo: null };   // s = 0: fluxos nominais; s = 1: valores presentes; hover = índice da barra sob o mouse
+
+function lerMac() {
+  const tit = $('m-tit').value;
+  const y = +$('m-taxa').value / 100;
+  const cup = tit === 'ltn' ? 0 : +$('m-cupom').value / 100;
+  const prazo = +$('m-prazo').value;
+  return { tit, y, cup, prazo, fl: fluxos(cup, nSem(prazo)) };
+}
+
+function desenhaGangorra() {
+  const p = lerMac();
+  $('m-taxa-v').textContent = pct(p.y, 2) + ' a.a.';
+  $('m-cupom-v').textContent = pct(p.cup, 0) + ' a.a.';
+  $('m-prazo-v').textContent = fmt(p.prazo, 1) + ' anos (' + fmt(nSem(p.prazo) * 126, 0) + ' DU)';
+  $('m-cupom-box').style.opacity = p.tit === 'ltn' ? .35 : 1;
+  $('m-cupom').disabled = p.tit === 'ltn';
+
+  const cv = $('cv-gangorra');
+  const alt = cv.parentElement.clientWidth < 600 ? 330 : 380;
+  const { ctx, w, h } = prepara(cv, alt);
+  const m = { l: 56, r: 18, t: 34, b: 92 };
+  const xMax = 10.5;
+  const vMax = FACE * Math.pow(1.16, 0.5);             // escala fixa: maior fluxo possível
+  const yBase = h - m.b;                               // linha da gangorra
+  const X = t => m.l + t / xMax * (w - m.l - m.r);
+  const H = v => v / vMax * (yBase - m.t - 6);
+
+  // pesos interpolados: s=0 nominal, s=1 valor presente
+  const pesos = p.fl.map(f => f.v * Math.pow(1 + p.y, -f.t * G.s));
+  const soma = pesos.reduce((a, b) => a + b, 0);
+  const centro = p.fl.reduce((a, f, i) => a + f.t * pesos[i], 0) / soma;
+
+  // grade horizontal e eixo y (R$)
+  ctx.font = MONO; ctx.lineWidth = 1;
+  for (const v of [0, 250, 500, 750, 1000]) {
+    const yy = yBase - H(v);
+    ctx.strokeStyle = cor('grid-dim'); ctx.beginPath(); ctx.moveTo(m.l, yy); ctx.lineTo(w - m.r, yy); ctx.stroke();
+    ctx.fillStyle = cor('text-dim'); ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText(fmt(v, 0), m.l - 6, yy);
+  }
+  ctx.save(); ctx.translate(12, m.t + (yBase - m.t) / 2); ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center'; ctx.fillText('R$ por fluxo', 0, 0); ctx.restore();
+  ctx.font = "600 13px 'IBM Plex Sans', sans-serif"; ctx.fillStyle = cor('text'); ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.fillText(G.s === 0 ? 'Fluxos nominais (sem desconto)' : G.s < 0.999 ? 'Descontando os fluxos…' : 'Fluxos a valor presente', m.l + 4, 8);
+
+  // vencimento
+  const xv = X(p.prazo);
+  ctx.strokeStyle = cor('ref'); ctx.setLineDash([5, 4]); ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(xv, m.t); ctx.lineTo(xv, yBase); ctx.stroke(); ctx.setLineDash([]);
+
+  // barras
+  const passo = (X(0.5) - X(0));
+  const bw = Math.max(4, Math.min(26, passo * 0.6));
+  p.fl.forEach((f, i) => {
+    const x = X(f.t);
+    // contorno do fluxo nominal
+    ctx.strokeStyle = cor('text-dim'); ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
+    ctx.strokeRect(x - bw / 2, yBase - H(f.v), bw, H(f.v)); ctx.setLineDash([]);
+    // valor (interpolado)
+    ctx.fillStyle = cor('accent');
+    ctx.globalAlpha = 0.85;
+    ctx.fillRect(x - bw / 2, yBase - H(pesos[i]), bw, H(pesos[i]));
+    ctx.globalAlpha = 1;
+  });
+  // barra sob o mouse: contorno em destaque
+  if (G.hover >= 0 && G.hover < p.fl.length && G.s === 1) {
+    const f = p.fl[G.hover], x = X(f.t);
+    ctx.strokeStyle = cor('text'); ctx.lineWidth = 2;
+    ctx.strokeRect(x - bw / 2 - 2, yBase - H(f.v) - 2, bw + 4, H(f.v) + 2);
+  }
+  G.geo = { X, H, bw, yBase, passo, fl: p.fl, y: p.y };   // usado pelo hover
+  // rótulo do último fluxo
+  const ult = p.fl[p.fl.length - 1], pu_ult = pesos[pesos.length - 1];
+  rotulo(ctx, reais(pu_ult, 0), X(ult.t), yBase - H(pu_ult) - 12, cor('accent'), X(ult.t) > w - 60 ? 'right' : 'center');
+
+  // gangorra (viga) e fulcro
+  ctx.strokeStyle = cor('text'); ctx.lineWidth = 4; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(X(0), yBase + 2); ctx.lineTo(X(xMax), yBase + 2); ctx.stroke();
+  ctx.lineCap = 'butt';
+  const xf = X(centro);
+  ctx.fillStyle = cor('accent');
+  ctx.beginPath(); ctx.moveTo(xf, yBase + 5); ctx.lineTo(xf - 14, yBase + 30); ctx.lineTo(xf + 14, yBase + 30); ctx.closePath(); ctx.fill();
+  // marcas de anos sob a viga
+  ctx.font = MONO; ctx.fillStyle = cor('text-dim'); ctx.textBaseline = 'top'; ctx.textAlign = 'center';
+  const passoAno = w < 500 ? 2 : 1;
+  for (let a = 0; a <= 10; a += passoAno) {
+    if (Math.abs(X(a) - xf) < 18) continue;   // evita sobrepor o fulcro
+    ctx.fillText(a + 'a', X(a), yBase + 12);
+  }
+  const lbl = (G.s < 0.999 ? 'equilíbrio ' : 'DMac = ') + fmt(centro, 2) + ' anos';
+  rotulo(ctx, lbl, Math.min(Math.max(xf, m.l + 70), w - m.r - 70), yBase + 46, cor('accent'), 'center', 'top', "600 13px 'IBM Plex Sans', sans-serif");
+  rotulo(ctx, 'vencimento ' + fmt(p.prazo, 1) + 'a', xv, m.t - 2, cor('ref'), xv > w - 120 ? 'right' : 'center', 'top');
+  ctx.font = MONO; ctx.fillStyle = cor('text-dim'); ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+  ctx.fillText('prazo (anos)', w - m.r, h - 4);
+
+  // estatísticas (sempre com o valor presente completo)
+  const PU = pu(p.fl, p.y), D = dmac(p.fl, p.y);
+  const vpUlt = ult.v / Math.pow(1 + p.y, ult.t);
+  $('m-s-pu').textContent = fmt(PU, 2);
+  $('m-s-dmac').textContent = fmt(D, 2);
+  $('m-s-rel').textContent = pct(D / p.prazo, 0);
+  $('m-s-princ').textContent = pct(vpUlt / PU, 0);
+
+  // texto condicionado aos números
+  let t;
+  if (G.s === 0) {
+    t = 'Estes são os fluxos nominais, sem desconto. O ponto de equilíbrio deles ainda não é a Duration de Macaulay. Aperte ▶ Descontar para trazê-los a valor presente.';
+  } else if (G.s < 0.999) {
+    t = 'Os fluxos estão encolhendo para o valor presente. Os mais distantes encolhem mais, porque são descontados por mais tempo; por isso o ponto de equilíbrio anda para a esquerda.';
+  } else if (p.fl.length === 1) {
+    t = `A LTN tem um único fluxo, no vencimento. O ponto de equilíbrio fica exatamente embaixo dele: D<sub>Mac</sub> = ${fmt(D, 2)} anos = prazo, qualquer que seja a taxa. Mude a taxa e veja: a barra encolhe, mas o triângulo não sai do lugar.`;
+  } else {
+    const nominal = p.fl.reduce((a, f) => a + f.t * f.v, 0) / p.fl.reduce((a, f) => a + f.v, 0);
+    t = `Os ${p.fl.length - 1} cupons “puxam” a gangorra para perto: a D<sub>Mac</sub> é ${fmt(D, 2)} anos, ${pct(1 - D / p.prazo, 0)} abaixo do prazo de ${fmt(p.prazo, 1)} anos. ` +
+        `Só com os fluxos nominais o equilíbrio estaria em ${fmt(nominal, 2)} anos; o desconto a ${pct(p.y, 2)} tirou mais ${fmt(nominal - D, 2)} ano(s), porque pesa mais sobre o principal distante. ` +
+        `O último fluxo ainda responde por ${pct(vpUlt / PU, 0)} do PU, e é ele que segura o ponto de equilíbrio longe da origem.`;
+  }
+  $('m-txt').innerHTML = t;
+}
+desenhos.macaulay = desenhaGangorra;
+
+// ---- Hover: mostra fluxo nominal e valor presente da barra apontada ----
+// Só funciona com os fluxos já descontados (G.s = 1), ou seja, depois do ▶ Descontar.
+function hoverGangorra(ev) {
+  const g = G.geo, tip = $('m-tip'), cv = $('cv-gangorra');
+  if (!g || G.s !== 1) { escondeTip(); return; }
+  const r = cv.getBoundingClientRect();
+  const mx = ev.clientX - r.left, my = ev.clientY - r.top;
+  // barra mais próxima na horizontal (dentro de meio semestre)
+  let idx = -1, dist = Infinity;
+  g.fl.forEach((f, i) => { const d = Math.abs(g.X(f.t) - mx); if (d < dist) { dist = d; idx = i; } });
+  const alcance = Math.max(g.bw / 2 + 4, g.passo / 2);
+  if (idx < 0 || dist > alcance || my > g.yBase + 4 || my < 20) { escondeTip(); return; }
+  if (idx !== G.hover) { G.hover = idx; desenhaGangorra(); }
+  const f = g.fl[idx];
+  const fator = Math.pow(1 + g.y, -f.t);
+  const vp = f.v * fator;
+  const puTot = pu(g.fl, g.y);
+  const ehUltimo = idx === g.fl.length - 1;
+  const tipo = g.fl.length === 1 ? 'Principal (LTN)' : ehUltimo ? 'Último cupom + principal' : 'Cupom ' + (idx + 1);
+  tip.innerHTML =
+    `<div class="tt">${tipo} · ${fmt(f.t, 1)} ano(s) · ${fmt(f.t * 252, 0)} DU</div>` +
+    `<div class="lin nom"><span>Fluxo nominal</span><span>R$ ${fmt(f.v, 2)}</span></div>` +
+    `<div class="lin vp"><span>Valor presente</span><span>R$ ${fmt(vp, 2)}</span></div>` +
+    `<div class="rod">fator de desconto 1/(1+${pct(g.y, 2)})<sup>${fmt(f.t, 1)}</sup> = ${fmt(fator, 4)} · ${pct(vp / puTot, 1)} do PU</div>`;
+  // posiciona a caixinha ao lado da barra, sem sair do gráfico
+  tip.classList.add('on');
+  const tw = tip.offsetWidth, th = tip.offsetHeight;
+  let tx = g.X(f.t) + g.bw / 2 + 10;
+  if (tx + tw > r.width - 6) tx = g.X(f.t) - g.bw / 2 - 10 - tw;
+  tx = Math.max(6, tx);
+  let ty = Math.min(30, r.height - th - 6);   // faixa de cima: não cobre a gangorra nem o rótulo da DMac
+  tip.style.left = tx + 'px'; tip.style.top = ty + 'px';
+}
+function escondeTip() {
+  $('m-tip').classList.remove('on');
+  if (G.hover !== -1) { G.hover = -1; if (abaAtual === 'macaulay') desenhaGangorra(); }
+}
+$('cv-gangorra').addEventListener('pointermove', hoverGangorra);
+$('cv-gangorra').addEventListener('pointerdown', hoverGangorra);   // toque no celular
+$('cv-gangorra').addEventListener('pointerleave', escondeTip);
+
+function playGangorra() {
+  pararGangorra();
+  escondeTip();
+  G.s = 0;
+  const t0 = performance.now(), dur = 2600;
+  const passo = agora => {
+    const k = Math.min(1, (agora - t0) / dur);
+    G.s = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;   // easing suave
+    desenhaGangorra();
+    if (k < 1) G.anim = requestAnimationFrame(passo); else G.anim = null;
+  };
+  G.anim = requestAnimationFrame(passo);
+}
+function pararGangorra() { if (G.anim) cancelAnimationFrame(G.anim); G.anim = null; G.s = 1; }
+paradas.macaulay = pararGangorra;
+$('m-play').addEventListener('click', playGangorra);
+$('m-reset').addEventListener('click', () => { pararGangorra(); G.s = 0; desenhaGangorra(); });
+['m-tit', 'm-taxa', 'm-cupom', 'm-prazo'].forEach(id => $(id).addEventListener('input', () => { pararGangorra(); escondeTip(); desenhaGangorra(); }));
+
+/* =========================================================
+   ABA 3 — TANGENTE (Duration Modificada)
+   ========================================================= */
+const T = { anim: null };
+
+function desenhaTangente() {
+  const tit = $('d-tit').value;
+  const y0 = +$('d-taxa').value / 100;
+  const prazo = +$('d-prazo').value;
+  const dy = +$('d-choque').value / 10000;
+  const mostraMac = $('d-erro-mac').checked;
+  const fl = fluxos(tit === 'ltn' ? 0 : 0.10, nSem(prazo));
+  const P0 = pu(fl, y0), Dm = dmod(fl, y0), Dc = dmac(fl, y0);
+  const reta = y => P0 - Dm * P0 * (y - y0);           // tangente
+  const retaMac = y => P0 - Dc * P0 * (y - y0);        // armadilha
+
+  $('d-taxa-v').textContent = pct(y0, 2) + ' a.a.';
+  $('d-prazo-v').textContent = fmt(prazo, 1) + ' anos';
+  $('d-choque-v').textContent = (dy > 0 ? '+' : dy < 0 ? '−' : '') + fmt(Math.abs(dy) * 10000, 0) + ' bp';
+  $('d-leg-mac').style.display = mostraMac ? '' : 'none';
+
+  const cv = $('cv-tangente');
+  const { ctx, w, h } = prepara(cv, cv.parentElement.clientWidth < 600 ? 320 : 380);
+  const m = { l: 64, r: 18, t: 34, b: 40 };
+  const xMin = y0 - 0.055, xMax = y0 + 0.055;
+  // limites verticais: curva, tangente (e reta Macaulay, se visível)
+  let vMin = Infinity, vMax = -Infinity;
+  for (const yy of passos(xMin, xMax, 80)) {
+    const vals = [pu(fl, yy), reta(yy)].concat(mostraMac ? [retaMac(yy)] : []);
+    for (const v of vals) { vMin = Math.min(vMin, v); vMax = Math.max(vMax, v); }
+  }
+  const pad = (vMax - vMin) * 0.06; vMin -= pad; vMax += pad;
+  const { X, Y } = eixos(ctx, w, h, m, xMin, xMax, vMin, vMax,
+    tickBonito(xMin, xMax, w < 500 ? 4 : 8), tickBonito(vMin, vMax, 6),
+    v => fmt(v * 100, 1) + '%', v => fmt(v, 0), 'PU × taxa', 'taxa (% a.a.)', 'PU (R$)');
+
+  ctx.save(); ctx.beginPath(); ctx.rect(m.l, m.t, w - m.l - m.r, h - m.t - m.b); ctx.clip();
+  // curva verdadeira
+  ctx.strokeStyle = cor('ref'); ctx.lineWidth = 2.5; ctx.beginPath();
+  passos(xMin, xMax, 160).forEach((yy, i) => { const px = X(yy), py = Y(pu(fl, yy)); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+  ctx.stroke();
+  // reta da Macaulay (armadilha)
+  if (mostraMac) {
+    ctx.strokeStyle = cor('warn'); ctx.lineWidth = 2; ctx.setLineDash([7, 5]);
+    ctx.beginPath(); ctx.moveTo(X(xMin), Y(retaMac(xMin))); ctx.lineTo(X(xMax), Y(retaMac(xMax))); ctx.stroke(); ctx.setLineDash([]);
+  }
+  // tangente
+  ctx.strokeStyle = cor('accent'); ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(X(xMin), Y(reta(xMin))); ctx.lineTo(X(xMax), Y(reta(xMax))); ctx.stroke();
+  ctx.restore();
+
+  // ponto atual
+  ctx.fillStyle = cor('text'); ctx.beginPath(); ctx.arc(X(y0), Y(P0), 5, 0, 2 * Math.PI); ctx.fill();
+  const y1 = y0 + dy, Preal = pu(fl, y1), Pest = reta(y1), Pmac = retaMac(y1);
+  if (dy !== 0) {
+    // guia vertical na nova taxa
+    ctx.strokeStyle = cor('text-dim'); ctx.setLineDash([3, 4]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(X(y1), m.t); ctx.lineTo(X(y1), h - m.b); ctx.stroke(); ctx.setLineDash([]);
+    // segmento de erro
+    ctx.strokeStyle = cor('bad'); ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(X(y1), Y(Preal)); ctx.lineTo(X(y1), Y(Pest)); ctx.stroke();
+    if (mostraMac) {
+      ctx.fillStyle = cor('warn'); ctx.beginPath(); ctx.arc(X(y1), Y(Pmac), 5, 0, 2 * Math.PI); ctx.fill();
+    }
+    ctx.fillStyle = cor('accent'); ctx.beginPath(); ctx.arc(X(y1), Y(Pest), 5.5, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = cor('ref'); ctx.beginPath(); ctx.arc(X(y1), Y(Preal), 5.5, 0, 2 * Math.PI); ctx.fill();
+    const ladoDir = X(y1) < w - 170;
+    const ax = X(y1) + (ladoDir ? 10 : -10), al = ladoDir ? 'left' : 'right';
+    const err = Preal - Pest;
+    const yErro = Y((Preal + Pest) / 2);
+    if (Math.abs(Y(Preal) - Y(Pest)) > 14) rotulo(ctx, 'erro ' + sinalR(err), ax, yErro, cor('bad'), al);
+  }
+  const txtHoje = 'hoje: ' + pct(y0, 2) + ' · PU ' + fmt(P0, 2);
+  if (w < 560) rotulo(ctx, txtHoje, w - m.r - 6, m.t + 12, cor('text'), 'right');   // celular: canto superior direito
+  else rotulo(ctx, txtHoje, X(y0) + 10, Y(P0) - 14, cor('text'), 'left');
+
+  // estatísticas
+  const dReal = Preal - P0, dEst = Pest - P0, err = Preal - Pest;
+  $('d-s-dmod').textContent = fmt(Dm, 2);
+  $('d-s-dmac').textContent = fmt(Dc, 2);
+  $('d-s-dv01').textContent = fmt(dv01(fl, y0), 4);
+  $('d-s-est').textContent = sinalR(dEst);
+  $('d-s-real').textContent = sinalR(dReal);
+  $('d-s-err').textContent = sinalR(err);
+
+  // texto condicionado
+  let t;
+  if (dy === 0) {
+    t = `Sem choque, estimativa e PU coincidem. A inclinação da reta é −D<sub>Mod</sub> × PU = −${fmt(Dm * P0, 2)} reais por 100% de taxa, ou seja, R$ ${fmt(dv01(fl, y0), 4)} por ponto-base (o DV01). Mova o choque.`;
+  } else {
+    const errRel = Math.abs(err / dReal);
+    const dir = dy > 0 ? 'alta' : 'queda';
+    let qual;
+    if (errRel < 0.01) qual = `A aproximação é excelente: erra só ${pct(errRel, 1)} da variação verdadeira.`;
+    else if (errRel < 0.05) qual = `A aproximação ainda é boa (erro de ${pct(errRel, 1)} da variação verdadeira), mas a curvatura já aparece.`;
+    else qual = `O erro já é de ${pct(errRel, 1)} da variação verdadeira: a reta não dá conta da curvatura. Esse “pedaço” que a D<sub>Mod</sub> não capta é a <b>convexidade</b>, tema da próxima animação.`;
+    const lado = err > 0
+      ? (dy > 0 ? `Na ${dir}, a reta <b>exagera a perda</b>: estima ${sinalR(dEst)}, mas o PU cai só ${sinalR(dReal)}.`
+                : `Na ${dir}, a reta <b>subestima o ganho</b>: estima ${sinalR(dEst)}, mas o PU sobe ${sinalR(dReal)}.`)
+      : `A reta ficou acima da curva neste ponto (erro de ${sinalR(err)}).`;
+    t = `Choque de ${(dy > 0 ? '+' : '−') + fmt(Math.abs(dy) * 10000, 0)} bp. ${lado} ${qual}`;
+    if (mostraMac) {
+      const exc = (Pmac - P0) - dEst;
+      t += ` Usando a D<sub>Mac</sub> (${fmt(Dc, 2)}) no lugar da D<sub>Mod</sub> (${fmt(Dm, 2)}), a estimativa seria ${sinalR(Pmac - P0)}, R$ ${fmt(Math.abs(exc), 2)} além da D<sub>Mod</sub>: um exagero de ${pct(Dc / Dm - 1, 1)} (= a própria taxa, ${pct(y0, 2)}) que existe <b>mesmo para choques pequenos</b>.`;
+    }
+  }
+  $('d-txt').innerHTML = t;
+}
+desenhos.modificada = desenhaTangente;
+
+// Animação: choque vai de 0 a +500, depois a −500 e volta a 0
+function playTangente() {
+  pararTangente();
+  const t0 = performance.now(), dur = 6000;
+  const passo = agora => {
+    const k = Math.min(1, (agora - t0) / dur);
+    const ch = 500 * Math.sin(2 * Math.PI * k);
+    $('d-choque').value = Math.round(ch / 25) * 25;
+    desenhaTangente();
+    if (k < 1) T.anim = requestAnimationFrame(passo); else { T.anim = null; $('d-choque').value = 0; desenhaTangente(); }
+  };
+  T.anim = requestAnimationFrame(passo);
+}
+function pararTangente() { if (T.anim) cancelAnimationFrame(T.anim); T.anim = null; }
+paradas.modificada = pararTangente;
+$('d-play').addEventListener('click', playTangente);
+$('d-reset').addEventListener('click', () => { pararTangente(); $('d-choque').value = 0; desenhaTangente(); });
+['d-tit', 'd-taxa', 'd-prazo', 'd-choque', 'd-erro-mac'].forEach(id => $(id).addEventListener('input', () => { pararTangente(); desenhaTangente(); }));
+
+/* =========================================================
+   ABA 4 — CUPOM E TAXA
+   ========================================================= */
+const CUPONS = [
+  { c: 0,    nome: 'LTN',  var: 'ref' },
+  { c: 0.06, nome: '6%',   var: 'warn' },
+  { c: 0.10, nome: '10%',  var: 'accent' },
+  { c: 0.14, nome: '14%',  var: 'roxo' }
+];
+const Cst = { anim: null };
+
+function desenhaCupom() {
+  const y = +$('c-taxa').value / 100;
+  const prazo = +$('c-prazo').value;
+  const cupSel = +$('c-cup').value;
+  $('c-taxa-v').textContent = pct(y, 2) + ' a.a.';
+  $('c-prazo-v').textContent = fmt(prazo, 1) + ' anos';
+  const pequeno = $('cv-prazo').parentElement.clientWidth < 420;
+  const alt = 320;
+
+  // --- gráfico 1: DMac × prazo ---
+  {
+    const { ctx, w, h } = prepara($('cv-prazo'), alt);
+    const m = { l: 44, r: pequeno ? 40 : 44, t: 34, b: 40 };
+    const { X, Y } = eixos(ctx, w, h, m, 0, 10, 0, 10, [0, 2, 4, 6, 8, 10], [0, 2, 4, 6, 8, 10],
+      v => fmt(v, 0), v => fmt(v, 0), 'DMac × prazo (taxa ' + pct(y, 2) + ')', 'prazo (anos)', 'DMac (anos)');
+    const ordem = CUPONS.slice().sort((a, b) => (a.c === cupSel) - (b.c === cupSel)); // destacado por último
+    for (const k of ordem) {
+      const sel = k.c === cupSel;
+      ctx.strokeStyle = cor(k.var); ctx.lineWidth = sel ? 3.2 : 1.6; ctx.globalAlpha = sel ? 1 : 0.75;
+      ctx.beginPath();
+      for (let n = 1; n <= 20; n++) {
+        const px = X(n / 2), py = Y(dmac(fluxos(k.c, n), y));
+        n === 1 ? ctx.moveTo(X(0), Y(0)) : null;
+        ctx.lineTo(px, py);
+      }
+      ctx.stroke(); ctx.globalAlpha = 1;
+      const yFim = dmac(fluxos(k.c, 20), y);
+      ctx.font = sel ? "600 12px 'IBM Plex Mono', monospace" : MONO;
+      ctx.fillStyle = cor(k.var); ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText(k.nome, X(10) + 4, Y(yFim));
+    }
+    // marcador no prazo selecionado
+    const dSel = dmac(fluxos(cupSel, nSem(prazo)), y);
+    ctx.fillStyle = cor('text'); ctx.beginPath(); ctx.arc(X(prazo), Y(dSel), 5, 0, 2 * Math.PI); ctx.fill();
+  }
+  // --- gráfico 2: DMac × taxa ---
+  {
+    const { ctx, w, h } = prepara($('cv-taxa'), alt);
+    const m = { l: 44, r: pequeno ? 40 : 44, t: 34, b: 40 };
+    const yTop = Math.max(1, prazo * 1.05);
+    const { X, Y } = eixos(ctx, w, h, m, 0.02, 0.25, 0, yTop, [0.05, 0.10, 0.15, 0.20, 0.25], tickBonito(0, yTop, 5),
+      v => fmt(v * 100, 0) + '%', v => fmt(v, 1), 'DMac × taxa (prazo ' + fmt(prazo, 1) + 'a)', 'taxa (% a.a.)', 'DMac (anos)');
+    const ordem = CUPONS.slice().sort((a, b) => (a.c === cupSel) - (b.c === cupSel));
+    const ultY = [];
+    for (const k of ordem) {
+      const sel = k.c === cupSel;
+      const fl = fluxos(k.c, nSem(prazo));
+      ctx.strokeStyle = cor(k.var); ctx.lineWidth = sel ? 3.2 : 1.6; ctx.globalAlpha = sel ? 1 : 0.75;
+      ctx.beginPath();
+      passos(0.02, 0.25, 60).forEach((yy, i) => { const px = X(yy), py = Y(dmac(fl, yy)); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+      ctx.stroke(); ctx.globalAlpha = 1;
+      // rótulo à direita, evitando sobreposição
+      let ly = Y(dmac(fl, 0.25));
+      for (const o of ultY) if (Math.abs(o - ly) < 12) ly = o + (ly >= o ? 12 : -12);
+      ultY.push(ly);
+      ctx.font = sel ? "600 12px 'IBM Plex Mono', monospace" : MONO;
+      ctx.fillStyle = cor(k.var); ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText(k.nome, X(0.25) + 4, ly);
+    }
+    // linha da taxa atual
+    ctx.strokeStyle = cor('text'); ctx.setLineDash([4, 4]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(X(y), m.t); ctx.lineTo(X(y), h - m.b); ctx.stroke(); ctx.setLineDash([]);
+    const dSel = dmac(fluxos(cupSel, nSem(prazo)), y);
+    ctx.fillStyle = cor('text'); ctx.beginPath(); ctx.arc(X(y), Y(dSel), 5, 0, 2 * Math.PI); ctx.fill();
+  }
+
+  // estatísticas e texto (no prazo e taxa selecionados)
+  const flSel = fluxos(cupSel, nSem(prazo));
+  const D = dmac(flSel, y), Dm = dmod(flSel, y);
+  $('c-s-ltn').textContent = fmt(prazo, 2);
+  $('c-s-dmac').textContent = fmt(D, 2);
+  $('c-s-enc').textContent = fmt(prazo - D, 2) + ' a (' + pct(1 - D / prazo, 0) + ')';
+  $('c-s-dmod').textContent = fmt(Dm, 2);
+
+  let t;
+  if (cupSel === 0) {
+    t = `Em destaque está a LTN: D<sub>Mac</sub> = prazo = ${fmt(prazo, 1)} anos, a qualquer taxa. No gráfico da direita, a linha dela é reta e horizontal. Escolha um cupom para ver a diferença.`;
+  } else {
+    const yAlta = Math.min(0.25, y + 0.05);
+    const Dalta = dmac(flSel, yAlta);
+    const dC6 = dmac(fluxos(0.06, nSem(prazo)), y), dC14 = dmac(fluxos(0.14, nSem(prazo)), y);
+    t = `Com cupom de ${pct(cupSel, 0)} e taxa de ${pct(y, 2)}, o título de ${fmt(prazo, 1)} anos tem D<sub>Mac</sub> de ${fmt(D, 2)} anos, ${pct(1 - D / prazo, 0)} abaixo do prazo. `;
+    if (yAlta > y + 1e-9) t += `Se a taxa fosse ${pct(yAlta, 2)}, cairia para ${fmt(Dalta, 2)} anos: o desconto mais pesado esvazia os fluxos distantes. `;
+    t += `No mesmo prazo e taxa, cupom de 6% dá ${fmt(dC6, 2)} anos e cupom de 14% dá ${fmt(dC14, 2)}: quanto mais dinheiro volta cedo, mais curta a duration.`;
+  }
+  $('c-txt').innerHTML = t;
+}
+desenhos.cupom = desenhaCupom;
+
+// Animação: taxa sobe de 5% a 25% e volta
+function playCupom() {
+  pararCupom();
+  const t0 = performance.now(), dur = 5000;
+  const passo = agora => {
+    const k = Math.min(1, (agora - t0) / dur);
+    const tri = k < 0.5 ? k * 2 : 2 - k * 2;
+    $('c-taxa').value = (5 + 20 * tri).toFixed(2);
+    desenhaCupom();
+    if (k < 1) Cst.anim = requestAnimationFrame(passo); else { Cst.anim = null; $('c-taxa').value = 12; desenhaCupom(); }
+  };
+  Cst.anim = requestAnimationFrame(passo);
+}
+function pararCupom() { if (Cst.anim) cancelAnimationFrame(Cst.anim); Cst.anim = null; }
+paradas.cupom = pararCupom;
+$('c-play').addEventListener('click', playCupom);
+$('c-reset').addEventListener('click', () => { pararCupom(); $('c-taxa').value = 12; $('c-prazo').value = 8; $('c-cup').value = '0.10'; desenhaCupom(); });
+['c-taxa', 'c-prazo', 'c-cup'].forEach(id => $(id).addEventListener('input', () => { pararCupom(); desenhaCupom(); }));
+
+/* =========================================================
+   ABA 5 — TESTE
+   ========================================================= */
+const QUESTOES = [
+  { e: 'Uma LTN vence em 3 anos (756 DU) e é negociada a 13% a.a. Qual é a sua Duration de Macaulay?',
+    a: ['3 anos', 'Um pouco menos de 3 anos, porque a taxa desconta o fluxo', '3 / 1,13 = 2,65 anos', 'Depende do PU de compra'],
+    c: 0,
+    f: 'A LTN tem um único fluxo, no vencimento; a média ponderada de um só prazo é ele mesmo: D<sub>Mac</sub> = 3 anos, a qualquer taxa. Os 2,65 anos são a Duration <i>Modificada</i>, e é aí que a confusão costuma aparecer.' },
+  { e: 'Uma NTN-F de 5 anos está ao par (PU R$ 1.000,00, taxa 10% a.a.), com D<sub>Mac</sub> = 4,07 e D<sub>Mod</sub> = 3,70. Qual é a estimativa de variação do PU para uma alta de 50 bp?',
+    a: ['−R$ 18,51', '−R$ 20,36', '−R$ 25,00', '+R$ 18,51'],
+    c: 0,
+    f: 'ΔPU ≈ −D<sub>Mod</sub> × PU × Δy = −3,70 × 1.000 × 0,005 = −R$ 18,51 (o exato é −R$ 18,28). −R$ 20,36 usa a Macaulay sem dividir por (1+y); −R$ 25,00 usa o prazo como se fosse duration; o sinal positivo esquece que taxa e PU andam em sentidos opostos.' },
+  { e: 'Dois títulos prefixados de 5 anos, ambos a 12% a.a.: um paga cupom de 6% a.a. e o outro, 14% a.a. Qual tem a maior Duration de Macaulay?',
+    a: ['O de cupom 6%', 'O de cupom 14%', 'São iguais, porque têm o mesmo prazo', 'Depende só da taxa, não do cupom'],
+    c: 0,
+    f: 'Cupom menor ⇒ uma fatia maior do valor fica no principal, lá no fim ⇒ ponto de equilíbrio mais distante. Aqui: 4,31 anos (cupom 6%) contra 3,83 anos (cupom 14%). “Mesmo prazo ⇒ mesma duration” só vale para zero-cupom.' },
+  { e: 'A taxa de uma NTN-F de 5 anos sobe de 10% para 15% a.a. O que acontece com a sua Duration de Macaulay?',
+    a: ['Diminui', 'Aumenta', 'Não muda, porque os prazos dos fluxos não mudam', 'Passa a ser igual ao prazo'],
+    c: 0,
+    f: 'Taxa maior desconta mais os fluxos distantes, que perdem peso; o equilíbrio anda para a esquerda: de 4,07 para 3,97 anos. Os prazos não mudam, mas os <i>pesos</i> mudam, e a duration é uma média ponderada.' },
+  { e: 'NTN-F de 10 anos a 13% a.a. (PU R$ 840,98, D<sub>Mod</sub> 5,55). A taxa sobe 300 bp de uma vez. Como a estimativa pela D<sub>Mod</sub> se compara com a variação verdadeira?',
+    a: ['Exagera a perda: estima −R$ 139,98, mas o PU cai R$ 124,31', 'Acerta, porque a D<sub>Mod</sub> é a derivada exata do PU', 'Subestima a perda: o PU cai mais que o estimado', 'Só erra em quedas de taxa, nunca em altas'],
+    c: 0,
+    f: 'A curva PU × taxa é convexa: fica sempre acima da tangente. Na alta, a reta exagera a perda (−139,98 contra −124,31); na queda de 300 bp ela subestimaria o ganho (+139,98 contra +159,02). A derivada é exata só no ponto; para choques grandes falta a convexidade.' }
+];
+let acertos = 0, respondidas = 0;
+function montaQuiz() {
+  const box = $('quiz');
+  QUESTOES.forEach((q, i) => {
+    // embaralha alternativas de forma fixa (para a certa não ficar sempre em A)
+    const ordem = [0, 1, 2, 3].map(k => (k + i) % 4);
+    const div = document.createElement('div'); div.className = 'q';
+    div.innerHTML = `<div class="enun"><span class="num">Q${i + 1}</span>${q.e}</div>` +
+      ordem.map(k => `<button class="alt" data-k="${k}">${String.fromCharCode(65 + ordem.indexOf(k))}) ${q.a[k]}</button>`).join('') +
+      `<div class="fb"></div>`;
+    box.appendChild(div);
+    div.querySelectorAll('.alt').forEach(b => b.addEventListener('click', () => {
+      const k = +b.dataset.k, ok = k === q.c;
+      div.querySelectorAll('.alt').forEach(x => { x.disabled = true; if (+x.dataset.k === q.c) x.classList.add('certa'); });
+      if (!ok) b.classList.add('errada');
+      const fb = div.querySelector('.fb');
+      fb.className = 'fb on ' + (ok ? 'ok' : 'no');
+      fb.innerHTML = (ok ? '<b>✓ Isso.</b> ' : '<b>✗ Não é essa.</b> ') + q.f;
+      respondidas++; if (ok) acertos++;
+      $('placar').textContent = `Acertos: ${acertos} de ${respondidas}` + (respondidas === QUESTOES.length ? ' — teste concluído.' : '');
+    }));
+  });
+}
+montaQuiz();
+</script>
+</body>
+</html>

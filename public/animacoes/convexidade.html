@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convexidade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Karla:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8f6f2;
+  --bg2:#efebe4;
+  --bg-card:#ffffff;
+  --text:#221d22;
+  --text-dim:#57505a;
+  --accent:#74307a;
+  --ok:#276b2b;
+  --bad:#b83227;
+  --ref:#1f5fa8;
+  --warn:#9a5a00;
+  --grid-dim:#e5e0d7;
+  --accent-bg:#f3e9f4;
+  --ok-bg:#e8f3e8;
+  --bad-bg:#fbeceb;
+  --warn-bg:#fdf3e2;
+  --ref-bg:#e8eff9;
+  --accent-brd:#d9c0dc;
+  --ok-brd:#b9dbba;
+  --bad-brd:#efc2bd;
+  --ref-brd:#bccfeb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Karla',system-ui,sans-serif;font-size:16.5px;line-height:1.6}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 20px 40px}
+header{margin-bottom:22px;animation:sobe .6s ease both}
+.tag{display:inline-block;font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-bg);border:1px solid var(--accent-brd);border-radius:999px;padding:3px 12px;margin-bottom:12px}
+h1{font-family:'Lora',Georgia,serif;font-weight:600;font-size:clamp(30px,5vw,46px);line-height:1.12}
+h1 em{color:var(--accent);font-style:italic;font-weight:500}
+.lead{color:var(--text-dim);max-width:780px;margin-top:10px;font-size:17.5px}
+nav{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 18px}
+nav button{font:500 15px 'Karla',sans-serif;color:var(--text);background:var(--bg-card);border:1px solid var(--grid-dim);border-radius:999px;padding:8px 16px;cursor:pointer;transition:background .2s,border-color .2s}
+nav button:hover{border-color:var(--accent)}
+nav button.ativo{background:var(--accent);border-color:var(--accent);color:#fff}
+.aba{display:none;animation:sobe .45s ease both}
+.aba.ativa{display:block}
+@keyframes sobe{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{background:var(--bg-card);border-radius:14px;box-shadow:0 1px 2px rgba(30,20,30,.05),0 6px 22px rgba(30,20,30,.06);padding:22px;margin-bottom:18px}
+h2{font-family:'Lora',Georgia,serif;font-weight:600;font-size:25px;margin-bottom:8px}
+h3{font-size:16.5px;font-weight:600;margin-bottom:6px}
+p+p{margin-top:10px}
+.formula{font-family:'Lora',Georgia,serif;font-size:clamp(18px,2.5vw,23px);text-align:center;background:var(--bg2);border-radius:10px;padding:16px 12px;margin:12px 0;line-height:1.55;overflow-x:auto}
+.formula small{display:block;font-family:'Karla',sans-serif;font-size:13.5px;color:var(--text-dim);margin-top:4px}
+.formula .t1{color:var(--text-dim)}
+.formula .t2{color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.par{border-radius:12px;padding:16px;border:1px solid}
+.par.certo{background:var(--ok-bg);border-color:var(--ok-brd)}
+.par.errado{background:var(--bad-bg);border-color:var(--bad-brd)}
+.par .rot{font:500 13px 'Roboto Mono',monospace;letter-spacing:.04em;margin-bottom:6px}
+.par.certo .rot{color:var(--ok)}
+.par.errado .rot{color:var(--bad)}
+.caixa{border-radius:12px;padding:14px 16px;margin-top:14px;border-left:4px solid}
+.caixa.dica{background:var(--accent-bg);border-color:var(--accent)}
+.caixa.cuidado{background:var(--warn-bg);border-color:var(--warn)}
+.caixa.mundo{background:var(--ref-bg);border-color:var(--ref)}
+table.cart{width:100%;border-collapse:collapse;margin:10px 0;font-size:15px}
+table.cart th,table.cart td{padding:7px 10px;border-bottom:1px solid var(--grid-dim);text-align:left}
+table.cart th{font-weight:600;color:var(--text-dim);font-size:13.5px}
+table.cart td.n{font-family:'Roboto Mono',monospace;text-align:right}
+table.cart th.n{text-align:right}
+.ca{color:var(--ref);font-weight:600}
+.cb{color:var(--accent);font-weight:600}
+details{margin-top:14px;background:var(--bg2);border-radius:10px;padding:10px 14px}
+summary{cursor:pointer;font-weight:600;color:var(--accent)}
+details .formula{background:var(--bg-card)}
+.controles{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;margin-bottom:14px}
+.ctrl{display:flex;flex-direction:column;gap:4px;min-width:170px;flex:1}
+.ctrl label{font-size:14px;color:var(--text-dim)}
+.ctrl label b{font-family:'Roboto Mono',monospace;color:var(--text);font-weight:500}
+input[type=range]{accent-color:var(--accent);width:100%}
+select{font:15px 'Karla',sans-serif;padding:7px 10px;border-radius:8px;border:1px solid var(--grid-dim);background:var(--bg-card);color:var(--text)}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font:600 15px 'Karla',sans-serif;border-radius:8px;padding:8px 14px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:#fff}
+.btn.sec{background:var(--bg-card);color:var(--accent)}
+.btn:hover{filter:brightness(1.1)}
+canvas{display:block;width:100%;background:var(--bg-card)}
+.cv-box{border:1px solid var(--grid-dim);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:6px 0 4px}
+.stat{background:var(--bg2);border-radius:10px;padding:10px 12px}
+.stat .n{font:500 clamp(17px,2.3vw,23px) 'Roboto Mono',monospace;color:var(--text)}
+.stat .l{font-size:13px;color:var(--text-dim);line-height:1.3}
+.stat.destaque .n{color:var(--accent)}
+.stat.azul .n{color:var(--ref)}
+.oque{margin-top:14px;background:var(--accent-bg);border:1px solid var(--accent-brd);border-radius:12px;padding:14px 16px}
+.oque h3{color:var(--accent)}
+.legenda{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--text-dim);margin:2px 0 10px}
+.legenda span::before{content:'';display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;background:var(--c,#000);border-radius:2px}
+.legenda span.tr::before{background:repeating-linear-gradient(90deg,var(--c) 0 5px,transparent 5px 9px)}
+.legenda span.bx::before{height:10px;opacity:.35}
+.nota{font-size:13.5px;color:var(--text-dim);margin-top:8px}
+.q{border:1px solid var(--grid-dim);border-radius:12px;padding:16px;margin-bottom:14px}
+.q .enun{font-weight:500;margin-bottom:10px}
+.q .num{font:500 13px 'Roboto Mono',monospace;color:var(--accent);margin-right:6px}
+.alt{display:block;width:100%;text-align:left;font:15.5px 'Karla',sans-serif;color:var(--text);background:var(--bg-card);border:1px solid var(--grid-dim);border-radius:9px;padding:9px 12px;margin-bottom:7px;cursor:pointer}
+.alt:hover:not(:disabled){border-color:var(--accent)}
+.alt:disabled{cursor:default}
+.alt.certa{background:var(--ok-bg);border-color:var(--ok)}
+.alt.errada{background:var(--bad-bg);border-color:var(--bad)}
+.fb{display:none;margin-top:8px;padding:12px 14px;border-radius:10px;font-size:15.5px}
+.fb.on{display:block}
+.fb.ok{background:var(--ok-bg);border:1px solid var(--ok-brd)}
+.fb.no{background:var(--bad-bg);border:1px solid var(--bad-brd)}
+.placar{font:500 15px 'Roboto Mono',monospace;color:var(--accent);margin-top:6px}
+footer{margin-top:26px;padding-top:14px;border-top:1px solid var(--grid-dim);font-size:13.5px;color:var(--text-dim)}
+@media (max-width:760px){
+  .grid2{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .wrap{padding:20px 14px 30px}
+  .card{padding:16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="tag">Tesouraria de IFs · Renda fixa</span>
+  <h1>Convexidade: <em>a curva que a duration não vê</em></h1>
+  <p class="lead">A Duration Modificada é uma reta; o PU é uma curva. A convexidade mede essa curvatura: corrige a estimativa para choques grandes e explica por que duas carteiras com a <b>mesma duration</b> podem reagir de forma diferente ao mesmo choque.</p>
+</header>
+
+<nav id="nav">
+  <button data-aba="conceito" class="ativo">① Conceito</button>
+  <button data-aba="correcao">② Corrigindo a Duration</button>
+  <button data-aba="carteiras">③ Mesma duration, choques diferentes</button>
+  <button data-aba="preco">④ O preço da convexidade</button>
+  <button data-aba="teste">⑤ Teste</button>
+</nav>
+
+<!-- ============ ABA 1: CONCEITO ============ -->
+<section class="aba ativa" id="aba-conceito">
+  <div class="card">
+    <h2>Da reta à parábola</h2>
+    <p>Na animação de Duration vimos que a tangente erra quando o choque é grande, e erra <b>sempre para o mesmo lado</b>: a curva PU × taxa fica acima da reta. A convexidade é a medida dessa curvatura, e entra como um segundo termo na estimativa:</p>
+    <div class="formula"><span class="t1">ΔPU ≈ −D<sub>Mod</sub> · PU · Δy</span> <span class="t2">+ ½ · C · PU · (Δy)²</span>
+      <small>1º termo: a duration (reta) &nbsp;·&nbsp; 2º termo: a convexidade (curvatura)</small>
+    </div>
+    <div class="formula">C = Σ t<sub>i</sub>(t<sub>i</sub>+1) · VP<sub>i</sub> / [ PU · (1+y)² ]
+      <small>t<sub>i</sub> = DU<sub>i</sub>/252 &nbsp;·&nbsp; VP<sub>i</sub> = F<sub>i</sub>/(1+y)<sup>t<sub>i</sub></sup> &nbsp;·&nbsp; para uma LTN de prazo T: C = T(T+1)/(1+y)²</small>
+    </div>
+    <p>Repare no <b>(Δy)²</b>: ao quadrado, o choque fica positivo, suba ou desça a taxa. Para quem está comprado no título, a convexidade é um termo <b>a favor nos dois sentidos</b>: na alta, a perda é menor do que a duration prevê; na queda, o ganho é maior.</p>
+    <details>
+      <summary>De onde vem a fórmula? (Taylor de 2ª ordem)</summary>
+      <p style="margin-top:10px">Expanda o PU em torno da taxa atual: PU(y+Δy) ≈ PU + PU′·Δy + ½·PU″·Δy². Já sabemos que PU′ = −D<sub>Mod</sub>·PU. Derivando de novo cada termo F<sub>i</sub>(1+y)<sup>−t<sub>i</sub></sup>:</p>
+      <div class="formula">PU″ = Σ t<sub>i</sub>(t<sub>i</sub>+1)·F<sub>i</sub>·(1+y)<sup>−t<sub>i</sub>−2</sup> = C · PU</div>
+      <p>Dividindo pelo PU, chega-se à convexidade. Ela é medida em “anos ao quadrado”, por isso os números parecem grandes (dezenas): o Δy² é que os traz de volta para a escala do PU.</p>
+    </details>
+  </div>
+
+  <div class="grid2">
+    <div class="par certo">
+      <div class="rot">✓ CERTO</div>
+      <p>NTN-F de 10 anos a 13% (PU 840,98; D<sub>Mod</sub> 5,55; C 45,50), alta de 300 bp:<br>
+      −5,55 × 840,98 × 0,03 <b>+ ½ × 45,50 × 840,98 × 0,03²</b> = −139,98 + 17,22 = <b>−R$ 122,76</b>. O exato é −R$ 124,31.</p>
+    </div>
+    <div class="par errado">
+      <div class="rot">✗ ARMADILHAS</div>
+      <p>Esquecer o ½ dá −R$ 105,54. Subtrair a convexidade “porque a taxa subiu” dá −R$ 157,20. Usar C · Δy (sem o quadrado) dá um número absurdo. O termo da convexidade é <b>sempre somado</b> para o comprador.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>Duas carteiras com a mesma duration</h2>
+    <p>Para ver a convexidade agir sozinha, vamos comparar duas formas de aplicar <b>R$ 1.000</b> com a <b>mesma Duration Modificada</b> (taxa de 13% a.a. para todos os títulos):</p>
+    <table class="cart">
+      <tr><th>Carteira</th><th>Composição</th><th class="n">D<sub>Mac</sub></th><th class="n">Convexidade</th></tr>
+      <tr><td class="ca">A · um título só</td><td>R$ 1.000,00 numa LTN de 5 anos</td><td class="n">5,00</td><td class="n">23,49</td></tr>
+      <tr><td class="cb">B · duas pontas</td><td>R$ 555,56 numa LTN de 1 ano + R$ 444,44 numa LTN de 10 anos</td><td class="n">5,00</td><td class="n">39,16</td></tr>
+    </table>
+    <p>Como a B é montada: a duration de uma carteira é a média das durations dos títulos, ponderada pelo valor aplicado. Com w na LTN de 10 anos e (1−w) na de 1 ano, basta resolver (1−w)·1 + w·10 = 5 ⇒ <b>w = 4/9</b>. As duas carteiras têm o mesmo ponto de equilíbrio, mas a B espalha o dinheiro para longe dele, e é isso que dá mais convexidade.</p>
+    <p class="nota">No mercado, uma carteira concentrada num vencimento é chamada de <i>bullet</i> e uma carteira com duas pontas, de <i>barbell</i>. Voltaremos a elas mais adiante no curso.</p>
+    <div class="caixa dica"><b>💡 O que a animação vai mostrar</b><br>
+      • A parábola de 2ª ordem praticamente encosta na curva verdadeira, mesmo com choques de centenas de pontos-base.<br>
+      • Mesma duration não é mesmo risco: num choque paralelo, a carteira B perde menos na alta e ganha mais na queda.<br>
+      • Por isso a convexidade tem preço: a B costuma render um pouco menos, e só compensa se a taxa andar o suficiente.</div>
+    <div class="caixa cuidado"><b>⚠️ Cuidado</b><br>
+      Tudo aqui supõe <b>choques paralelos</b> (todas as taxas andam igual). Se a curva mudar de inclinação, as pontas da carteira B podem andar diferente, e a comparação muda: é outro risco, que não é medido pela convexidade.</div>
+    <div class="caixa mundo"><b>🌎 Janela para o mundo real</b><br>
+      A convexidade é a taxa com que a duration muda quando a taxa se mexe. Por isso, nas mesas, ela aparece como a variação do DV01 do book a cada movimento da curva: um book com convexidade alta precisa de menos ajuste de hedge quando a taxa anda.</div>
+    <p class="nota">Convenções: DU/252, capitalização exponencial, face R$ 1.000,00; NTN-F com cupom de 10% a.a. e semestres de 126 DU (aproximação didática).</p>
+  </div>
+</section>
+
+<!-- ============ ABA 2: CORREÇÃO ============ -->
+<section class="aba" id="aba-correcao">
+  <div class="card">
+    <h2>A parábola que encosta na curva</h2>
+    <p>Mesma curva PU × taxa da animação de Duration, agora com duas estimativas: a <b>reta</b> (só duration) e a <b>parábola</b> (duration + convexidade). Aplique um choque e veja quanto do erro a convexidade elimina.</p>
+  </div>
+  <div class="card">
+    <div class="controles">
+      <div class="ctrl" style="max-width:200px"><label for="a-tit">Título</label>
+        <select id="a-tit"><option value="ntnf">NTN-F (cupom 10%)</option><option value="ltn">LTN (zero-cupom)</option></select></div>
+      <div class="ctrl"><label for="a-taxa">Taxa atual: <b id="a-taxa-v"></b></label><input type="range" id="a-taxa" min="6" max="20" step="0.25" value="13"></div>
+      <div class="ctrl"><label for="a-prazo">Prazo: <b id="a-prazo-v"></b></label><input type="range" id="a-prazo" min="1" max="10" step="0.5" value="10"></div>
+      <div class="ctrl"><label for="a-choque">Choque: <b id="a-choque-v"></b></label><input type="range" id="a-choque" min="-500" max="500" step="25" value="300"></div>
+      <div class="btns"><button class="btn" id="a-play">▶ Varrer choques</button><button class="btn sec" id="a-reset">↺</button></div>
+    </div>
+    <div class="legenda">
+      <span style="--c:var(--ref)">PU verdadeiro</span>
+      <span class="tr" style="--c:var(--text-dim)">1ª ordem: só duration (reta)</span>
+      <span style="--c:var(--accent)">2ª ordem: duration + convexidade (parábola)</span>
+    </div>
+    <div class="cv-box"><canvas id="cv-curva"></canvas></div>
+    <div class="legenda" style="margin-top:4px">
+      <span class="bx" style="--c:var(--text-dim)">efeito da duration</span>
+      <span class="bx" style="--c:var(--accent)">efeito da convexidade</span>
+      <span style="--c:var(--ref)">ΔPU verdadeiro</span>
+    </div>
+    <div class="cv-box"><canvas id="cv-decomp"></canvas></div>
+    <div class="stats">
+      <div class="stat azul"><div class="n" id="a-s-real"></div><div class="l">ΔPU verdadeiro</div></div>
+      <div class="stat"><div class="n" id="a-s-1"></div><div class="l">1ª ordem (erro <span id="a-s-e1"></span>)</div></div>
+      <div class="stat destaque"><div class="n" id="a-s-2"></div><div class="l">2ª ordem (erro <span id="a-s-e2"></span>)</div></div>
+      <div class="stat"><div class="n" id="a-s-c"></div><div class="l">convexidade (D<sub>Mod</sub> = <span id="a-s-d"></span>)</div></div>
+    </div>
+    <div class="oque"><h3>🔍 O que está acontecendo</h3><p id="a-txt"></p></div>
+  </div>
+</section>
+
+<!-- ============ ABA 3: CARTEIRAS ============ -->
+<section class="aba" id="aba-carteiras">
+  <div class="card">
+    <h2>Mesmo ponto de equilíbrio, gangorras diferentes</h2>
+    <p>Em cima, o dinheiro de cada carteira na linha do tempo: as duas equilibram no mesmo ponto (mesma duration). Embaixo, a variação de valor de cada uma para cada choque paralelo. Aperte <b>▶ Varrer choques</b> e acompanhe a distância entre as duas.</p>
+  </div>
+  <div class="card">
+    <div class="controles">
+      <div class="ctrl"><label for="b-taxa">Taxa (todos os títulos): <b id="b-taxa-v"></b></label><input type="range" id="b-taxa" min="6" max="20" step="0.25" value="13"></div>
+      <div class="ctrl"><label for="b-choque">Choque paralelo: <b id="b-choque-v"></b></label><input type="range" id="b-choque" min="-400" max="400" step="25" value="200"></div>
+      <div class="btns"><button class="btn" id="b-play">▶ Varrer choques</button><button class="btn sec" id="b-reset">↺</button></div>
+    </div>
+    <div class="cv-box"><canvas id="cv-gangorras"></canvas></div>
+    <div class="legenda">
+      <span style="--c:var(--ref)">Carteira A · LTN 5 anos</span>
+      <span style="--c:var(--accent)">Carteira B · LTN 1 ano + LTN 10 anos</span>
+      <span class="bx" style="--c:var(--ok)">vantagem da B</span>
+    </div>
+    <div class="cv-box"><canvas id="cv-sorriso"></canvas></div>
+    <div class="stats">
+      <div class="stat azul"><div class="n" id="b-s-a"></div><div class="l">Carteira A (por R$ 1.000)</div></div>
+      <div class="stat destaque"><div class="n" id="b-s-b"></div><div class="l">Carteira B (por R$ 1.000)</div></div>
+      <div class="stat"><div class="n" id="b-s-dif"></div><div class="l">vantagem da B</div></div>
+      <div class="stat"><div class="n" id="b-s-c"></div><div class="l">convexidade A · B</div></div>
+    </div>
+    <div class="oque"><h3>🔍 O que está acontecendo</h3><p id="b-txt"></p></div>
+  </div>
+</section>
+
+<!-- ============ ABA 4: PREÇO ============ -->
+<section class="aba" id="aba-preco">
+  <div class="card">
+    <h2>Convexidade não é almoço grátis</h2>
+    <p>Se a carteira B ganhasse em qualquer choque, todo mundo a compraria, e os preços se ajustariam. Na prática, ela rende um pouco <b>menos</b> (um <i>spread</i> negativo). A curva abaixo mostra o retorno da B menos o da A ao fim do horizonte, para cada choque que acontecer logo no início. Aperte <b>▶ Aumentar o spread</b>.</p>
+  </div>
+  <div class="card">
+    <div class="controles">
+      <div class="ctrl"><label for="p-taxa">Taxa da carteira A: <b id="p-taxa-v"></b></label><input type="range" id="p-taxa" min="6" max="20" step="0.25" value="13"></div>
+      <div class="ctrl"><label for="p-spread">B rende a menos: <b id="p-spread-v"></b></label><input type="range" id="p-spread" min="0" max="50" step="1" value="15"></div>
+      <div class="ctrl"><label for="p-h">Horizonte: <b id="p-h-v"></b></label><input type="range" id="p-h" min="1" max="6" step="1" value="3"></div>
+      <div class="ctrl"><label for="p-choque">Choque realizado: <b id="p-choque-v"></b></label><input type="range" id="p-choque" min="-300" max="300" step="5" value="30"></div>
+      <div class="btns"><button class="btn" id="p-play">▶ Aumentar o spread</button><button class="btn sec" id="p-reset">↺</button></div>
+    </div>
+    <div class="legenda">
+      <span style="--c:var(--accent)">retorno da B − retorno da A</span>
+      <span class="bx" style="--c:var(--ok)">B vence</span>
+      <span class="bx" style="--c:var(--bad)">A vence</span>
+      <span class="tr" style="--c:var(--warn)">choques de empate</span>
+    </div>
+    <div class="cv-box"><canvas id="cv-preco"></canvas></div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="p-s-0"></div><div class="l">B − A se a taxa não andar (carrego perdido)</div></div>
+      <div class="stat destaque"><div class="n" id="p-s-emp"></div><div class="l">choques de empate</div></div>
+      <div class="stat"><div class="n" id="p-s-res"></div><div class="l">B − A no choque realizado</div></div>
+      <div class="stat"><div class="n" id="p-s-vence"></div><div class="l">quem vence no choque realizado</div></div>
+    </div>
+    <div class="oque"><h3>🔍 O que está acontecendo</h3><p id="p-txt"></p></div>
+    <p class="nota">Pesos da B recalculados a cada spread para manter a D<sub>Mod</sub> igual à da A. Choque paralelo aplicado no início e mantido até o horizonte; horizonte em meses de 21 DU. Retornos exatos (reprecificação), não aproximações.</p>
+  </div>
+</section>
+
+<!-- ============ ABA 5: TESTE ============ -->
+<section class="aba" id="aba-teste">
+  <div class="card">
+    <h2>Teste rápido</h2>
+    <p>Cinco questões. Os erros mais comuns estão entre as alternativas.</p>
+    <div id="quiz" style="margin-top:14px"></div>
+    <div class="placar" id="placar"></div>
+  </div>
+</section>
+
+<footer>Laboratório de Tesouraria de IFs — Simulações · Prof. José Américo</footer>
+</div>
+
+<script>
+// ===MOTOR-INICIO===
+// Motor de cálculo — mesmas fórmulas conferidas em Python (conv_ref.py)
+// Convenção: DU/252, capitalização exponencial, face R$ 1.000,00.
+const FACE = 1000;
+
+// Fluxos do título: lista de {t (anos), v (R$)}. cupomAA = 0 => LTN.
+function fluxos(cupomAA, nSem) {
+  const c = FACE * (Math.pow(1 + cupomAA, 0.5) - 1);   // cupom semestral equivalente
+  const out = [];
+  for (let i = 1; i <= nSem; i++) {
+    const t = 126 * i / 252;
+    const v = c + (i === nSem ? FACE : 0);
+    if (v > 0) out.push({ t: t, v: v });
+  }
+  return out;
+}
+function pu(fl, y) { let s = 0; for (const f of fl) s += f.v / Math.pow(1 + y, f.t); return s; }
+function dmac(fl, y) { let s = 0; for (const f of fl) s += f.t * f.v / Math.pow(1 + y, f.t); return s / pu(fl, y); }
+function dmod(fl, y) { return dmac(fl, y) / (1 + y); }
+// Convexidade: (1/PU)·d²PU/dy²
+function conv(fl, y) {
+  let s = 0;
+  for (const f of fl) s += f.t * (f.t + 1) * f.v / Math.pow(1 + y, f.t);
+  return s / (pu(fl, y) * Math.pow(1 + y, 2));
+}
+// Estimativas de 1ª e 2ª ordem para a variação do PU
+function aprox1(fl, y, dy) { return -dmod(fl, y) * pu(fl, y) * dy; }
+function aprox2(fl, y, dy) { const p = pu(fl, y); return -dmod(fl, y) * p * dy + 0.5 * conv(fl, y) * p * dy * dy; }
+
+// Carteira B: peso (em valor) de LTN 1a e LTN 10a para igualar a DMod da LTN 5a.
+// A rende y; B rende yb = y - s.
+function pesosB(y, s) {
+  const yb = y - s;
+  const w10 = (5 * (1 + yb) / (1 + y) - 1) / 9;
+  return [1 - w10, w10];
+}
+// Valor de R$ 1 aplicado em LTN de prazo T, que rende y, após choque dy imediato e horizonte H (anos)
+function fatorLTN(T, y, dy, H) { return Math.pow(1 + y, T) / Math.pow(1 + y + dy, T - H); }
+// Retornos de A e de B no horizonte H
+function retornos(y, s, H, dy) {
+  const yb = y - s, w = pesosB(y, s);
+  const rA = fatorLTN(5, y, dy, H) - 1;
+  const rB = w[0] * fatorLTN(1, yb, dy, H) + w[1] * fatorLTN(10, yb, dy, H) - 1;
+  return [rA, rB];
+}
+// Choque de empate (B - A = 0) do lado indicado (+1 alta, -1 queda), por bisseção
+function empate(y, s, H, lado) {
+  if (s <= 0) return 0;
+  const f = d => { const r = retornos(y, s, H, d); return r[1] - r[0]; };
+  let lo = lado * 1e-7, hi = lado * 0.10;
+  if (f(hi) < 0) return null;
+  for (let i = 0; i < 100; i++) { const mid = (lo + hi) / 2; if (f(mid) < 0) lo = mid; else hi = mid; }
+  return (lo + hi) / 2;
+}
+// ===MOTOR-FIM===
+
+/* ---------- utilidades ---------- */
+const $ = id => document.getElementById(id);
+const cor = nome => getComputedStyle(document.documentElement).getPropertyValue('--' + nome).trim();
+const fmt = (x, d) => x.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const pct = (x, d) => fmt(x * 100, d) + '%';
+const sinalR = (x, d = 2) => (x > 0 ? '+' : x < 0 ? '−' : '') + 'R$ ' + fmt(Math.abs(x), d);
+const bp = x => (x > 0 ? '+' : x < 0 ? '−' : '') + fmt(Math.abs(x) * 1e4, 0) + ' bp';
+const bp2 = x => (x > 0 ? '+' : x < 0 ? '−' : '') + fmt(Math.abs(x) * 1e4, 2) + ' bp';
+const nSem = prazo => Math.round(prazo * 2);
+const MONO = "11px 'Roboto Mono', monospace";
+const TIT = "600 13px 'Karla', sans-serif";
+
+function prepara(cv, altura) {
+  const dpr = window.devicePixelRatio || 1;
+  const w = cv.parentElement.clientWidth;
+  cv.style.height = altura + 'px';
+  cv.width = Math.round(w * dpr); cv.height = Math.round(altura * dpr);
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, altura);
+  return { ctx, w, h: altura };
+}
+function eixos(ctx, w, h, m, xMin, xMax, yMin, yMax, xTicks, yTicks, fx, fy, titulo, rotX, rotY) {
+  const X = v => m.l + (v - xMin) / (xMax - xMin) * (w - m.l - m.r);
+  const Y = v => h - m.b - (v - yMin) / (yMax - yMin) * (h - m.t - m.b);
+  ctx.lineWidth = 1; ctx.font = MONO; ctx.fillStyle = cor('text-dim'); ctx.strokeStyle = cor('grid-dim');
+  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  for (const v of yTicks) { ctx.beginPath(); ctx.moveTo(m.l, Y(v)); ctx.lineTo(w - m.r, Y(v)); ctx.stroke(); ctx.fillText(fy(v), m.l - 6, Y(v)); }
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  for (const v of xTicks) { ctx.beginPath(); ctx.moveTo(X(v), m.t); ctx.lineTo(X(v), h - m.b); ctx.stroke(); ctx.fillText(fx(v), X(v), h - m.b + 6); }
+  ctx.strokeStyle = cor('text-dim');
+  ctx.beginPath(); ctx.moveTo(m.l, m.t); ctx.lineTo(m.l, h - m.b); ctx.lineTo(w - m.r, h - m.b); ctx.stroke();
+  if (titulo) { ctx.font = TIT; ctx.fillStyle = cor('text'); ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText(titulo, m.l + 4, 8); }
+  ctx.font = MONO; ctx.fillStyle = cor('text-dim');
+  if (rotX) { ctx.textAlign = 'right'; ctx.textBaseline = 'bottom'; ctx.fillText(rotX, w - m.r, h - 4); }
+  if (rotY) { ctx.save(); ctx.translate(12, m.t + (h - m.t - m.b) / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(rotY, 0, 0); ctx.restore(); }
+  return { X, Y };
+}
+function passos(a, b, n) { const out = []; const s = (b - a) / n; for (let i = 0; i <= n; i++) out.push(a + s * i); return out; }
+function tickBonito(min, max, alvo) {
+  const bruto = (max - min) / alvo;
+  const p = Math.pow(10, Math.floor(Math.log10(bruto)));
+  const r = bruto / p;
+  const s = (r < 1.5 ? 1 : r < 3 ? 2 : r < 7 ? 5 : 10) * p;
+  const out = [];
+  for (let v = Math.ceil(min / s) * s; v <= max + 1e-9; v += s) out.push(+v.toFixed(10));
+  return out;
+}
+function rotulo(ctx, txt, x, y, corTxt, alinh = 'center', fonte = MONO) {
+  ctx.font = fonte; ctx.textAlign = alinh; ctx.textBaseline = 'middle';
+  const lw = ctx.measureText(txt).width;
+  const x0 = alinh === 'center' ? x - lw / 2 : alinh === 'right' ? x - lw : x;
+  ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillRect(x0 - 3, y - 9, lw + 6, 18);
+  ctx.fillStyle = corTxt; ctx.fillText(txt, x, y);
+}
+function ponto(ctx, x, y, c, r = 5) { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.fill(); }
+
+/* ---------- navegação ---------- */
+let abaAtual = 'conceito';
+const desenhos = {}, paradas = {};
+document.querySelectorAll('#nav button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('#nav button').forEach(x => x.classList.toggle('ativo', x === b));
+  document.querySelectorAll('.aba').forEach(s => s.classList.remove('ativa'));
+  if (paradas[abaAtual]) paradas[abaAtual]();
+  abaAtual = b.dataset.aba;
+  $('aba-' + abaAtual).classList.add('ativa');
+  if (desenhos[abaAtual]) desenhos[abaAtual]();
+}));
+window.addEventListener('resize', () => { if (desenhos[abaAtual]) desenhos[abaAtual](); });
+
+// Animação genérica de um slider: percorre a função caminho(k), k de 0 a 1
+function animaSlider(estado, idSlider, dur, caminho, desenha, aoFim) {
+  if (estado.anim) cancelAnimationFrame(estado.anim);
+  const t0 = performance.now();
+  const passo = agora => {
+    const k = Math.min(1, (agora - t0) / dur);
+    $(idSlider).value = caminho(k);
+    desenha();
+    if (k < 1) estado.anim = requestAnimationFrame(passo); else { estado.anim = null; if (aoFim) aoFim(); }
+  };
+  estado.anim = requestAnimationFrame(passo);
+}
+
+/* =========================================================
+   ABA 2 — CORREÇÃO DE 2ª ORDEM
+   ========================================================= */
+const A = { anim: null };
+function desenhaCorrecao() {
+  const tit = $('a-tit').value;
+  const y0 = +$('a-taxa').value / 100, prazo = +$('a-prazo').value, dy = +$('a-choque').value / 1e4;
+  const fl = fluxos(tit === 'ltn' ? 0 : 0.10, nSem(prazo));
+  const P0 = pu(fl, y0), Dm = dmod(fl, y0), C = conv(fl, y0);
+  const reta = y => P0 + aprox1(fl, y0, y - y0);
+  const parab = y => P0 + aprox2(fl, y0, y - y0);
+  $('a-taxa-v').textContent = pct(y0, 2) + ' a.a.';
+  $('a-prazo-v').textContent = fmt(prazo, 1) + ' anos';
+  $('a-choque-v').textContent = bp(dy);
+
+  // ----- gráfico principal -----
+  const cv = $('cv-curva');
+  const { ctx, w, h } = prepara(cv, cv.parentElement.clientWidth < 600 ? 300 : 360);
+  const m = { l: 64, r: 18, t: 34, b: 40 };
+  const xMin = y0 - 0.055, xMax = y0 + 0.055;
+  let vMin = Infinity, vMax = -Infinity;
+  for (const yy of passos(xMin, xMax, 80)) for (const v of [pu(fl, yy), reta(yy), parab(yy)]) { vMin = Math.min(vMin, v); vMax = Math.max(vMax, v); }
+  const pad = (vMax - vMin) * 0.06; vMin -= pad; vMax += pad;
+  const { X, Y } = eixos(ctx, w, h, m, xMin, xMax, vMin, vMax, tickBonito(xMin, xMax, w < 500 ? 4 : 8), tickBonito(vMin, vMax, 6),
+    v => fmt(v * 100, 1) + '%', v => fmt(v, 0), 'PU × taxa', 'taxa (% a.a.)', 'PU (R$)');
+  ctx.save(); ctx.beginPath(); ctx.rect(m.l, m.t, w - m.l - m.r, h - m.t - m.b); ctx.clip();
+  const linha = (f, c, lw, tr) => {
+    ctx.strokeStyle = c; ctx.lineWidth = lw; ctx.setLineDash(tr || []); ctx.beginPath();
+    passos(xMin, xMax, 160).forEach((yy, i) => { const px = X(yy), py = Y(f(yy)); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+    ctx.stroke(); ctx.setLineDash([]);
+  };
+  linha(reta, cor('text-dim'), 1.8, [7, 5]);
+  linha(yy => pu(fl, yy), cor('ref'), 3);
+  linha(parab, cor('accent'), 2);
+  ctx.restore();
+  ponto(ctx, X(y0), Y(P0), cor('text'));
+  const y1 = y0 + dy, Preal = pu(fl, y1), P1 = reta(y1), P2 = parab(y1);
+  if (dy !== 0) {
+    ctx.strokeStyle = cor('text-dim'); ctx.setLineDash([3, 4]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(X(y1), m.t); ctx.lineTo(X(y1), h - m.b); ctx.stroke(); ctx.setLineDash([]);
+    ponto(ctx, X(y1), Y(P1), cor('text-dim'));
+    ponto(ctx, X(y1), Y(P2), cor('accent'), 5.5);
+    ponto(ctx, X(y1), Y(Preal), cor('ref'), 4);
+    const dir = X(y1) < w - 190, ax = X(y1) + (dir ? 10 : -10), al = dir ? 'left' : 'right';
+    if (Math.abs(Y(P1) - Y(P2)) > 14) rotulo(ctx, '1ª ordem: erro ' + sinalR(P1 - Preal), ax, Y(P1), cor('text-dim'), al);
+    rotulo(ctx, '2ª ordem: erro ' + sinalR(P2 - Preal), ax, Y(P2) + (Y(P2) < Y(P1) ? -14 : 14), cor('accent'), al);
+  }
+  const txtHoje = 'hoje: ' + pct(y0, 2) + ' · PU ' + fmt(P0, 2);
+  if (w < 560) rotulo(ctx, txtHoje, w - m.r - 6, m.t + 12, cor('text'), 'right');
+  else rotulo(ctx, txtHoje, X(y0) + 10, Y(P0) - 16, cor('text'), 'left');
+
+  // ----- decomposição em barras: duration + convexidade = ΔPU -----
+  const termoD = -Dm * P0 * dy, termoC = 0.5 * C * P0 * dy * dy, dReal = Preal - P0;
+  {
+    const { ctx, w, h } = prepara($('cv-decomp'), 180);
+    const m2 = { l: 16, r: 16 };
+    const lim = Math.max(Math.abs(termoD), Math.abs(termoD + termoC), Math.abs(dReal), 1) * 1.08;
+    const X = v => m2.l + (v + lim) / (2 * lim) * (w - m2.l - m2.r);
+    ctx.font = TIT; ctx.fillStyle = cor('text'); ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText('ΔPU em duas parcelas (R$)', 10, 8);
+    const y1b = 64, y2b = 118;
+    // eixo zero
+    ctx.strokeStyle = cor('text-dim'); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(X(0), 36); ctx.lineTo(X(0), y2b + 14); ctx.stroke();
+    ctx.font = MONO; ctx.fillStyle = cor('text-dim'); ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText('0', X(0), 36);
+    const barra = (yb, a, b, c) => { ctx.fillStyle = c; ctx.globalAlpha = 0.8; ctx.fillRect(Math.min(X(a), X(b)), yb - 11, Math.max(2, Math.abs(X(b) - X(a))), 22); ctx.globalAlpha = 1; };
+    barra(y1b, 0, termoD, cor('text-dim'));
+    barra(y2b, termoD, termoD + termoC, cor('accent'));
+    ctx.strokeStyle = cor('text-dim'); ctx.setLineDash([2, 3]);
+    ctx.beginPath(); ctx.moveTo(X(termoD), y1b + 11); ctx.lineTo(X(termoD), y2b - 11); ctx.stroke(); ctx.setLineDash([]);
+    // rótulos: duration do lado oposto ao da barra; convexidade a partir da ponta mais perto do zero
+    const ladoD = termoD <= 0 ? 1 : -1;
+    rotulo(ctx, 'duration ' + sinalR(termoD), X(0) + ladoD * 8, y1b, cor('text'), ladoD > 0 ? 'left' : 'right');
+    if (dy !== 0) {
+      const perto = Math.abs(termoD + termoC) < Math.abs(termoD) ? termoD + termoC : termoD;
+      const ladoC = perto <= 0 ? 1 : -1;
+      rotulo(ctx, 'convexidade +R$ ' + fmt(termoC, 2) + ' (sempre a favor)', X(perto) + ladoC * 8, y2b, cor('accent'), ladoC > 0 ? 'left' : 'right');
+    }
+    // ΔPU verdadeiro
+    ctx.strokeStyle = cor('ref'); ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(X(dReal), 44); ctx.lineTo(X(dReal), y2b + 16); ctx.stroke(); ctx.lineWidth = 1;
+    rotulo(ctx, 'verdadeiro ' + sinalR(dReal), Math.min(Math.max(X(dReal), 90), w - 90), y2b + 32, cor('ref'));
+  }
+
+  // ----- estatísticas -----
+  const e1 = P1 - Preal, e2 = P2 - Preal;
+  $('a-s-real').textContent = sinalR(dReal);
+  $('a-s-1').textContent = sinalR(P1 - P0); $('a-s-e1').textContent = sinalR(e1);
+  $('a-s-2').textContent = sinalR(P2 - P0); $('a-s-e2').textContent = sinalR(e2);
+  $('a-s-c').textContent = fmt(C, 2); $('a-s-d').textContent = fmt(Dm, 2);
+
+  // ----- texto condicionado -----
+  let t;
+  if (dy === 0) {
+    t = `Sem choque, as três coincidem no ponto atual. A convexidade deste título é ${fmt(C, 2)}: quanto maior, mais a curva se afasta da reta quando a taxa anda. Mova o choque.`;
+  } else {
+    const red = Math.abs(e1) > 1e-9 ? 1 - Math.abs(e2) / Math.abs(e1) : 1;
+    const sentido = dy > 0 ? 'alta' : 'queda';
+    t = `Choque de ${bp(dy)} (${sentido}). Só com a duration, o erro seria de ${sinalR(e1)}; somando a convexidade (${sinalR(termoC)}), o erro cai para ${sinalR(e2)}, ou seja, <b>${pct(red, 0)} do erro some</b>. `;
+    t += dy > 0
+      ? `Na alta, a parcela da convexidade <b>reduz a perda</b> estimada.`
+      : `Na queda, a parcela da convexidade <b>aumenta o ganho</b> estimado.`;
+    t += ` Em qualquer sentido ela é positiva, porque depende de (Δy)².`;
+    if (Math.abs(e2) / Math.abs(dReal) > 0.01) t += ` O que ainda sobra (${pct(Math.abs(e2 / dReal), 1)} da variação) vem de termos de ordem mais alta, que só pesam em choques muito grandes.`;
+  }
+  $('a-txt').innerHTML = t;
+}
+desenhos.correcao = desenhaCorrecao;
+function pararA() { if (A.anim) cancelAnimationFrame(A.anim); A.anim = null; }
+paradas.correcao = pararA;
+$('a-play').addEventListener('click', () => animaSlider(A, 'a-choque', 6000, k => Math.round(500 * Math.sin(2 * Math.PI * k) / 25) * 25, desenhaCorrecao, () => { $('a-choque').value = 300; desenhaCorrecao(); }));
+$('a-reset').addEventListener('click', () => { pararA(); $('a-choque').value = 0; desenhaCorrecao(); });
+['a-tit', 'a-taxa', 'a-prazo', 'a-choque'].forEach(id => $(id).addEventListener('input', () => { pararA(); desenhaCorrecao(); }));
+
+/* =========================================================
+   ABA 3 — CARTEIRAS A × B (mesma duration)
+   ========================================================= */
+const B = { anim: null };
+// Variação de valor (por R$ 1) de cada carteira num choque imediato
+function varA(y, dy) { return Math.pow(1 + y, 5) / Math.pow(1 + y + dy, 5) - 1; }
+function varB(y, dy) { const w = pesosB(y, 0); return w[0] * (1 + y) / (1 + y + dy) + w[1] * Math.pow(1 + y, 10) / Math.pow(1 + y + dy, 10) - 1; }
+
+function desenhaCarteiras() {
+  const y = +$('b-taxa').value / 100, dy = +$('b-choque').value / 1e4;
+  $('b-taxa-v').textContent = pct(y, 2) + ' a.a.';
+  $('b-choque-v').textContent = bp(dy);
+  const w = pesosB(y, 0);
+  const CA = 30 / Math.pow(1 + y, 2);                                   // LTN 5a: T(T+1)/(1+y)²
+  const CB = w[0] * 2 / Math.pow(1 + y, 2) + w[1] * 110 / Math.pow(1 + y, 2);
+
+  // ----- gangorras: dinheiro na linha do tempo -----
+  {
+    const cv = $('cv-gangorras');
+    const { ctx, w: W, h } = prepara(cv, 250);
+    const estreito = W < 500;
+    const m = { l: estreito ? 96 : 120, r: 20 };
+    const X = t => m.l + t / 10.5 * (W - m.l - m.r);
+    ctx.font = TIT; ctx.fillStyle = cor('text'); ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText(estreito ? 'Onde está o dinheiro (R$ 1.000)' : 'Onde está o dinheiro de cada carteira (R$ 1.000 aplicados)', 10, 8);
+    const altMax = 70;
+    const linhaG = (base, nome, c, barras) => {
+      ctx.font = "600 13px 'Karla', sans-serif"; ctx.fillStyle = c; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      ctx.fillText(nome, m.l - 14, base - 22);
+      for (const [t, v] of barras) {
+        const hh = v / 1000 * altMax;
+        ctx.fillStyle = c; ctx.globalAlpha = 0.85; ctx.fillRect(X(t) - 12, base - hh, 24, hh); ctx.globalAlpha = 1;
+        rotulo(ctx, 'R$ ' + fmt(v, 0), X(t), base - hh - 10, c);
+      }
+      ctx.strokeStyle = cor('text'); ctx.lineWidth = 4; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(X(0), base + 2); ctx.lineTo(X(10.5), base + 2); ctx.stroke(); ctx.lineCap = 'butt';
+      ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(X(5), base + 5); ctx.lineTo(X(5) - 11, base + 24); ctx.lineTo(X(5) + 11, base + 24); ctx.closePath(); ctx.fill();
+    };
+    linhaG(122, 'A · LTN 5a', cor('ref'), [[5, 1000]]);
+    linhaG(214, 'B · 1a + 10a', cor('accent'), [[1, 1000 * w[0]], [10, 1000 * w[1]]]);
+    ctx.font = MONO; ctx.fillStyle = cor('text-dim'); ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    for (const a of [0, 1, 10]) ctx.fillText(a + 'a', X(a), 232);
+    const txtEq = estreito ? 'DMac = 5 anos nas duas' : 'mesmo equilíbrio: DMac = 5 anos';
+    ctx.font = "600 12px 'Karla', sans-serif";
+    const cabe = X(5) + 18 + ctx.measureText(txtEq).width < W - 6;
+    rotulo(ctx, txtEq, cabe ? X(5) + 18 : X(5) - 18, 150, cor('text'), cabe ? 'left' : 'right', "600 12px 'Karla', sans-serif");
+  }
+
+  // ----- variação de valor × choque -----
+  const cv = $('cv-sorriso');
+  const { ctx, w: W, h } = prepara(cv, cv.parentElement.clientWidth < 600 ? 300 : 340);
+  const m = { l: 62, r: 20, t: 34, b: 40 };
+  const xs = passos(-0.04, 0.04, 160);
+  let vMin = Infinity, vMax = -Infinity;
+  for (const d of xs) for (const v of [varA(y, d), varB(y, d)]) { vMin = Math.min(vMin, v); vMax = Math.max(vMax, v); }
+  const pad = (vMax - vMin) * 0.06; vMin -= pad; vMax += pad;
+  const { X, Y } = eixos(ctx, W, h, m, -0.04, 0.04, vMin, vMax, tickBonito(-0.04, 0.04, W < 500 ? 4 : 8), tickBonito(vMin, vMax, 6),
+    v => (v > 0 ? '+' : '') + fmt(v * 1e4, 0), v => Math.abs(v) < 1e-9 ? '0%' : (v > 0 ? '+' : '−') + fmt(Math.abs(v) * 100, 0) + '%', 'Variação do valor × choque paralelo', 'choque (bp)', 'variação (%)');
+  // área de vantagem da B
+  ctx.fillStyle = cor('ok'); ctx.globalAlpha = 0.18; ctx.beginPath();
+  xs.forEach((d, i) => { i ? ctx.lineTo(X(d), Y(varB(y, d))) : ctx.moveTo(X(d), Y(varB(y, d))); });
+  xs.slice().reverse().forEach(d => ctx.lineTo(X(d), Y(varA(y, d))));
+  ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
+  const curva = (f, c, lw) => { ctx.strokeStyle = c; ctx.lineWidth = lw; ctx.beginPath(); xs.forEach((d, i) => { i ? ctx.lineTo(X(d), Y(f(d))) : ctx.moveTo(X(d), Y(f(d))); }); ctx.stroke(); };
+  curva(d => varA(y, d), cor('ref'), 2.5);
+  curva(d => varB(y, d), cor('accent'), 2.5);
+  // marcador do choque atual
+  const vA = varA(y, dy), vB = varB(y, dy);
+  ctx.strokeStyle = cor('text-dim'); ctx.setLineDash([3, 4]); ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(X(dy), m.t); ctx.lineTo(X(dy), h - m.b); ctx.stroke(); ctx.setLineDash([]);
+  ponto(ctx, X(dy), Y(vA), cor('ref')); ponto(ctx, X(dy), Y(vB), cor('accent'));
+  if (dy !== 0) {
+    const dir = X(dy) < W - 170, al = dir ? 'left' : 'right', ax = X(dy) + (dir ? 10 : -10);
+    rotulo(ctx, 'B − A = ' + sinalR((vB - vA) * 1000), ax, (Y(vA) + Y(vB)) / 2 + (dy > 0 ? 18 : -18), cor('ok'), al);
+  }
+
+  // ----- estatísticas -----
+  $('b-s-a').textContent = sinalR(vA * 1000);
+  $('b-s-b').textContent = sinalR(vB * 1000);
+  $('b-s-dif').textContent = sinalR((vB - vA) * 1000);
+  $('b-s-c').textContent = fmt(CA, 1) + ' · ' + fmt(CB, 1);
+
+  // ----- texto condicionado -----
+  let t;
+  if (dy === 0) {
+    t = `Sem choque, as duas valem R$ 1.000. Mesma duration significa mesma inclinação na origem: as curvas saem juntas. Mas a B tem convexidade ${fmt(CB, 1)} contra ${fmt(CA, 1)} da A, então vai se curvar mais. Mova o choque.`;
+  } else {
+    const d = (vB - vA) * 1000, est = 0.5 * (CB - CA) * dy * dy * 1000;
+    t = dy > 0
+      ? `Alta de ${bp(dy)}: a A perde ${sinalR(vA * 1000).replace('−', '')} e a B perde ${sinalR(vB * 1000).replace('−', '')}. <b>A B perde menos</b>, ${sinalR(d)} por R$ 1.000. `
+      : `Queda de ${bp(dy).replace('−', '')}: a A ganha ${sinalR(vA * 1000)} e a B ganha ${sinalR(vB * 1000)}. <b>A B ganha mais</b>, ${sinalR(d)} por R$ 1.000. `;
+    t += `A diferença é quase toda ½ × (C<sub>B</sub> − C<sub>A</sub>) × (Δy)² = ${sinalR(est)}. Mesma duration, risco diferente: quem olha só a D<sub>Mod</sub> acha as duas iguais.`;
+  }
+  $('b-txt').innerHTML = t;
+}
+desenhos.carteiras = desenhaCarteiras;
+function pararB() { if (B.anim) cancelAnimationFrame(B.anim); B.anim = null; }
+paradas.carteiras = pararB;
+$('b-play').addEventListener('click', () => animaSlider(B, 'b-choque', 6000, k => Math.round(400 * Math.sin(2 * Math.PI * k) / 25) * 25, desenhaCarteiras, () => { $('b-choque').value = 200; desenhaCarteiras(); }));
+$('b-reset').addEventListener('click', () => { pararB(); $('b-choque').value = 0; desenhaCarteiras(); });
+['b-taxa', 'b-choque'].forEach(id => $(id).addEventListener('input', () => { pararB(); desenhaCarteiras(); }));
+
+/* =========================================================
+   ABA 4 — O PREÇO DA CONVEXIDADE
+   ========================================================= */
+const P = { anim: null };
+function desenhaPreco() {
+  const y = +$('p-taxa').value / 100, s = +$('p-spread').value / 1e4, meses = +$('p-h').value;
+  const H = meses * 21 / 252, dy = +$('p-choque').value / 1e4;
+  $('p-taxa-v').textContent = pct(y, 2) + ' a.a.';
+  $('p-spread-v').textContent = fmt(s * 1e4, 0) + ' bp (B rende ' + pct(y - s, 2) + ')';
+  $('p-h-v').textContent = meses + (meses === 1 ? ' mês' : ' meses') + ' (' + (meses * 21) + ' DU)';
+  $('p-choque-v').textContent = bp(dy);
+
+  const dif = d => { const r = retornos(y, s, H, d); return r[1] - r[0]; };
+  const eP = empate(y, s, H, 1), eN = empate(y, s, H, -1);
+
+  const cv = $('cv-preco');
+  const { ctx, w, h } = prepara(cv, cv.parentElement.clientWidth < 600 ? 300 : 360);
+  const m = { l: 62, r: 20, t: 34, b: 40 };
+  const xs = passos(-0.03, 0.03, 200);
+  let vMin = Infinity, vMax = -Infinity;
+  for (const d of xs) { const v = dif(d); vMin = Math.min(vMin, v); vMax = Math.max(vMax, v); }
+  vMin = Math.min(vMin, -0.0002); vMax = Math.max(vMax, 0.0002);
+  const pad = (vMax - vMin) * 0.08; vMin -= pad; vMax += pad;
+  const { X, Y } = eixos(ctx, w, h, m, -0.03, 0.03, vMin, vMax, tickBonito(-0.03, 0.03, w < 500 ? 4 : 6), tickBonito(vMin, vMax, 6),
+    v => (v > 0 ? '+' : '') + fmt(v * 1e4, 0), v => (v > 0 ? '+' : '') + fmt(v * 1e4, 0), 'Retorno da B − retorno da A, em ' + meses + (meses === 1 ? ' mês' : ' meses'), 'choque (bp)', 'B − A (bp)');
+  // áreas: verde acima de zero, vermelho abaixo
+  const area = (c, sinal) => {
+    ctx.fillStyle = c; ctx.globalAlpha = 0.2; ctx.beginPath(); ctx.moveTo(X(xs[0]), Y(0));
+    xs.forEach(d => { const v = dif(d); ctx.lineTo(X(d), Y(sinal > 0 ? Math.max(v, 0) : Math.min(v, 0))); });
+    ctx.lineTo(X(xs[xs.length - 1]), Y(0)); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
+  };
+  area(cor('ok'), 1); area(cor('bad'), -1);
+  ctx.strokeStyle = cor('text'); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(m.l, Y(0)); ctx.lineTo(w - m.r, Y(0)); ctx.stroke();
+  ctx.strokeStyle = cor('accent'); ctx.lineWidth = 2.8; ctx.beginPath();
+  xs.forEach((d, i) => { i ? ctx.lineTo(X(d), Y(dif(d))) : ctx.moveTo(X(d), Y(dif(d))); }); ctx.stroke();
+  // empates
+  for (const e of [eN, eP]) {
+    if (e === null || s <= 0 || Math.abs(e) > 0.03) continue;
+    ctx.strokeStyle = cor('warn'); ctx.setLineDash([5, 4]); ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(X(e), m.t); ctx.lineTo(X(e), h - m.b); ctx.stroke(); ctx.setLineDash([]);
+    rotulo(ctx, bp(e), X(e), m.t + 10, cor('warn'));
+  }
+  // choque realizado
+  const vr = dif(dy);
+  ctx.strokeStyle = cor('text-dim'); ctx.setLineDash([2, 4]); ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(X(dy), Y(0)); ctx.lineTo(X(dy), Y(vr)); ctx.stroke(); ctx.setLineDash([]);
+  ponto(ctx, X(dy), Y(vr), vr >= 0 ? cor('ok') : cor('bad'), 6);
+
+  // estatísticas
+  const v0 = dif(0);
+  $('p-s-0').textContent = bp2(v0);
+  $('p-s-emp').textContent = s <= 0 ? 'nenhum' : (eN === null ? '—' : bp(eN)) + ' / ' + (eP === null ? '—' : bp(eP));
+  $('p-s-res').textContent = bp2(vr);
+  $('p-s-vence').textContent = Math.abs(vr) < 5e-7 ? 'empate' : vr > 0 ? 'B (2 pontas)' : 'A (5 anos)';
+
+  // texto condicionado
+  let t;
+  if (s <= 0) {
+    t = `Com spread zero, a curva fica <b>inteira acima de zero</b>: a B vence com qualquer choque e empata se a taxa não andar. Seria um ganho sem risco, e é por isso que o mercado não deixa esse spread ficar em zero: quem quer convexidade paga por ela.`;
+  } else {
+    t = `A B rende ${fmt(s * 1e4, 0)} bp a menos. Se a taxa não andar, em ${meses} ${meses === 1 ? 'mês' : 'meses'} ela fica ${bp2(Math.abs(v0)).replace('+', '')} atrás: é o carrego que se paga pela convexidade. `;
+    if (eP !== null && eN !== null) t += `Para a convexidade compensar, a taxa precisa andar mais que <b>${bp(eP)}</b> ou <b>${bp(eN)}</b> logo no início. `;
+    t += Math.abs(vr) < 5e-7 ? `No choque escolhido (${bp(dy)}) as duas empatam.`
+      : vr > 0 ? `No choque escolhido (${bp(dy)}), a taxa andou o bastante: <b>a B vence</b> por ${bp2(vr)}.`
+               : `No choque escolhido (${bp(dy)}), a taxa andou pouco: <b>a A vence</b> por ${bp2(-vr).replace('+', '')}; a convexidade não pagou o carrego.`;
+    t += ` Mais spread ou horizonte mais longo afastam os empates; a convexidade é uma aposta em <b>volatilidade</b> da taxa, não na direção.`;
+  }
+  $('p-txt').innerHTML = t;
+}
+desenhos.preco = desenhaPreco;
+function pararP() { if (P.anim) cancelAnimationFrame(P.anim); P.anim = null; }
+paradas.preco = pararP;
+$('p-play').addEventListener('click', () => animaSlider(P, 'p-spread', 5000, k => Math.round(40 * k), desenhaPreco));
+$('p-reset').addEventListener('click', () => { pararP(); $('p-spread').value = 15; $('p-h').value = 3; $('p-choque').value = 30; $('p-taxa').value = 13; desenhaPreco(); });
+['p-taxa', 'p-spread', 'p-h', 'p-choque'].forEach(id => $(id).addEventListener('input', () => { pararP(); desenhaPreco(); }));
+
+/* =========================================================
+   ABA 5 — TESTE
+   ========================================================= */
+const QUESTOES = [
+  { e: 'NTN-F de 10 anos a 13% a.a.: PU R$ 840,98, D<sub>Mod</sub> 5,55 e convexidade 45,50. Qual a estimativa de 2ª ordem para a variação do PU numa alta de 300 bp?',
+    a: ['−R$ 122,76', '−R$ 105,54', '−R$ 157,20', '−R$ 139,98'],
+    c: 0,
+    f: '−5,55 × 840,98 × 0,03 + ½ × 45,50 × 840,98 × 0,03² = −139,98 + 17,22 = −R$ 122,76 (o exato é −R$ 124,31). −105,54 esquece o ½; −157,20 subtrai a convexidade “porque a taxa subiu”; −139,98 é só a duration.' },
+  { e: 'As carteiras A (LTN 5 anos) e B (LTN 1 ano + LTN 10 anos) têm a mesma D<sub>Mod</sub> e R$ 1.000 aplicados cada, a 13% a.a. A taxa sobe 200 bp de uma vez. O que acontece?',
+    a: ['As duas perdem o mesmo, porque têm a mesma duration', 'A perde menos, porque é um título só', 'B perde menos: cerca de R$ 81 contra R$ 84 da A', 'B perde mais, porque tem um título de 10 anos'],
+    c: 2,
+    f: 'A perde R$ 83,98 e B perde R$ 81,18. Mesma duration iguala só a inclinação na origem; com choque grande, a maior convexidade da B (39,2 contra 23,5) faz diferença. “Tem um título de 10 anos, logo perde mais” esquece que o peso dele foi calculado para a duration bater.' },
+  { e: 'E se, em vez de subir, a taxa cair 200 bp?',
+    a: ['A ganha mais, porque a convexidade só protege na alta', 'B ganha mais: cerca de R$ 97 contra R$ 93 da A', 'As duas ganham o mesmo', 'B ganha menos, porque perdeu menos na alta'],
+    c: 1,
+    f: 'A ganha R$ 93,40 e B ganha R$ 96,91. O termo ½·C·(Δy)² é positivo nos dois sentidos: na alta reduz a perda, na queda aumenta o ganho. Não há troca entre os dois lados.' },
+  { e: 'No mercado, a carteira B costuma render um pouco menos que a A. Por quê?',
+    a: ['Porque a B tem duration menor', 'Porque a B tem mais risco de crédito', 'Porque a convexidade tem valor: quem a quer paga com uma taxa menor', 'Não rende menos: a convexidade é um ganho grátis'],
+    c: 2,
+    f: 'Se a B rendesse o mesmo, ganharia em qualquer choque paralelo sem custo, e todos a comprariam. O preço sobe, a taxa cai, e o spread negativo aparece. Duration e crédito são iguais por construção (títulos públicos, mesma D<sub>Mod</sub>).' },
+  { e: 'A B rende 15 bp a menos que a A. Com horizonte de 3 meses, os choques de empate são de cerca de ±65 bp. Se a taxa subir 30 bp logo no início e ficar lá, qual carteira termina melhor?',
+    a: ['B, porque a convexidade sempre vence', 'B, porque o choque foi de alta', 'Empatam, porque têm a mesma duration', 'A, porque o choque ficou abaixo do empate e o carrego pesou mais'],
+    c: 3,
+    f: 'Com 30 bp, o ganho de convexidade da B (proporcional a Δy²) é pequeno e não cobre os ~3,75 bp de carrego perdido em 3 meses: A vence por cerca de 2,7 bp. A convexidade é uma aposta em movimento <i>grande</i> da taxa, para qualquer lado; a direção não importa.' }
+];
+let acertos = 0, respondidas = 0;
+function montaQuiz() {
+  const box = $('quiz');
+  QUESTOES.forEach((q, i) => {
+    const div = document.createElement('div'); div.className = 'q';
+    div.innerHTML = `<div class="enun"><span class="num">Q${i + 1}</span>${q.e}</div>` +
+      q.a.map((txt, k) => `<button class="alt" data-k="${k}">${String.fromCharCode(65 + k)}) ${txt}</button>`).join('') + `<div class="fb"></div>`;
+    box.appendChild(div);
+    div.querySelectorAll('.alt').forEach(b => b.addEventListener('click', () => {
+      const k = +b.dataset.k, ok = k === q.c;
+      div.querySelectorAll('.alt').forEach(x => { x.disabled = true; if (+x.dataset.k === q.c) x.classList.add('certa'); });
+      if (!ok) b.classList.add('errada');
+      const fb = div.querySelector('.fb');
+      fb.className = 'fb on ' + (ok ? 'ok' : 'no');
+      fb.innerHTML = (ok ? '<b>✓ Isso.</b> ' : '<b>✗ Não é essa.</b> ') + q.f;
+      respondidas++; if (ok) acertos++;
+      $('placar').textContent = `Acertos: ${acertos} de ${respondidas}` + (respondidas === QUESTOES.length ? ' — teste concluído.' : '');
+    }));
+  });
+}
+montaQuiz();
+</script>
+</body>
+</html>
