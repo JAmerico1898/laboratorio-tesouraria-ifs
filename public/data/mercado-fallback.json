@@ -2811,5 +2811,164 @@
    ],
    "rotuloY": "Inflação implícita a termo (% a.a.)"
   }
- ]
+ ],
+ "ancoras": {
+  "focus": {
+   "dataBase": "2026-08-21",
+   "selicAnual": {
+    "2026": 0.1375,
+    "2027": 0.12,
+    "2028": 0.105,
+    "2029": 0.1,
+    "2030": 0.1
+   },
+   "ipcaAnual": {
+    "2026": 0.050164,
+    "2027": 0.042549,
+    "2028": 0.038,
+    "2029": 0.035,
+    "2030": 0.035
+   },
+   "ipca12m": 0.044151
+  },
+  "reunioes": [
+   {
+    "id": "R6/2026",
+    "dataDecisao": "2026-09-16",
+    "duEfetiva": 18,
+    "estimada": false,
+    "focusSelic": 0.1375
+   },
+   {
+    "id": "R7/2026",
+    "dataDecisao": "2026-11-04",
+    "duEfetiva": 51,
+    "estimada": false,
+    "focusSelic": 0.1375
+   },
+   {
+    "id": "R8/2026",
+    "dataDecisao": "2026-12-09",
+    "duEfetiva": 75,
+    "estimada": false,
+    "focusSelic": 0.1375
+   },
+   {
+    "id": "R1/2027",
+    "dataDecisao": "2027-01-27",
+    "duEfetiva": 108,
+    "estimada": false,
+    "focusSelic": 0.1375
+   },
+   {
+    "id": "R2/2027",
+    "dataDecisao": "2027-03-17",
+    "duEfetiva": 141,
+    "estimada": false,
+    "focusSelic": 0.135
+   },
+   {
+    "id": "R3/2027",
+    "dataDecisao": "2027-04-28",
+    "duEfetiva": 169,
+    "estimada": false,
+    "focusSelic": 0.1325
+   },
+   {
+    "id": "R4/2027",
+    "dataDecisao": "2027-06-16",
+    "duEfetiva": 203,
+    "estimada": false,
+    "focusSelic": 0.13
+   },
+   {
+    "id": "R5/2027",
+    "dataDecisao": "2027-08-04",
+    "duEfetiva": 238,
+    "estimada": false,
+    "focusSelic": 0.1275
+   },
+   {
+    "id": "R6/2027",
+    "dataDecisao": "2027-09-22",
+    "duEfetiva": 272,
+    "estimada": false,
+    "focusSelic": 0.125
+   },
+   {
+    "id": "R7/2027",
+    "dataDecisao": "2027-10-27",
+    "duEfetiva": 296,
+    "estimada": false,
+    "focusSelic": 0.1225
+   },
+   {
+    "id": "R8/2027",
+    "dataDecisao": "2027-12-08",
+    "duEfetiva": 324,
+    "estimada": false,
+    "focusSelic": 0.12
+   },
+   {
+    "id": "R1/2028",
+    "dataDecisao": "2028-01-26",
+    "duEfetiva": 359,
+    "estimada": true,
+    "focusSelic": 0.12
+   },
+   {
+    "id": "R2/2028",
+    "dataDecisao": "2028-03-15",
+    "duEfetiva": 392,
+    "estimada": true,
+    "focusSelic": 0.1175
+   },
+   {
+    "id": "R3/2028",
+    "dataDecisao": "2028-05-03",
+    "duEfetiva": 424,
+    "estimada": true,
+    "focusSelic": 0.115
+   },
+   {
+    "id": "R4/2028",
+    "dataDecisao": "2028-06-14",
+    "duEfetiva": 454,
+    "estimada": true,
+    "focusSelic": 0.1125
+   },
+   {
+    "id": "R5/2028",
+    "dataDecisao": "2028-08-02",
+    "duEfetiva": 488,
+    "estimada": true,
+    "focusSelic": 0.1125
+   },
+   {
+    "id": "R6/2028",
+    "dataDecisao": "2028-09-20",
+    "duEfetiva": 522,
+    "estimada": true,
+    "focusSelic": null
+   },
+   {
+    "id": "R7/2028",
+    "dataDecisao": "2028-10-25",
+    "duEfetiva": 546,
+    "estimada": true,
+    "focusSelic": null
+   }
+  ],
+  "ultimoCopom": {
+   "id": "R5/2026",
+   "numero": 280,
+   "selic": 0.14,
+   "variacaoBps": -25,
+   "unanime": null,
+   "fraseChave": null,
+   "fonteUrl": null,
+   "dataDecisao": "2026-08-05"
+  },
+  "avisos": []
+ }
 }

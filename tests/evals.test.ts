@@ -271,6 +271,40 @@ describe("painel e payload", () => {
   });
 });
 
+describe("âncoras no payload", () => {
+  const a = s.ancoras!;
+  const ref = s.dataEfetiva!;
+
+  it("o snapshot traz o bloco de âncoras, com Focus e última decisão", () => {
+    expect(s.ancoras).toBeTruthy();
+    expect(a.focus).not.toBeNull();
+    expect(a.ultimoCopom).not.toBeNull();
+    expect(a.reunioes.length).toBeGreaterThan(0);
+  });
+
+  it("sem look-ahead: Focus e última decisão não são posteriores à data do dado (100%)", () => {
+    expect(a.focus!.dataBase <= ref, a.focus!.dataBase).toBe(true);
+    expect(a.ultimoCopom!.dataDecisao <= ref, a.ultimoCopom!.dataDecisao).toBe(true);
+  });
+
+  it("toda reunião listada é futura, com DU estritamente crescente e positivo (100%)", () => {
+    let anterior = 0;
+    for (const r of a.reunioes) {
+      expect(r.dataDecisao > ref, r.id).toBe(true);
+      expect(r.duEfetiva, r.id).toBeGreaterThan(anterior);
+      anterior = r.duEfetiva;
+    }
+  });
+
+  it("toda Selic do Focus por reunião está em [0; 0,5] (100%)", () => {
+    for (const r of a.reunioes) {
+      if (r.focusSelic === null) continue;
+      expect(r.focusSelic, r.id).toBeGreaterThanOrEqual(0);
+      expect(r.focusSelic, r.id).toBeLessThanOrEqual(0.5);
+    }
+  });
+});
+
 describe("registro do módulo", () => {
   it("animações e simulações entram entre o módulo 4 e o mercado-hoje (nº 7), antes dos estudos de caso", () => {
     const slugs = MODULES.map((m) => m.slug);

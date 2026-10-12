@@ -161,3 +161,32 @@ export const GLOSSARIO: VerbeteFamilia[] = [
     ],
   },
 ];
+
+export interface VerbeteAncora {
+  termo: string;
+  texto: string;
+}
+
+/** Conceitos do card Âncoras: não são curvas, por isso ficam fora de `GLOSSARIO`. */
+export const GLOSSARIO_ANCORAS: VerbeteAncora[] = [
+  {
+    termo: "Focus",
+    texto:
+      "Pesquisa semanal do Banco Central com as projeções de bancos, gestoras e consultorias para Selic, IPCA, câmbio e PIB. O painel usa a mediana da pesquisa mais recente até a data de referência: é o consenso que a mesa tinha naquele dia.",
+  },
+  {
+    termo: "Juro neutro",
+    texto:
+      "Taxa de juro real que não estimula nem contrai a economia, com a inflação na meta. Não é observável: é estimada. O painel usa a referência do Copom e a converte em neutro nominal somando a meta de inflação. Juro real acima do neutro indica política monetária contracionista.",
+  },
+  {
+    termo: "CDI esperado pelo Focus",
+    texto:
+      "Taxa que o DI de cada vencimento teria se a Selic seguisse exatamente a trajetória do Focus, reunião a reunião. É a média da Selic projetada, ponderada pelo tempo até o vencimento, menos o spread entre a Selic meta e o DI over. Permite comparar curva e consenso na mesma unidade.",
+  },
+  {
+    termo: "Hawkish / dovish",
+    texto:
+      "Hawkish é a postura que privilegia o combate à inflação, com juros mais altos por mais tempo; dovish é a que aceita juros mais baixos. Quando o DI fica abaixo do CDI esperado pelo Focus, o mercado precifica mais cortes que o consenso: está mais dovish.",
+  },
+];

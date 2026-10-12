@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { Icon } from "@/components/Icon";
 import { FAMILIAS } from "@/lib/mercado/config";
-import { GLOSSARIO } from "@/lib/mercado/glossario";
+import { GLOSSARIO, GLOSSARIO_ANCORAS } from "@/lib/mercado/glossario";
 import type { Familia } from "@/lib/mercado/types";
 
 /** Botão que abre o glossário das curvas, rolado até a família da aba ativa. */
@@ -63,6 +63,19 @@ export function Glossario({ familia }: { familia: Familia }) {
               </section>
             );
           })}
+          <section>
+            <h3 className="flex items-center gap-1.5 text-[14px] font-extrabold text-primary">
+              <Icon name="anchor" size={18} /> Âncoras
+            </h3>
+            <dl className="mt-3 space-y-3">
+              {GLOSSARIO_ANCORAS.map((v) => (
+                <div key={v.termo}>
+                  <dt className="text-[13.5px] font-bold">{v.termo}</dt>
+                  <dd className="mt-0.5 text-[13px] leading-relaxed text-ink">{v.texto}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
         </div>
       </dialog>
     </>

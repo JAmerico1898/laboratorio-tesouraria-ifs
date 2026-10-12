@@ -6,6 +6,7 @@ import { carregarAncora, carregarSnapshot, hojeIso, paraCsv } from "@/lib/mercad
 import { recortarCurva } from "@/lib/mercado/metricas";
 import { dataBr } from "@/lib/mercado/template";
 import type { Curva, Familia, JanelaDu, MercadoSnapshot } from "@/lib/mercado/types";
+import { CardAncoras } from "./CardAncoras";
 import { CartoesForward } from "./CartoesForward";
 import { Glossario } from "./Glossario";
 import { GraficoCurva } from "./GraficoCurva";
@@ -280,6 +281,11 @@ export function PainelMercado({
           <div className="mt-5">
             <Indicadores s={snap} />
           </div>
+          {!snapshotFixo && (
+            <div className="mt-5">
+              <CardAncoras s={snap} />
+            </div>
+          )}
           <div className="mt-4">
             <TabelaVertices curva={curva} />
           </div>
