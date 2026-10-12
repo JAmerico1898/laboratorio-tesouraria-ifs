@@ -15,14 +15,27 @@ from __future__ import annotations
 import datetime as dt
 import json
 import math
+import os
+import sys
+import urllib.request
 from http.server import BaseHTTPRequestHandler
 from typing import Any
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, quote, urlparse
 
 import pyield as yd
 
+# Garante o import do módulo irmão qualquer que seja o diretório de trabalho.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from copom_calendario import CALENDARIO, DECISOES  # noqa: E402
+
 MAX_TENTATIVAS_DATA = 10
 MAX_RECUO_VNA = 45
+MAX_REUNIOES = 18
+
+OLINDA = "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/"
+# A Olinda responde em ~0,2 s. O teto é curto de propósito: o cliente desiste
+# da API em 15 s, e um Focus lento não pode custar o painel inteiro.
+TIMEOUT_FOCUS_S = 4
 
 
 # ── utilitários ────────────────────────────────────────────────────────────
@@ -486,6 +499,101 @@ def _indicadores(data: dt.date) -> dict[str, Any]:
     }
 
 
+def _olinda(recurso: str, filtro: str, extra: str = "") -> list[dict[str, Any]]:
+    url = f"{OLINDA}{recurso}?$format=json&$filter={quote(filtro)}{extra}"
+    with urllib.request.urlopen(url, timeout=TIMEOUT_FOCUS_S) as r:
+        return json.load(r)["value"]
+
+
+def _focus(data: dt.date) -> tuple[dict[str, Any], dict[str, float]]:
+    """Pesquisa Focus mais recente com Data ≤ `data` (sem look-ahead).
+
+    Devolve o bloco `focus` e o dicionário reunião → mediana da Selic. Lança na
+    primeira consulta que falhar: as seguintes dependem da data-base.
+    """
+    iso = data.strftime("%Y-%m-%d")
+    base = _olinda(
+        "ExpectativasMercadoAnuais",
+        f"Indicador eq 'Selic' and baseCalculo eq 0 and Data le '{iso}'",
+        "&$top=1&$orderby=Data%20desc&$select=Data",
+    )[0]["Data"]
+
+    anos = {str(a) for a in range(data.year, data.year + 5)}
+    anuais: dict[str, dict[str, float]] = {"Selic": {}, "IPCA": {}}
+    for r in _olinda(
+        "ExpectativasMercadoAnuais",
+        f"(Indicador eq 'Selic' or Indicador eq 'IPCA') and baseCalculo eq 0 and Data eq '{base}'",
+        "&$top=40&$select=Indicador,DataReferencia,Mediana",
+    ):
+        if r["DataReferencia"] in anos and r["Mediana"] is not None:
+            anuais[r["Indicador"]][r["DataReferencia"]] = round(r["Mediana"] / 100, 6)
+
+    # A OData ordena `Reuniao` como texto; a ordem da resposta não é usada.
+    por_reuniao = {
+        r["Reuniao"]: round(r["Mediana"] / 100, 6)
+        for r in _olinda(
+            "ExpectativasMercadoSelic",
+            f"baseCalculo eq 0 and Data eq '{base}'",
+            "&$top=60&$select=Reuniao,Mediana",
+        )
+        if r["Mediana"] is not None
+    }
+
+    ipca12 = _olinda(
+        "ExpectativasMercadoInflacao12Meses",
+        f"Indicador eq 'IPCA' and baseCalculo eq 0 and Suavizada eq 'S' and Data le '{base}'",
+        "&$top=1&$orderby=Data%20desc&$select=Data,Mediana",
+    )
+    focus = {
+        "dataBase": base,
+        "selicAnual": dict(sorted(anuais["Selic"].items())),
+        "ipcaAnual": dict(sorted(anuais["IPCA"].items())),
+        "ipca12m": round(ipca12[0]["Mediana"] / 100, 6) if ipca12 else None,
+    }
+    return focus, por_reuniao
+
+
+def _ancoras(data: dt.date) -> dict[str, Any]:
+    """Âncoras do card: Focus, reuniões futuras do Copom e última decisão.
+
+    Nunca lança: falha parcial vira `None`/lista vazia mais uma linha em `avisos`.
+    """
+    iso = data.strftime("%Y-%m-%d")
+    avisos: list[str] = []
+
+    focus: dict[str, Any] | None = None
+    por_reuniao: dict[str, float] = {}
+    try:
+        focus, por_reuniao = _focus(data)
+    except Exception:  # noqa: BLE001 — o Focus nunca derruba o snapshot
+        avisos.append("Focus indisponível no momento")
+
+    reunioes: list[dict[str, Any]] = []
+    try:
+        for r in [c for c in CALENDARIO if c["data"] > iso][:MAX_REUNIOES]:
+            efetiva = yd.du.deslocar(r["data"], 1)
+            reunioes.append(
+                {
+                    "id": r["id"],
+                    "dataDecisao": r["data"],
+                    "duEfetiva": int(yd.du.contar(data, efetiva)),
+                    "estimada": r["estimada"],
+                    "focusSelic": por_reuniao.get(r["id"]),
+                }
+            )
+    except Exception:  # noqa: BLE001
+        reunioes = []
+        avisos.append("Calendário do Copom indisponível no momento")
+
+    passadas = [d for d in DECISOES if d["data"] <= iso]
+    ultimo = None
+    if passadas:
+        ultimo = {k: v for k, v in passadas[-1].items() if k != "data"}
+        ultimo["dataDecisao"] = passadas[-1]["data"]
+
+    return {"focus": focus, "reunioes": reunioes, "ultimoCopom": ultimo, "avisos": avisos}
+
+
 # Rótulo do eixo Y de cada curva. Fica aqui, e não no componente, porque é
 # aqui que se sabe qual campo do pyield alimentou a série.
 ROTULO_Y = {
@@ -533,6 +641,7 @@ def construir_snapshot(data: dt.date, bloco: str = "all") -> dict[str, Any]:
         "contingencia": False,
         "indicadores": _indicadores(data),
         "curvas": curvas,
+        "ancoras": _ancoras(data),
     }
 
 

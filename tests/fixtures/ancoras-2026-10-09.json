@@ -1,0 +1,48 @@
+{
+  "dataEfetiva": "2026-10-09",
+  "indicadores": { "selicMeta": 0.1375, "diOver": 0.1365 },
+  "di1": [
+    ["DI1X26", 15, 0.13654], ["DI1Z26", 34, 0.13538], ["DI1F27", 56, 0.1344], ["DI1G27", 76, 0.13366],
+    ["DI1H27", 94, 0.13295], ["DI1J27", 116, 0.13218], ["DI1K27", 137, 0.13138], ["DI1M27", 157, 0.13059],
+    ["DI1N27", 179, 0.12982], ["DI1Q27", 201, 0.12892], ["DI1U27", 223, 0.12805], ["DI1V27", 244, 0.12732],
+    ["DI1X27", 264, 0.12657], ["DI1Z27", 284, 0.12589], ["DI1F28", 307, 0.12528], ["DI1J28", 370, 0.12398],
+    ["DI1N28", 431, 0.12312], ["DI1V28", 495, 0.12262], ["DI1X28", 516, 0.12249], ["DI1Z28", 535, 0.1224],
+    ["DI1F29", 555, 0.12224], ["DI1J29", 616, 0.1223], ["DI1N29", 679, 0.12244], ["DI1V29", 743, 0.12229],
+    ["DI1X29", 765, 0.12225], ["DI1Z29", 784, 0.1222], ["DI1F30", 804, 0.12218]
+  ],
+  "ancoras": {
+    "focus": {
+      "dataBase": "2026-10-02",
+      "selicAnual": { "2026": 0.135, "2027": 0.12, "2028": 0.105, "2029": 0.10, "2030": 0.10 },
+      "ipcaAnual": { "2026": 0.050129, "2027": 0.043007, "2028": 0.038007, "2029": 0.035108, "2030": 0.035 },
+      "ipca12m": 0.045905
+    },
+    "reunioes": [
+      { "id": "R7/2026", "dataDecisao": "2026-11-04", "duEfetiva": 17,  "estimada": false, "focusSelic": 0.135 },
+      { "id": "R8/2026", "dataDecisao": "2026-12-09", "duEfetiva": 41,  "estimada": false, "focusSelic": 0.135 },
+      { "id": "R1/2027", "dataDecisao": "2027-01-27", "duEfetiva": 74,  "estimada": false, "focusSelic": 0.135 },
+      { "id": "R2/2027", "dataDecisao": "2027-03-17", "duEfetiva": 107, "estimada": false, "focusSelic": 0.1325 },
+      { "id": "R3/2027", "dataDecisao": "2027-04-28", "duEfetiva": 135, "estimada": false, "focusSelic": 0.13 },
+      { "id": "R4/2027", "dataDecisao": "2027-06-16", "duEfetiva": 169, "estimada": false, "focusSelic": 0.1275 },
+      { "id": "R5/2027", "dataDecisao": "2027-08-04", "duEfetiva": 204, "estimada": false, "focusSelic": 0.125 },
+      { "id": "R6/2027", "dataDecisao": "2027-09-22", "duEfetiva": 238, "estimada": false, "focusSelic": 0.125 },
+      { "id": "R7/2027", "dataDecisao": "2027-10-27", "duEfetiva": 262, "estimada": false, "focusSelic": 0.1225 },
+      { "id": "R8/2027", "dataDecisao": "2027-12-08", "duEfetiva": 290, "estimada": false, "focusSelic": 0.12 },
+      { "id": "R1/2028", "dataDecisao": "2028-01-26", "duEfetiva": 325, "estimada": true,  "focusSelic": 0.1175 },
+      { "id": "R2/2028", "dataDecisao": "2028-03-15", "duEfetiva": 358, "estimada": true,  "focusSelic": 0.115 },
+      { "id": "R3/2028", "dataDecisao": "2028-05-03", "duEfetiva": 390, "estimada": true,  "focusSelic": 0.1125 },
+      { "id": "R4/2028", "dataDecisao": "2028-06-14", "duEfetiva": 420, "estimada": true,  "focusSelic": 0.11 },
+      { "id": "R5/2028", "dataDecisao": "2028-08-02", "duEfetiva": 454, "estimada": true,  "focusSelic": 0.11 },
+      { "id": "R6/2028", "dataDecisao": "2028-09-20", "duEfetiva": 488, "estimada": true,  "focusSelic": 0.105 },
+      { "id": "R7/2028", "dataDecisao": "2028-10-25", "duEfetiva": 512, "estimada": true,  "focusSelic": null },
+      { "id": "R8/2028", "dataDecisao": "2028-12-06", "duEfetiva": 539, "estimada": true,  "focusSelic": null }
+    ],
+    "ultimoCopom": {
+      "id": "R6/2026", "numero": 281, "dataDecisao": "2026-09-16", "selic": 0.1375, "variacaoBps": -25,
+      "unanime": true,
+      "fraseChave": "a magnitude do ciclo de calibração será ajustada à luz da evolução do cenário",
+      "fonteUrl": "https://www.bcb.gov.br/content/copom/atascopom/Copom281-not20260916281.pdf"
+    },
+    "avisos": []
+  }
+}

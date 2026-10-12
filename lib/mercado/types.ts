@@ -41,6 +41,8 @@ export interface MercadoSnapshot {
   contingencia: boolean;
   indicadores: Indicadores;
   curvas: Curva[];
+  /** Opcional: payloads anteriores ao card Âncoras continuam válidos. */
+  ancoras?: Ancoras | null;
   error?: string;
 }
 
@@ -62,4 +64,39 @@ export interface LeituraRapida {
 export interface JanelaDu {
   duMin?: number;
   duMax?: number;
+}
+
+// ── âncoras ────────────────────────────────────────────────────────────────
+
+export interface FocusAncora {
+  dataBase: string; // ISO; Data da pesquisa, sempre ≤ dataEfetiva
+  selicAnual: Record<string, number>; // decimal, chave = ano
+  ipcaAnual: Record<string, number>;
+  ipca12m: number | null;
+}
+
+export interface ReuniaoCopom {
+  id: string; // "R7/2026"
+  dataDecisao: string; // ISO, 2º dia da reunião
+  duEfetiva: number; // DU da data de referência ao 1º dia útil após a decisão
+  estimada: boolean;
+  focusSelic: number | null;
+}
+
+export interface DecisaoCopom {
+  id: string;
+  numero: number; // 281
+  dataDecisao: string;
+  selic: number; // decimal, após a decisão
+  variacaoBps: number;
+  unanime: boolean | null;
+  fraseChave: string | null;
+  fonteUrl: string | null;
+}
+
+export interface Ancoras {
+  focus: FocusAncora | null;
+  reunioes: ReuniaoCopom[];
+  ultimoCopom: DecisaoCopom | null;
+  avisos: string[];
 }
