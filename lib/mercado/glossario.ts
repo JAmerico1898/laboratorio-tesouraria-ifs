@@ -27,19 +27,19 @@ export const GLOSSARIO: VerbeteFamilia[] = [
         id: "pre-zero",
         nome: "PRE zero-cupom (ANBIMA)",
         texto:
-          "Curva prefixada sem pagamentos intermediários, estimada pela ANBIMA a partir das LTN e NTN-F. Cada ponto é a taxa de um fluxo único naquele prazo, em base 252 dias úteis. É a referência para descontar fluxos em reais.",
+          "Curva prefixada sem pagamentos intermediários, construída com as taxas indicativas da ANBIMA: as LTN entram direto, pois já são zero-cupom, e as NTN-F têm os cupons removidos por bootstrap. Cada ponto é a taxa de um fluxo único naquele prazo, em base 252 dias úteis. É a referência para descontar fluxos em reais.",
       },
       {
         id: "di1",
         nome: "DI Futuro (B3)",
         texto:
-          "Taxa de ajuste dos contratos DI1 da B3: a expectativa do CDI acumulado até cada vencimento. É a curva de juros mais líquida do país e a base de hedge e de precificação do crédito pós-fixado. A tabela traz o DV01 de cada contrato.",
+          "Taxa de ajuste dos contratos DI1 da B3: a expectativa do CDI acumulado até cada vencimento. É a curva de juros mais líquida do país e a base de hedge e de precificação do crédito pós-fixado. A tabela \"Vértices da curva\", no fim do painel, traz o DV01 de cada contrato.",
       },
       {
         id: "ntnb-zero",
         nome: "Juro real zero (NTN-B)",
         texto:
-          "Juro real zero-cupom extraído das NTN-B: quanto o mercado paga acima do IPCA por um fluxo único em cada prazo. Remove o efeito dos cupons semestrais, o que permite comparar prazos diferentes de forma direta.",
+          "Juro real zero-cupom extraído das NTN-B: quanto o mercado paga acima do IPCA por um fluxo único em cada prazo. É obtido por bootstrap a partir das taxas indicativas da ANBIMA: do preço de cada NTN-B desconta-se o valor dos cupons anteriores, usando as taxas zero já encontradas nos prazos mais curtos, e o que sobra define a taxa zero do vencimento. Sem o efeito dos cupons, prazos diferentes ficam comparáveis.",
       },
       {
         id: "ntnb-tir",
@@ -125,20 +125,20 @@ export const GLOSSARIO: VerbeteFamilia[] = [
         id: "fwd-implicita",
         nome: "Forward da inflação implícita",
         texto:
-          "Inflação implícita a termo entre vencimentos de NTN-B. Isola a inflação que o mercado espera para cada período futuro, e não a média desde hoje.",
+          "Inflação implícita a termo entre vencimentos de NTN-B. A taxa nominal de referência é o DI Futuro, e não LTN ou NTN-F: é o forward do Break-even NTN-B × DI. Isola a inflação que o mercado espera para cada período futuro, e não a média desde hoje.",
       },
     ],
   },
   {
     familia: "implicita",
     descricao:
-      "Inflação implícita (break-even): a inflação que iguala o retorno de um título prefixado ao de um título indexado ao IPCA no mesmo prazo. Pela equação de Fisher, (1 + nominal) = (1 + real) × (1 + implícita). Inclui também o prêmio de risco dos prefixados.",
+      "Inflação implícita (break-even): a inflação que iguala o retorno de um título prefixado ao de um título indexado ao IPCA no mesmo prazo. Pela equação de Fisher, (1 + nominal) = (1 + real) × (1 + implícita). Inclui também o prêmio de risco dos prefixados. O painel usa duas referências nominais: a curva PRE zero-cupom (LTN e NTN-F) e o DI Futuro.",
     curvas: [
       {
         id: "be-ntnb-pre",
         nome: "Break-even NTN-B × PRE",
         texto:
-          "Inflação implícita da TIR das NTN-B contra a curva PRE da ANBIMA, no mesmo prazo. Se a inflação realizada ficar acima dela, a NTN-B rende mais; abaixo, o prefixado rende mais. Vértice fora do alcance da curva nominal vem marcado e sem valor.",
+          "Inflação implícita entre o juro real zero das NTN-B e a curva PRE zero-cupom (LTN e NTN-F), no mesmo prazo. Se a inflação realizada ficar acima dela, a NTN-B rende mais; abaixo, o prefixado rende mais. Vértice fora do alcance da curva nominal vem marcado e sem valor.",
       },
       {
         id: "be-ntnb-di",
@@ -156,7 +156,7 @@ export const GLOSSARIO: VerbeteFamilia[] = [
         id: "be-forward",
         nome: "Break-even forward",
         texto:
-          "Inflação implícita a termo entre vértices consecutivos do break-even NTN-B × PRE. Mostra a inflação embutida para cada período futuro, útil para comparar com a meta de inflação no longo prazo.",
+          "Inflação implícita a termo entre vértices consecutivos do break-even NTN-B × PRE, cuja referência nominal é a curva PRE zero-cupom (LTN e NTN-F). Mostra a inflação embutida para cada período futuro, útil para comparar com a meta de inflação no longo prazo.",
       },
     ],
   },
@@ -177,7 +177,7 @@ export const GLOSSARIO_ANCORAS: VerbeteAncora[] = [
   {
     termo: "Juro neutro",
     texto:
-      "Taxa de juro real que não estimula nem contrai a economia, com a inflação na meta. Não é observável: é estimada. O painel usa a referência do Copom e a converte em neutro nominal somando a meta de inflação. Juro real acima do neutro indica política monetária contracionista.",
+      "Taxa de juro real que não estimula nem contrai a economia, com a inflação na meta. Não é observável nem calculada pelo painel: é uma estimativa. O painel adota o número que o Copom declara usar em seus modelos, publicado em ata, e o converte em neutro nominal compondo-o com a meta de inflação. Juro real acima do neutro indica política monetária contracionista.",
   },
   {
     termo: "CDI esperado pelo Focus",

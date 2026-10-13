@@ -158,11 +158,8 @@ export function CardAncoras({ s }: { s: MercadoSnapshot }) {
             v={pct(META_INFLACAO, 2)}
             nota={`(banda ${num(BANDA_INFERIOR * 100, 2)}–${num(BANDA_SUPERIOR * 100, 2)})`}
           />
-          <Linha
-            k="Juro neutro real"
-            v={pct(NEUTRO_REAL, 2)}
-            nota={<span title={NEUTRO_FONTE} className="cursor-help">ⓘ fonte</span>}
-          />
+          <Linha k="Juro neutro real" v={pct(NEUTRO_REAL, 2)} />
+          <p className="text-[11.5px] leading-snug text-muted">Fonte: {NEUTRO_FONTE}</p>
           <Linha
             k="Neutro nominal"
             v={pct(neutroNominal(NEUTRO_REAL, META_INFLACAO), 2)}

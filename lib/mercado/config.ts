@@ -58,10 +58,10 @@ export const FORWARDS_CLASSICOS: { rotulo: string; de: number; ate: number }[] =
   { rotulo: "5a5a", de: 5, ate: 10 },
 ];
 
-/** Juro real neutro de referência, em decimal. Editável. */
+/** Juro real neutro de referência, em decimal. Atualize, com a fonte, quando o BCB revisar. */
 export const NEUTRO_REAL = 0.05;
 export const NEUTRO_FONTE =
-  "Copom, ata de dez/2024: taxa real neutra elevada de 4,75% para 5,00% a.a. Atualize quando o BCB revisar.";
+  "Copom, ata de dez/2024: taxa real neutra elevada de 4,75% para 5,00% a.a. É uma estimativa do BCB, não um cálculo do painel.";
 
 /** Abaixo deste módulo (bps), DI e Focus são lidos como alinhados. */
 export const LIMIAR_FOCUS_BPS = 10;
