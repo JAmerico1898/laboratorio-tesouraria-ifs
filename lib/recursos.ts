@@ -125,7 +125,7 @@ export const SIMULADORES: Simulador[] = [
   },
   {
     arquivo: "simulador-inflacao-implicita.xlsx",
-    modulo: 2,
+    modulo: 1,
     titulo: "Inflação implícita",
     descricao: "Breakeven, NTN-B e a decomposição do prêmio.",
   },

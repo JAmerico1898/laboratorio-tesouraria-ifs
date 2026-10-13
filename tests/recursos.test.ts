@@ -41,7 +41,7 @@ describe("simulações em Excel", () => {
 
   it("distribuição por módulo segue a lista do professor", () => {
     const por = (n: number) => SIMULADORES.filter((s) => s.modulo === n).length;
-    expect([por(1), por(2), por(3), por(4)]).toEqual([1, 7, 4, 3]);
+    expect([por(1), por(2), por(3), por(4)]).toEqual([2, 6, 4, 3]);
   });
 
   it("o módulo declara o total de simuladores", () => {
