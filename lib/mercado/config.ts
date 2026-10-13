@@ -69,5 +69,9 @@ export const LIMIAR_FOCUS_BPS = 10;
 /** Prazo máximo (DU) da tabela DI × Focus — além disso o prêmio domina. */
 export const PRAZO_MAX_DI_FOCUS_DU = 600;
 
+/** Prazos (DU) das leituras de juro real, break-even e ponta longa: 2 e 10 anos. */
+export const PRAZO_CURTO_DU = 2 * DU_ANO;
+export const PRAZO_LONGO_DU = 10 * DU_ANO;
+
 /** Reuniões com Selic implícita extraída da curva. */
 export const N_REUNIOES_IMPLICITAS = 2;

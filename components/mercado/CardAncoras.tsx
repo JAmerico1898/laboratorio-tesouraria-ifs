@@ -4,7 +4,6 @@ import { Icon } from "@/components/Icon";
 import {
   diVsFocus,
   focusSelicReuniao,
-  juroRealExAnte,
   neutroNominal,
   selicImplicita,
 } from "@/lib/mercado/ancoras";
@@ -15,25 +14,11 @@ import {
   NEUTRO_FONTE,
   NEUTRO_REAL,
 } from "@/lib/mercado/config";
-import { bps, getCurva } from "@/lib/mercado/metricas";
+import { getCurva } from "@/lib/mercado/metricas";
 import { dataBr, num, pct } from "@/lib/mercado/template";
 import type { MercadoSnapshot } from "@/lib/mercado/types";
+import { BLOCO, LeiturasAncoras, Linha, ROTULO, TD, TH } from "./LeiturasAncoras";
 import { bpsSinal, TabelaDiFocus } from "./TabelaDiFocus";
-
-const BLOCO = "rounded-xl border border-border-soft bg-surface-container-lowest p-3";
-const ROTULO = "text-[10px] font-bold uppercase tracking-wider text-muted";
-const TH = `${ROTULO} pb-1 text-right`;
-const TD = "py-0.5 text-right text-[13px] tabular-nums text-ink";
-
-function Linha({ k, v, nota }: { k: string; v: string; nota?: React.ReactNode }) {
-  return (
-    <div className="flex flex-wrap items-baseline gap-x-2 text-[13px]">
-      <span className="text-muted">{k}</span>
-      <span className="font-semibold tabular-nums text-ink">{v}</span>
-      {nota && <span className="text-[11.5px] tabular-nums text-muted">{nota}</span>}
-    </div>
-  );
-}
 
 /** Âncoras contra as quais a curva é lida: Copom, Focus, meta e juro neutro. */
 export function CardAncoras({ s }: { s: MercadoSnapshot }) {
@@ -45,8 +30,7 @@ export function CardAncoras({ s }: { s: MercadoSnapshot }) {
   const di = getCurva(s, "di1")?.vertices ?? [];
   const implicitas = selicImplicita(di, a, s.indicadores);
   const anoBase = Number(s.dataEfetiva?.slice(0, 4));
-  const anos = [0, 1, 2].map((i) => String(anoBase + i));
-  const real = juroRealExAnte(di, f?.ipca12m ?? null);
+  const anos = [0, 1, 2, 3, 4].map((i) => String(anoBase + i));
   const pp = (v: number | undefined) => num(v === undefined ? null : v * 100, 2);
 
   return (
@@ -165,15 +149,10 @@ export function CardAncoras({ s }: { s: MercadoSnapshot }) {
             v={pct(neutroNominal(NEUTRO_REAL, META_INFLACAO), 2)}
             nota={`= (${num(1 + NEUTRO_REAL, 2)} × ${num(1 + META_INFLACAO, 2)}) − 1`}
           />
-          {f && (
-            <Linha
-              k="Juro real ex-ante 1 ano"
-              v={pct(real, 2)}
-              nota={real === null ? undefined : `(${bpsSinal(bps(real - NEUTRO_REAL))} bps vs. neutro)`}
-            />
-          )}
         </div>
       </div>
+
+      <LeiturasAncoras s={s} />
 
       <div className="mt-3">
         {f ? (

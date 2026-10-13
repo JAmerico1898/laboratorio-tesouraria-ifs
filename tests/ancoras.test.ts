@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   cdiEsperadoFocus,
   diVsFocus,
+  focusIpcaMedio,
   focusSelicReuniao,
   juroRealExAnte,
   neutroNominal,
@@ -86,6 +87,32 @@ describe("âncoras — valores de ouro de 09/10/2026", () => {
   it("juroRealExAnte: DI de 252 DU contra o IPCA 12 meses", () => {
     perto(interpolar(di, 252), 0.12701);
     perto(juroRealExAnte(di, a.focus!.ipca12m), 0.07754);
+  });
+
+  it("diVsFocus: custo de travar a pré em R$ 100 mi segue o sinal e o tamanho do DI − Focus", () => {
+    for (const l of diVsFocus(di, a, ind)) {
+      const t = l.diasUteis / 252;
+      const aprox = 1e8 * (l.difBps! / 1e4) * t * (1 + l.di) ** (t - 1);
+      expect(Math.sign(l.travarReais!)).toBe(Math.sign(l.difBps!));
+      expect(Math.abs(l.travarReais! / aprox - 1), l.rotulo).toBeLessThan(0.01);
+    }
+  });
+
+  it("focusIpcaMedio: 12 meses à frente no 1º ano, medianas anuais depois", () => {
+    const f = a.focus!;
+    expect(focusIpcaMedio("2026-10-09", "2027-05-15", f)).toBe(f.ipca12m);
+    // 1 ano a 4,5905% + 81 dias de 2027 a 4,3007% + 227 dias de 2028 a 3,8007%.
+    perto(focusIpcaMedio("2026-10-09", "2028-08-15", f), 0.04289);
+    const plano = { ...f, ipca12m: 0.04, ipcaAnual: { "2027": 0.04, "2028": 0.04 } };
+    perto(focusIpcaMedio("2026-10-09", "2028-08-15", plano), 0.04, 1e-12);
+  });
+
+  it("focusIpcaMedio devolve nulo sem Focus, sem mediana do ano ou com prazo vencido", () => {
+    const f = a.focus!;
+    expect(focusIpcaMedio("2026-10-09", "2028-08-15", null)).toBeNull();
+    expect(focusIpcaMedio("2026-10-09", "2028-08-15", { ...f, ipca12m: null })).toBeNull();
+    expect(focusIpcaMedio("2026-10-09", "2035-05-15", f)).toBeNull();
+    expect(focusIpcaMedio("2026-10-09", "2026-10-09", f)).toBeNull();
   });
 
   it("focusSelicReuniao cai na mediana anual quando o Focus não cobre a reunião", () => {

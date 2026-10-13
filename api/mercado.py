@@ -506,15 +506,23 @@ def _olinda(recurso: str, filtro: str, extra: str = "") -> list[dict[str, Any]]:
 
 
 def _focus(data: dt.date) -> tuple[dict[str, Any], dict[str, float]]:
-    """Pesquisa Focus mais recente com Data ≤ `data` (sem look-ahead).
+    """Pesquisa Focus mais recente já publicada em `data` (sem look-ahead).
+
+    O boletim sai no primeiro dia útil da semana, com dados até a sexta
+    anterior. A Olinda guarda medianas diárias, então exige-se data-base
+    anterior à segunda-feira da última semana cujo boletim já saiu em `data`.
 
     Devolve o bloco `focus` e o dicionário reunião → mediana da Selic. Lança na
     primeira consulta que falhar: as seguintes dependem da data-base.
     """
     iso = data.strftime("%Y-%m-%d")
+    segunda = data - dt.timedelta(days=data.weekday())
+    if str(yd.du.deslocar(segunda.strftime("%Y-%m-%d"), 0))[:10] > iso:
+        segunda -= dt.timedelta(days=7)
+    corte = segunda.strftime("%Y-%m-%d")
     base = _olinda(
         "ExpectativasMercadoAnuais",
-        f"Indicador eq 'Selic' and baseCalculo eq 0 and Data le '{iso}'",
+        f"Indicador eq 'Selic' and baseCalculo eq 0 and Data lt '{corte}'",
         "&$top=1&$orderby=Data%20desc&$select=Data",
     )[0]["Data"]
 
@@ -553,10 +561,11 @@ def _focus(data: dt.date) -> tuple[dict[str, Any], dict[str, float]]:
     return focus, por_reuniao
 
 
-def _ancoras(data: dt.date) -> dict[str, Any]:
+def _ancoras(data: dt.date, pedida: dt.date | None = None) -> dict[str, Any]:
     """Âncoras do card: Focus, reuniões futuras do Copom e última decisão.
 
-    Nunca lança: falha parcial vira `None`/lista vazia mais uma linha em `avisos`.
+    O Focus é o disponível em `pedida` (o dia em que a mesa lê a curva), que
+    pode ser posterior à data do dado. Nunca lança: falha parcial vira `None`/lista vazia mais uma linha em `avisos`.
     """
     iso = data.strftime("%Y-%m-%d")
     avisos: list[str] = []
@@ -564,7 +573,7 @@ def _ancoras(data: dt.date) -> dict[str, Any]:
     focus: dict[str, Any] | None = None
     por_reuniao: dict[str, float] = {}
     try:
-        focus, por_reuniao = _focus(data)
+        focus, por_reuniao = _focus(pedida or data)
     except Exception:  # noqa: BLE001 — o Focus nunca derruba o snapshot
         avisos.append("Focus indisponível no momento")
 
@@ -627,7 +636,9 @@ BLOCOS = {
 }
 
 
-def construir_snapshot(data: dt.date, bloco: str = "all") -> dict[str, Any]:
+def construir_snapshot(
+    data: dt.date, bloco: str = "all", pedida: dt.date | None = None
+) -> dict[str, Any]:
     """Monta o payload de uma data que sabidamente tem dado."""
     escolhidos = BLOCOS.keys() if bloco == "all" else [bloco]
     curvas: list[dict[str, Any]] = []
@@ -641,7 +652,7 @@ def construir_snapshot(data: dt.date, bloco: str = "all") -> dict[str, Any]:
         "contingencia": False,
         "indicadores": _indicadores(data),
         "curvas": curvas,
-        "ancoras": _ancoras(data),
+        "ancoras": _ancoras(data, pedida),
     }
 
 
@@ -651,7 +662,7 @@ def resolver(data_pedida: dt.date, bloco: str = "all") -> dict[str, Any]:
     for i in range(MAX_TENTATIVAS_DATA):
         alvo = data_pedida - dt.timedelta(days=i)
         try:
-            snap = construir_snapshot(alvo, bloco)
+            snap = construir_snapshot(alvo, bloco, data_pedida)
             if any(c["vertices"] for c in snap["curvas"]):
                 snap["dataSolicitada"] = data_pedida.strftime("%Y-%m-%d")
                 return snap

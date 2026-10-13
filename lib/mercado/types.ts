@@ -69,7 +69,7 @@ export interface JanelaDu {
 // ── âncoras ────────────────────────────────────────────────────────────────
 
 export interface FocusAncora {
-  dataBase: string; // ISO; Data da pesquisa, sempre ≤ dataEfetiva
+  dataBase: string; // ISO; Data da pesquisa já publicada no dia em que o painel é lido
   selicAnual: Record<string, number>; // decimal, chave = ano
   ipcaAnual: Record<string, number>;
   ipca12m: number | null;

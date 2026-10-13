@@ -1,7 +1,7 @@
 "use client";
 
 import type { LinhaDiFocus } from "@/lib/mercado/ancoras";
-import { pct } from "@/lib/mercado/template";
+import { num, pct } from "@/lib/mercado/template";
 
 /** Pontos-base com sinal e sem casas: "−27", "+18", "0". */
 export function bpsSinal(v: number | null | undefined): string {
@@ -18,7 +18,7 @@ export function TabelaDiFocus({ linhas }: { linhas: LinhaDiFocus[] }) {
   return (
     <>
       <div className="overflow-x-auto rounded-xl border border-border-soft">
-        <table className="w-full min-w-[520px] border-collapse">
+        <table className="w-full min-w-[680px] border-collapse">
           <caption className="sr-only">DI contra o CDI esperado pelo Focus</caption>
           <thead className="bg-surface-container-high">
             <tr>
@@ -27,6 +27,7 @@ export function TabelaDiFocus({ linhas }: { linhas: LinhaDiFocus[] }) {
               <th scope="col" className={`${th} text-right`}>CDI esperado (Focus)</th>
               <th scope="col" className={`${th} text-right`}>DI − Focus</th>
               <th scope="col" className={th}>Leitura</th>
+              <th scope="col" className={th}>Travar pré (R$ 100 mi)</th>
             </tr>
           </thead>
           <tbody>
@@ -42,6 +43,11 @@ export function TabelaDiFocus({ linhas }: { linhas: LinhaDiFocus[] }) {
                   {l.difBps === null ? "—" : `${bpsSinal(l.difBps)} bps`}
                 </td>
                 <td className={td}>{l.leitura ?? "—"}</td>
+                <td className={td}>
+                  {l.travarReais === null
+                    ? "—"
+                    : `${l.travarReais < 0 ? "economiza" : "custa"} R$ ${num(Math.abs(l.travarReais) / 1000, 0)} mil`}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -67,6 +73,22 @@ export function TabelaDiFocus({ linhas }: { linhas: LinhaDiFocus[] }) {
           <li>
             <b>Leitura:</b> diferença menor que −10 bps, mercado mais dovish que o Focus; maior
             que +10 bps, curva acima do Focus (nos prazos longos, isso é prêmio, não expectativa).
+          </li>
+          <li>
+            <b>Travar pré (R$ 100 mi):</b> diferença, no vencimento, entre captar R$ 100 milhões à
+            taxa do DI e pagar o CDI esperado pelo Focus. “Economiza” se o Focus acertar e a pré
+            sair mais barata; não mede o risco de os cortes virem mais lentos.
+          </li>
+          <li>
+            <b>Ponta longa:</b> DI de janeiro mais próximo de 10 anos menos o neutro nominal. A
+            diferença junta prêmio de prazo, prêmio fiscal e a chance de o mercado ver um neutro
+            mais alto que o do BCB. <b>Juro real:</b> TIR da NTN-B mais próxima de 2 anos e taxa
+            real a termo 5a5a da curva zero de NTN-B.
+          </li>
+          <li>
+            <b>Inflação implícita:</b> break-even NTN-B × PRE nos vencimentos mais próximos de 2 e
+            de 10 anos. O Focus do período usa o IPCA 12 meses à frente no primeiro ano e as
+            medianas anuais depois, ponderadas pelo tempo; sem mediana para todo o prazo, fica “—”.
           </li>
           <li>
             <b>Juro real ex-ante:</b> DI de 1 ano (252 dias úteis) descontado do IPCA 12 meses do

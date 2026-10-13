@@ -2,6 +2,7 @@ import {
   DU_ANO,
   LIMIAR_FOCUS_BPS,
   N_REUNIOES_IMPLICITAS,
+  NOCIONAL_PADRAO,
   PRAZO_MAX_DI_FOCUS_DU,
 } from "./config";
 import { bps, forward, interpolar } from "./metricas";
@@ -33,6 +34,8 @@ export interface LinhaDiFocus {
   focus: number | null;
   difBps: number | null;
   leitura: LeituraFocus | null;
+  /** Custo (R$, nocional padrão) de travar a pré em vez de pagar o CDI do Focus; negativo = economia. */
+  travarReais: number | null;
   /** O cálculo usa ao menos uma reunião com data ainda não oficial. */
   estimada: boolean;
 }
@@ -122,6 +125,31 @@ export function juroRealExAnte(di: Vertice[], ipca12m: number | null): number | 
   return (1 + di1a) / (1 + ipca12m) - 1;
 }
 
+const ANO_MS = 365.25 * 864e5;
+
+/**
+ * IPCA médio (a.a.) que o Focus projeta da data de referência até `venc`: os
+ * primeiros 12 meses pela mediana de 12 meses à frente; o restante pelas
+ * medianas anuais, ponderadas pelo tempo em cada ano-calendário.
+ */
+export function focusIpcaMedio(ref: string, venc: string, f: FocusAncora | null): number | null {
+  if (!f || f.ipca12m === null) return null;
+  const t0 = Date.parse(ref);
+  const fim = Date.parse(venc);
+  if (!(fim > t0)) return null;
+  const t1 = t0 + ANO_MS;
+  if (fim <= t1) return f.ipca12m;
+  let log = Math.log(1 + f.ipca12m);
+  for (let ano = new Date(t1).getUTCFullYear(); ano <= new Date(fim).getUTCFullYear(); ano++) {
+    const ipca = f.ipcaAnual[String(ano)];
+    if (ipca === undefined) return null;
+    const de = Math.max(t1, Date.UTC(ano, 0, 1));
+    const ate = Math.min(fim, Date.UTC(ano + 1, 0, 1));
+    log += (Math.log(1 + ipca) * (ate - de)) / ANO_MS;
+  }
+  return Math.exp(log / ((fim - t0) / ANO_MS)) - 1;
+}
+
 export function rotuloFocus(difBps: number): LeituraFocus {
   if (difBps < -LIMIAR_FOCUS_BPS) return "mercado mais dovish";
   if (difBps > LIMIAR_FOCUS_BPS) return "curva acima do Focus";
@@ -149,6 +177,11 @@ export function diVsFocus(di: Vertice[], a: Ancoras, ind: Taxas): LinhaDiFocus[]
         focus,
         difBps,
         leitura: difBps === null ? null : rotuloFocus(difBps),
+        travarReais:
+          focus === null
+            ? null
+            : NOCIONAL_PADRAO *
+              ((1 + taxa) ** (v.diasUteis / DU_ANO) - (1 + focus) ** (v.diasUteis / DU_ANO)),
         estimada: a.reunioes.some((r) => r.estimada && r.duEfetiva < v.diasUteis),
       };
     });
