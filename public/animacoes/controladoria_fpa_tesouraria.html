@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Controladoria, FP&amp;A e Tesouraria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,700;1,6..72,500&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAF7F2;
+  --bg2:#F2EDE4;
+  --bg-card:#FFFFFF;
+  --text:#1E1B18;
+  --text-dim:#5A544C;
+  --accent:#8A2E4F;      /* cor de identidade desta animação */
+  --ctrl:#2D5B8C;        /* Controladoria  — passado */
+  --tes:#0E6B5F;         /* Tesouraria     — presente */
+  --fpa:#6A3E9E;         /* FP&A           — futuro */
+  --ok:#2A7230;
+  --bad:#B42318;
+  --warn:#9A5B00;
+  --line:#8F877C;
+  --ctrl-bg:#E9F0F8;
+  --tes-bg:#E3F2EF;
+  --fpa-bg:#EFE8F7;
+  --ok-bg:#E8F4E9;
+  --bad-bg:#FCEBE9;
+  --warn-bg:#FBF1E0;
+  --grid-dim:#E6E0D6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Figtree',system-ui,sans-serif;font-size:16px;line-height:1.55}
+.wrap{max-width:1040px;margin:0 auto;padding:28px 16px 40px}
+.tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:3px 12px;margin-bottom:12px}
+h1{font-family:'Newsreader',serif;font-weight:700;font-size:clamp(28px,5vw,44px);line-height:1.1;margin-bottom:10px}
+h1 em{color:var(--accent);font-style:italic;font-weight:500}
+.lead{color:var(--text-dim);max-width:720px;font-size:17px}
+h2{font-family:'Newsreader',serif;font-size:26px;margin:4px 0 12px}
+h3{font-family:'Newsreader',serif;font-size:20px;margin-bottom:6px}
+.mono{font-family:'IBM Plex Mono',monospace}
+
+/* ---------- abas ---------- */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0 20px}
+.tab{font:600 15px 'Figtree',sans-serif;border:1.5px solid var(--accent);color:var(--accent);background:var(--bg-card);border-radius:999px;padding:8px 18px;cursor:pointer;transition:all .2s}
+.tab:hover{background:var(--bg2)}
+.tab.on{background:var(--accent);color:#fff}
+.pane{display:none;animation:fade .45s ease}
+.pane.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.card{background:var(--bg-card);border-radius:14px;box-shadow:0 1px 3px rgba(40,30,20,.08),0 6px 20px rgba(40,30,20,.05);padding:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:760px){.grid3,.grid2{grid-template-columns:1fr}}
+
+/* ---------- Conceito ---------- */
+.ciclo{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin:6px 0 18px;font-weight:600}
+.pill{border-radius:999px;padding:6px 14px;color:#fff;font-size:15px}
+.p-ctrl{background:var(--ctrl)}.p-tes{background:var(--tes)}.p-fpa{background:var(--fpa)}
+.seta{font-family:'IBM Plex Mono',monospace;color:var(--text-dim)}
+.area{border-top:5px solid}
+.area.ctrl{border-color:var(--ctrl)}.area.tes{border-color:var(--tes)}.area.fpa{border-color:var(--fpa)}
+.tempo{font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.ctrl .tempo,.c-ctrl{color:var(--ctrl)}.tes .tempo,.c-tes{color:var(--tes)}.fpa .tempo,.c-fpa{color:var(--fpa)}
+.pergunta{font-family:'Newsreader',serif;font-style:italic;font-size:18px;margin:4px 0 10px}
+.area ul{padding-left:18px;font-size:15px}
+.area li{margin-bottom:5px}
+.duo{margin-top:16px}
+.certo{background:var(--ok-bg);border-left:4px solid var(--ok)}
+.errado{background:var(--bad-bg);border-left:4px solid var(--bad)}
+.certo b{color:var(--ok)}.errado b{color:var(--bad)}
+.caixa{margin-top:14px;border-radius:12px;padding:14px 16px;font-size:15px}
+.caixa.warn{background:var(--warn-bg);border-left:4px solid var(--warn)}
+.caixa.info{background:var(--ctrl-bg);border-left:4px solid var(--ctrl)}
+.caixa.dica{background:var(--fpa-bg);border-left:4px solid var(--fpa)}
+
+/* ---------- Simulação ---------- */
+.banco{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 14px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--bg2);border-radius:6px;padding:3px 8px;color:var(--text-dim)}
+.eventos{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.ev{font:600 14px 'Figtree',sans-serif;border:1.5px solid var(--line);background:var(--bg-card);color:var(--text);border-radius:10px;padding:8px 12px;cursor:pointer}
+.ev.on{border-color:var(--accent);background:var(--accent);color:#fff}
+.controles{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:12px}
+.controles label{font-weight:600;font-size:15px}
+.controles input[type=range]{width:220px;accent-color:var(--accent)}
+#sliderVal{font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--accent);min-width:90px}
+.btn{font:600 14px 'Figtree',sans-serif;border:none;border-radius:10px;padding:9px 16px;cursor:pointer;background:var(--accent);color:#fff}
+.btn.sec{background:var(--bg2);color:var(--text)}
+canvas{display:block;width:100%;border-radius:12px;background:var(--bg-card)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+@media (max-width:760px){.stats{grid-template-columns:1fr 1fr}}
+.stat{background:var(--bg-card);border-radius:12px;padding:12px;box-shadow:0 1px 3px rgba(40,30,20,.08)}
+.stat .rot{font-size:12.5px;color:var(--text-dim);line-height:1.3}
+.stat .val{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:20px;margin-top:4px}
+.acoes .area{opacity:.35;transition:opacity .4s,transform .4s;transform:translateY(4px)}
+.acoes .area.lit{opacity:1;transform:none}
+.acoes .area p{font-size:15px}
+.ordem{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-dim)}
+.oque{margin-top:14px;background:var(--bg2);border-radius:12px;padding:14px 16px;font-size:15.5px}
+.oque.alerta{background:var(--bad-bg);border-left:4px solid var(--bad)}
+.oque.atencao{background:var(--warn-bg);border-left:4px solid var(--warn)}
+.oque.tranq{background:var(--ok-bg);border-left:4px solid var(--ok)}
+
+/* ---------- Cenários ---------- */
+.cen{display:flex;flex-direction:column;gap:10px}
+.cen .sit{font-size:15.5px}
+.escolha{display:flex;flex-wrap:wrap;gap:6px}
+.escolha button{font:600 13.5px 'Figtree',sans-serif;border:1.5px solid var(--line);background:var(--bg-card);color:var(--text);border-radius:8px;padding:6px 10px;cursor:pointer}
+.escolha button.certa{background:var(--ok);border-color:var(--ok);color:#fff}
+.escolha button.errada{background:var(--bad);border-color:var(--bad);color:#fff}
+.escolha button:disabled{cursor:default}
+.resp{display:none;font-size:14.5px;border-radius:10px;padding:10px 12px}
+.resp.ok{display:block;background:var(--ok-bg);border-left:4px solid var(--ok)}
+.resp.no{display:block;background:var(--bad-bg);border-left:4px solid var(--bad)}
+
+/* ---------- Teste ---------- */
+.q{margin-bottom:14px}
+.q .enun{font-weight:600;margin-bottom:10px}
+.alt{display:block;width:100%;text-align:left;font:15px 'Figtree',sans-serif;background:var(--bg-card);border:1.5px solid var(--grid-dim);color:var(--text);border-radius:10px;padding:9px 12px;margin-bottom:7px;cursor:pointer}
+.alt:hover:not(:disabled){border-color:var(--line)}
+.alt.certa{background:var(--ok-bg);border-color:var(--ok)}
+.alt.errada{background:var(--bad-bg);border-color:var(--bad)}
+.alt:disabled{cursor:default}
+.fb{display:none;font-size:14.5px;margin-top:4px;padding:10px 12px;border-radius:10px;background:var(--bg2)}
+.placar{font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--accent);margin-bottom:12px}
+footer{margin-top:34px;font-size:13px;color:var(--text-dim);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="tag">Gestão de IFs · Estrutura financeira do banco</span>
+  <h1>Controladoria, Tesouraria e FP&amp;A: <em>passado, presente e futuro</em></h1>
+  <p class="lead">As três áreas olham para os mesmos números do banco, mas em tempos diferentes. A Controladoria registra o que aconteceu, a Tesouraria cuida de hoje e o FP&amp;A projeta o que vem.</p>
+
+  <nav class="tabs">
+    <button class="tab on" data-p="conceito">① Conceito</button>
+    <button class="tab" data-p="sim">② Simulação</button>
+    <button class="tab" data-p="cen">③ Cenários</button>
+    <button class="tab" data-p="teste">④ Teste</button>
+  </nav>
+
+  <!-- ================= ① CONCEITO ================= -->
+  <section class="pane on" id="conceito">
+    <div class="card">
+      <h2>Um ciclo, três tempos</h2>
+      <div class="ciclo">
+        <span class="pill p-fpa">FP&amp;A planeja</span><span class="seta">→</span>
+        <span class="pill p-tes">Tesouraria executa e protege</span><span class="seta">→</span>
+        <span class="pill p-ctrl">Controladoria registra</span><span class="seta">→</span>
+        <span class="pill p-fpa">FP&amp;A compara e reprojeta</span>
+      </div>
+      <div class="grid3">
+        <div class="card area ctrl">
+          <div class="tempo">⟵ Passado</div>
+          <h3 class="c-ctrl">Controladoria</h3>
+          <div class="pergunta">“O que aconteceu?”</div>
+          <ul>
+            <li>Contabilidade e fechamento (Cosif, balancetes, demonstrações)</li>
+            <li>Apuração do resultado e das provisões (perda esperada, Res. CMN 4.966)</li>
+            <li>Registro a valor justo das posições</li>
+            <li>Reporte contábil ao BCB e ao fisco</li>
+            <li>Conciliações e controles internos</li>
+          </ul>
+        </div>
+        <div class="card area tes">
+          <div class="tempo">● Presente</div>
+          <h3 class="c-tes">Tesouraria</h3>
+          <div class="pergunta">“Estamos líquidos e protegidos hoje?”</div>
+          <ul>
+            <li>Leitura da curva de juros (ETTJ, forwards, deformações)</li>
+            <li>Apreçamento e carregamento de títulos: DV01, convexidade, imunização</li>
+            <li>Funding e liquidez: custo all-in de CDB, LF e LCI/LCA; compulsório e LCR</li>
+            <li>ALM: ΔEVE e ΔNII dentro dos limites do ALCO</li>
+            <li>Curva de FTP (preço interno do dinheiro)</li>
+          </ul>
+        </div>
+        <div class="card area fpa">
+          <div class="tempo">Futuro ⟶</div>
+          <h3 class="c-fpa">FP&amp;A</h3>
+          <div class="pergunta">“Para onde vamos?”</div>
+          <ul>
+            <li>Orçamento anual e forecasts rolantes</li>
+            <li>Projeção de margem (NII), PDD, capital e ROE</li>
+            <li>Análise orçado × realizado (volume, taxa, mix)</li>
+            <li>Rentabilidade gerencial por produto e segmento</li>
+            <li>Cenários para o plano de capital</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid2 duo">
+        <div class="caixa certo"><b>✓ Certo:</b> a Controladoria diz quanto o banco ganhou; o FP&amp;A explica por que ganhou isso e projeta quanto vai ganhar. O gerencial do FP&amp;A tem de fechar com o contábil.</div>
+        <div class="caixa errado"><b>✗ Armadilha:</b> “FP&amp;A e Controladoria são a mesma coisa, porque as duas mexem com o resultado.” Uma registra o realizado com regra contábil; a outra planeja e analisa com visão gerencial.</div>
+      </div>
+      <div class="caixa warn">⚠️ <b>Tesouraria de banco não é só “o caixa”.</b> Além de pagar e receber, ela capta, gere a liquidez regulatória, opera a mesa e faz o ALM. É dela (ALM) a curva de FTP; o FP&amp;A <i>usa</i> essa curva para medir a rentabilidade de cada produto, mas não a define.</div>
+      <div class="caixa info">🌎 <b>Janela para o mundo real:</b> com a Res. CMN 4.966, em vigor desde janeiro de 2025, as provisões dos bancos passaram ao modelo de perda esperada. A Controladoria passou a apurar a PDD com outra lógica, e o FP&amp;A teve de refazer as projeções de custo de crédito.</div>
+    </div>
+  </section>
+
+  <!-- ================= ② SIMULAÇÃO ================= -->
+  <section class="pane" id="sim">
+    <div class="card">
+      <h2>Um evento cai no “hoje”: quem faz o quê?</h2>
+      <div class="banco">
+        <span class="chip">Banco Horizonte (fictício)</span>
+        <span class="chip">Ativo R$ 50 bi</span><span class="chip">Crédito R$ 30 bi</span>
+        <span class="chip">Títulos pré na carteira de negociação R$ 8 bi · duration modificada 2 · DV01 R$ 1,6 mi/bp</span>
+        <span class="chip">Gap 12m −R$ 8 bi</span><span class="chip">LCR 150%</span>
+        <span class="chip">PL R$ 5 bi</span><span class="chip">Lucro orçado R$ 900 mi · ROE 18%</span>
+      </div>
+      <div class="eventos" id="eventos"></div>
+      <div class="controles">
+        <label for="slider" id="sliderLabel">Intensidade</label>
+        <input type="range" id="slider">
+        <span id="sliderVal"></span>
+        <button class="btn" id="play">▶ Disparar</button>
+        <button class="btn sec" id="reset">↺ Reiniciar</button>
+      </div>
+      <canvas id="cv"></canvas>
+      <div class="stats" id="stats"></div>
+      <div class="grid3 acoes" id="acoes"></div>
+      <div class="oque" id="oque"></div>
+      <p class="ordem" style="margin-top:10px">Contas simplificadas, com valores em R$ e alíquota de IR/CSLL de 45%. MtM ≈ −valor × duration modificada × Δtaxa (= −DV01 × Δtaxa em bps); ΔNII = gap × Δtaxa; LCR = HQLA ÷ saídas líquidas em 30 dias; PDD = carteira × Δinadimplência × LGD (45%).</p>
+    </div>
+  </section>
+
+  <!-- ================= ③ CENÁRIOS ================= -->
+  <section class="pane" id="cen">
+    <h2>De quem é a tarefa?</h2>
+    <p class="lead" style="margin-bottom:14px">Escolha a área antes de ver a resposta.</p>
+    <div class="grid2" id="cenarios"></div>
+  </section>
+
+  <!-- ================= ④ TESTE ================= -->
+  <section class="pane" id="teste">
+    <h2>Teste rápido</h2>
+    <div class="placar" id="placar"></div>
+    <div id="questoes"></div>
+  </section>
+
+  <footer>Banco Horizonte é fictício; os números são ilustrativos.</footer>
+</div>
+
+<script>
+/* =====================================================================
+   CÁLCULOS (valores em R$ milhões) — conferidos em Python (calc_check.py)
+   ===================================================================== */
+// --- CALC-INICIO ---
+const BASE = {credito:30000, pre_mtm:8000, duration:2.0, gap12:-8000, hqla:6000,
+              saidas:4000, runoff:0.40, pl:5000, nii:2400, lucro:900, ir:0.45, lgd:0.45,
+              nii_mes:200, spread_extra:0.008};
+
+// Copom sobe a Selic em s pontos percentuais
+function calcSelic(s){
+  const b = BASE;
+  const dv01 = b.pre_mtm * b.duration / 10000;      // R$ mi por ponto-base (duration modificada)
+  const mtm  = -dv01 * s * 100;                     // perda a mercado dos títulos pré (s p.p. = s×100 bps)
+  const dnii = b.gap12 * s / 100;                   // efeito em 12 meses na margem
+  const lucro = b.lucro + (mtm + dnii) * (1 - b.ir);
+  return {dv01, mtm, dnii, lucro, roe: lucro / b.pl};
+}
+// Grande cliente saca x bilhões
+function calcSaque(x){
+  const b = BASE, xm = x * 1000;
+  const hqla = b.hqla - xm;                          // o saque sai dos ativos líquidos
+  const saidas = b.saidas - b.runoff * xm;           // esse depósito já pesava 40% nas saídas
+  const lcr = saidas > 0 ? hqla / saidas : 0;
+  const custo = xm * b.spread_extra;                 // repor a captação custa 0,8 p.p. a mais
+  const lucro = b.lucro - custo * (1 - b.ir);
+  return {hqla, lcr, custo, lucro};
+}
+// Inadimplência sobe d pontos percentuais
+function calcInad(d){
+  const b = BASE;
+  const pdd = b.credito * d / 100 * b.lgd;           // provisão adicional
+  const lucro = b.lucro - pdd * (1 - b.ir);
+  const receb = b.credito * d / 100;                 // parcelas que deixam de entrar (12m)
+  return {pdd, lucro, roe: lucro / b.pl, receb};
+}
+// Fechamento: volume de crédito v% acima (ou abaixo) do orçado
+function calcFecha(v){
+  const b = BASE;
+  const real = b.nii_mes * (1 + v / 100);
+  const efeito = real - b.nii_mes;                   // efeito volume no mês
+  const funding = b.credito * v / 100;               // funding extra (+) ou liberado (−)
+  const forecast = b.nii * (1 + v / 100);            // NII anual se o desvio persistir
+  return {real, efeito, funding, forecast};
+}
+// --- CALC-FIM ---
+
+/* ---------- formatação brasileira ---------- */
+function num(x, d){ return x.toLocaleString('pt-BR',{minimumFractionDigits:d, maximumFractionDigits:d}); }
+// valor em R$ mi → "R$ 160 mi" ou "R$ 1,5 bi"; sinal opcional
+function rs(x, sinal){
+  const s = sinal ? (x > 0 ? '+' : x < 0 ? '−' : '') : (x < 0 ? '−' : '');
+  const a = Math.abs(x);
+  const corpo = a >= 1000 ? 'R$ ' + num(a/1000, 2) + ' bi' : 'R$ ' + num(a, a < 10 && a % 1 ? 1 : 0) + ' mi';
+  return s + corpo;
+}
+function pct(x, d){ return num(x*100, d) + '%'; }
+
+/* =====================================================================
+   EVENTOS: cada um define o slider, a ordem das áreas e os textos
+   ===================================================================== */
+const EVENTOS = {
+  selic: {
+    nome:'📈 Copom sobe a Selic', rot:'Alta da Selic', min:0.25, max:2, step:0.25, val:1,
+    fmt: v => '+' + num(v,2) + ' p.p.', calc: calcSelic,
+    ordem:['tes','ctrl','fpa'],
+    canvas: r => ({ tes:['marca a mercado', rs(r.mtm)], ctrl:['registra a perda', rs(r.mtm)], fpa:['reprojeta lucro', rs(r.lucro)] }),
+    stats: r => [['Perda a mercado (carteira de negociação)', rs(r.mtm)], ['Efeito na margem em 12m (ΔNII)', rs(r.dnii)],
+                 ['Lucro anual projetado', rs(r.lucro)], ['ROE projetado', pct(r.roe,1)]],
+    textos: (r,v) => ({
+      tes:  `No mesmo dia, a mesa vê a carteira pré de negociação perder ${rs(Math.abs(r.mtm))} a mercado (DV01 de ${rs(r.dv01)}/bp × ${num(v*100,0)} bps) e decide se reduz a exposição, reponderando a carteira ou vendendo DI1. A ALM revê o gap de 12 meses (−R$ 8 bi: os passivos repactuam antes dos ativos) e atualiza a curva de FTP.`,
+      ctrl: `No fechamento, reconhece a perda de ${rs(Math.abs(r.mtm))} no resultado, porque os títulos estão na carteira de negociação, e confere os preços com uma área independente da mesa. No banking book (custo amortizado ou VJORA, pela Res. CMN 4.966), a perda não passaria pelo resultado do mês; no VJORA ela vai ao PL. O risco seria o mesmo.`,
+      fpa:  `Refaz o forecast: a margem cai ${rs(Math.abs(r.dnii))} em 12 meses e, somando a perda a mercado, o lucro do ano vai de R$ 900 mi para ${rs(r.lucro)} (ROE de ${pct(r.roe,1)}).`
+    }),
+    oque: r => r.roe < 0.15
+      ? {cls:'alerta', txt:`Com ROE projetado de ${pct(r.roe,1)}, a meta de 18% fica fora de alcance. O FP&A leva à diretoria a revisão do plano, e a decisão de fechar ou carregar a posição, com a Tesouraria, vira prioridade.`}
+      : {cls:'atencao', txt:`O ROE projetado cai para ${pct(r.roe,1)}. É um desvio administrável: a Tesouraria avalia se fecha parte da posição e o FP&A registra o novo número no forecast.`}
+  },
+  saque: {
+    nome:'🏃 Grande cliente saca', rot:'Valor do saque', min:0.5, max:5, step:0.5, val:2,
+    fmt: v => 'R$ ' + num(v,1) + ' bi', calc: calcSaque,
+    ordem:['tes','ctrl','fpa'],
+    canvas: r => ({ tes:['cobre a liquidez', 'LCR ' + pct(r.lcr,0)], ctrl:['registra a saída', rs(-(BASE.hqla - r.hqla))], fpa:['revisa o funding', rs(r.custo,true) + ' a.a.'] }),
+    stats: r => [['LCR após o saque (simplificado)', pct(r.lcr,0)], ['Ativos líquidos (HQLA)', rs(r.hqla)],
+                 ['Custo extra para repor a captação', rs(r.custo,true) + '/ano'], ['Lucro anual projetado', rs(r.lucro)]],
+    textos: (r,v) => ({
+      tes:  `Hoje mesmo, paga o saque com os ativos líquidos, que caem para ${rs(r.hqla)}, e o LCR vai a ${pct(r.lcr,0)}. ${r.lcr < 1 ? 'Abaixo de 100%: precisa captar ou fazer compromissada já.' : 'Ainda acima de 100%, mas a folga diminuiu.'}`,
+      ctrl: `Registra a baixa de ${rs(BASE.hqla - r.hqla)} em depósitos e em disponibilidades. Se a Tesouraria vender títulos para cobrir o saque, apura o ganho ou a perda na venda.`,
+      fpa:  `Revisa o plano de funding: repor essa captação custa ${rs(r.custo)} a mais por ano, e o lucro projetado vai a ${rs(r.lucro)}.`
+    }),
+    oque: r => r.lcr < 1
+      ? {cls:'alerta', txt:`O LCR de ${pct(r.lcr,0)} está abaixo do mínimo de 100%. É um problema de hoje, da Tesouraria; o efeito no lucro (${rs(r.lucro)}) é pequeno perto do risco de liquidez.`}
+      : r.lcr < 1.2
+      ? {cls:'atencao', txt:`O LCR de ${pct(r.lcr,0)} ainda cumpre o mínimo, mas a folga é pequena. A Tesouraria reforça a captação antes que outro saque aconteça.`}
+      : {cls:'tranq', txt:`Com LCR de ${pct(r.lcr,0)}, o banco absorve o saque com folga. O impacto relevante é o custo de repor a captação, que fica no forecast do FP&A.`}
+  },
+  inad: {
+    nome:'📉 Inadimplência sobe', rot:'Alta da inadimplência', min:0.5, max:3, step:0.5, val:1,
+    fmt: v => '+' + num(v,1) + ' p.p.', calc: calcInad,
+    ordem:['ctrl','fpa','tes'],
+    canvas: r => ({ ctrl:['provisiona', rs(r.pdd,true) + ' PDD'], fpa:['revisa o ROE', 'ROE ' + pct(r.roe,1)], tes:['ajusta o caixa', rs(-r.receb)] }),
+    stats: r => [['PDD adicional', rs(r.pdd,true)], ['Lucro anual projetado', rs(r.lucro)],
+                 ['ROE projetado', pct(r.roe,1)], ['Carteira que deixa de pagar', rs(r.receb)]],
+    textos: (r,v) => ({
+      ctrl: `Constitui ${rs(r.pdd)} a mais de provisão para perda esperada (Res. CMN 4.966), lançados no resultado do mês.`,
+      fpa:  `Revisa o custo de crédito do ano: o lucro projetado cai para ${rs(r.lucro)} e o ROE para ${pct(r.roe,1)}. Leva à diretoria a discussão sobre a política de concessão.`,
+      tes:  `Refaz a projeção de caixa: cerca de ${rs(r.receb)} da carteira deixam de pagar, e o caixa que deixa de entrar precisa ser coberto com funding.`
+    }),
+    oque: r => r.roe < 0.15
+      ? {cls:'alerta', txt:`ROE projetado de ${pct(r.roe,1)}. A provisão é registrada pela Controladoria agora, mas é o FP&A quem mostra que o plano do ano não se sustenta.`}
+      : {cls:'atencao', txt:`A provisão de ${rs(r.pdd)} reduz o ROE projetado para ${pct(r.roe,1)}. É um desvio relevante, ainda dentro de uma faixa administrável.`}
+  },
+  fecha: {
+    nome:'📅 Fechamento do mês', rot:'Volume de crédito vs. orçado', min:-10, max:10, step:1, val:5,
+    fmt: v => (v > 0 ? '+' : v < 0 ? '−' : '') + num(Math.abs(v),0) + '%', calc: calcFecha,
+    ordem:['ctrl','fpa','tes'],
+    canvas: r => ({ ctrl:['fecha o mês', 'NII ' + rs(r.real)], fpa:['explica e reprojeta', rs(r.forecast)], tes: r.funding === 0 ? ['confere liquidez', 'no plano'] : [r.funding > 0 ? 'busca funding' : 'libera funding', rs(r.funding, true)] }),
+    stats: r => [['NII realizado no mês', rs(r.real)], ['Efeito volume vs. orçado', r.efeito === 0 ? 'sem desvio' : rs(r.efeito,true)],
+                 ['Funding adicional', r.funding === 0 ? 'no plano' : rs(r.funding,true)], ['Forecast de NII do ano', rs(r.forecast)]],
+    textos: (r,v) => ({
+      ctrl: `Fecha o balancete e apura um NII de ${rs(r.real)} no mês, contra R$ 200 mi orçados.`,
+      fpa:  r.efeito === 0
+        ? `Compara orçado × realizado: sem desvio de volume, o forecast do ano fica em ${rs(r.forecast)}.`
+        : `Compara orçado × realizado e explica o desvio de ${rs(r.efeito,true)} como efeito volume. Se ele persistir, o forecast de NII do ano vai a ${rs(r.forecast)}.`,
+      tes:  r.funding > 0
+        ? `A carteira está ${rs(r.funding)} acima do plano, e esse crédito precisa de funding. A Tesouraria ajusta a captação e confere o LCR do fim do mês.`
+        : r.funding < 0
+        ? `A carteira está ${rs(-r.funding)} abaixo do plano, o que libera funding. A Tesouraria reduz a captação mais cara ou aplica o excesso.`
+        : `A carteira está no plano. A Tesouraria apenas confere a posição de liquidez do fim do mês.`
+    }),
+    oque: r => r.efeito === 0
+      ? {cls:'tranq', txt:`Mês dentro do orçamento: a Controladoria fecha, o FP&A confirma e a Tesouraria não precisa mudar o funding.`}
+      : r.efeito > 0
+      ? {cls:'atencao', txt:`Crescer acima do plano parece boa notícia (${rs(r.efeito,true)} de margem no mês), mas consome ${rs(r.funding)} de funding e capital. O FP&A só fecha o forecast depois de validar o funding com a Tesouraria.`}
+      : {cls:'atencao', txt:`O volume abaixo do plano tirou ${rs(-r.efeito)} da margem do mês. A Controladoria só registra o fato; o FP&A é quem explica a causa e diz se o ano ainda fecha.`}
+  }
+};
+const NOMES = {ctrl:'Controladoria', tes:'Tesouraria', fpa:'FP&A'};
+const TEMPO = {ctrl:'⟵ passado', tes:'● hoje', fpa:'futuro ⟶'};
+
+/* =====================================================================
+   ESTADO E CONTROLES DA SIMULAÇÃO
+   ===================================================================== */
+let evAtual = 'selic', t = 1, rodando = false, t0 = 0;
+const DUR = 3400;   // duração da animação (ms)
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const slider = document.getElementById('slider');
+
+function cor(nome){ return getComputedStyle(document.documentElement).getPropertyValue('--' + nome).trim(); }
+
+function montarEventos(){
+  const box = document.getElementById('eventos');
+  Object.keys(EVENTOS).forEach(k => {
+    const b = document.createElement('button');
+    b.className = 'ev' + (k === evAtual ? ' on' : '');
+    b.textContent = EVENTOS[k].nome;
+    b.onclick = () => { evAtual = k; document.querySelectorAll('.ev').forEach(e => e.classList.remove('on')); b.classList.add('on'); configSlider(); disparar(); };
+    box.appendChild(b);
+  });
+}
+function configSlider(){
+  const e = EVENTOS[evAtual];
+  slider.min = e.min; slider.max = e.max; slider.step = e.step; slider.value = e.val;
+  document.getElementById('sliderLabel').textContent = e.rot;
+}
+// janela de tempo em que cada área "acende" (posição na ordem: 0, 1, 2)
+function inicioArea(i){ return 0.30 + 0.23 * i; }
+
+function atualizarPainel(){
+  const e = EVENTOS[evAtual], v = parseFloat(slider.value), r = e.calc(v);
+  document.getElementById('sliderVal').textContent = e.fmt(v);
+  document.getElementById('stats').innerHTML = e.stats(r).map(s =>
+    `<div class="stat"><div class="rot">${s[0]}</div><div class="val">${s[1]}</div></div>`).join('');
+  const tx = e.textos(r, v);
+  document.getElementById('acoes').innerHTML = e.ordem.map((a, i) =>
+    `<div class="card area ${a}" id="ac-${a}"><div class="tempo">${i+1}º · ${TEMPO[a]}</div><h3 class="c-${a}">${NOMES[a]}</h3><p>${tx[a]}</p></div>`).join('');
+  const oq = e.oque(r), box = document.getElementById('oque');
+  box.className = 'oque ' + oq.cls;
+  box.innerHTML = '🔍 <b>O que está acontecendo:</b> ' + oq.txt;
+  acenderCards();
+}
+function acenderCards(){
+  EVENTOS[evAtual].ordem.forEach((a, i) => {
+    const el = document.getElementById('ac-' + a);
+    if (el) el.classList.toggle('lit', t >= inicioArea(i) + 0.18);
+  });
+}
+
+/* =====================================================================
+   CANVAS: linha do tempo com as três zonas
+   ===================================================================== */
+function ajustarCanvas(){
+  const dpr = window.devicePixelRatio || 1, w = cv.parentElement.clientWidth - 40;
+  const h = 290;
+  cv.width = Math.max(300, w) * dpr; cv.height = h * dpr;
+  cv.style.height = h + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+// escreve o texto reduzindo a fonte até caber na largura máxima
+function textoAjustado(txt, x, y, maxW, peso, tam, familia){
+  let t = tam;
+  do { ctx.font = `${peso} ${t}px ${familia}`; t -= 0.5; } while (ctx.measureText(txt).width > maxW && t > 8);
+  ctx.fillText(txt, x, y);
+}
+function ease(x){ x = Math.min(1, Math.max(0, x)); return 1 - Math.pow(1 - x, 3); }
+function retArred(x, y, w, h, r){
+  ctx.beginPath(); ctx.moveTo(x+r, y); ctx.arcTo(x+w, y, x+w, y+h, r); ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r); ctx.arcTo(x, y, x+w, y, r); ctx.closePath();
+}
+function desenhar(){
+  const W = cv.width / (window.devicePixelRatio || 1), H = 290;
+  ctx.clearRect(0, 0, W, H);
+  const e = EVENTOS[evAtual], r = e.calc(parseFloat(slider.value)), lab = e.canvas(r);
+  const m = 10, gap = 8, zw = (W - 2*m - 2*gap) / 3;
+  const zonas = {ctrl: m, tes: m + zw + gap, fpa: m + 2*(zw + gap)};
+  const yTop = 34, yAx = 230, zh = yAx - 18 - yTop;
+  const xHoje = zonas.tes + zw/2;
+  const pequeno = zw < 150;
+
+  ctx.fillStyle = cor('text'); ctx.font = '600 13px Figtree, sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText(e.nome.replace(/^\S+\s/, '') + ' · ' + e.fmt(parseFloat(slider.value)), m, 20);
+
+  // zonas das três áreas
+  ['ctrl','tes','fpa'].forEach(a => {
+    const i = e.ordem.indexOf(a), ti = inicioArea(i);
+    const chegou = ease((t - ti - 0.12) / 0.1);   // 0→1 quando o pulso chega
+    ctx.fillStyle = cor(a + '-bg'); retArred(zonas[a], yTop, zw, zh, 12); ctx.fill();
+    ctx.lineWidth = 1 + 2.5 * chegou; ctx.strokeStyle = cor(a); ctx.globalAlpha = 0.35 + 0.65 * chegou; ctx.stroke();
+    ctx.globalAlpha = 1;
+    const cx = zonas[a] + zw/2;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = cor(a);
+    textoAjustado(NOMES[a], cx, yTop + 24, zw - 10, 700, pequeno ? 13 : 15, 'Figtree, sans-serif');
+    ctx.fillStyle = cor('text-dim'); ctx.font = '11px "IBM Plex Mono", monospace';
+    ctx.fillText(TEMPO[a], cx, yTop + 42);
+    if (chegou > 0){
+      ctx.globalAlpha = chegou;
+      ctx.fillStyle = cor('text');
+      textoAjustado(lab[a][0], cx, yTop + 92, zw - 10, 500, pequeno ? 11.5 : 13, 'Figtree, sans-serif');
+      ctx.fillStyle = cor(a);
+      textoAjustado(lab[a][1], cx, yTop + 118, zw - 10, 600, pequeno ? 12.5 : 16, '"IBM Plex Mono", monospace');
+      ctx.fillStyle = cor('text-dim'); ctx.font = '11px "IBM Plex Mono", monospace';
+      ctx.fillText((i+1) + 'º a agir', cx, yTop + 146);
+      ctx.globalAlpha = 1;
+    }
+  });
+
+  // eixo do tempo
+  ctx.strokeStyle = cor('line'); ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(m, yAx); ctx.lineTo(W - m, yAx); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(W - m, yAx); ctx.lineTo(W - m - 8, yAx - 5); ctx.lineTo(W - m - 8, yAx + 5); ctx.closePath();
+  ctx.fillStyle = cor('line'); ctx.fill();
+  ctx.fillStyle = cor('text-dim'); ctx.font = '11px "IBM Plex Mono", monospace';
+  ctx.textAlign = 'left'; ctx.fillText('passado', m, yAx + 20);
+  ctx.textAlign = 'right'; ctx.fillText('futuro', W - m, yAx + 20);
+  ctx.textAlign = 'center'; ctx.fillStyle = cor('text'); ctx.fillText('HOJE', xHoje, yAx + 34);
+
+  // o evento cai no "hoje"
+  const queda = ease(t / 0.2);
+  const yEv = 8 + (yAx - 8) * queda;
+  ctx.fillStyle = cor('accent'); ctx.beginPath(); ctx.arc(xHoje, yEv, 8, 0, 2*Math.PI); ctx.fill();
+  // onda de impacto
+  if (t > 0.2 && t < 0.45){
+    const k = (t - 0.2) / 0.25;
+    ctx.strokeStyle = cor('accent'); ctx.globalAlpha = 1 - k; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(xHoje, yAx, 8 + 40*k, 0, 2*Math.PI); ctx.stroke(); ctx.globalAlpha = 1;
+  }
+  // pulsos que viajam do "hoje" até cada área, na ordem do evento
+  e.ordem.forEach((a, i) => {
+    const ti = inicioArea(i), k = (t - ti) / 0.12;
+    if (k > 0 && k < 1){
+      const x = xHoje + (zonas[a] + zw/2 - xHoje) * ease(k);
+      const y = yAx - (yAx - (yTop + zh - 30)) * ease(k);
+      ctx.fillStyle = cor(a); ctx.beginPath(); ctx.arc(x, y, 7, 0, 2*Math.PI); ctx.fill();
+    }
+  });
+}
+
+/* ---------- laço de animação ---------- */
+function quadro(agora){
+  if (!rodando) return;
+  t = Math.min(1, (agora - t0) / DUR);
+  desenhar(); acenderCards();
+  if (t < 1) requestAnimationFrame(quadro); else rodando = false;
+}
+function disparar(){ atualizarPainel(); t = 0; t0 = performance.now(); if (!rodando){ rodando = true; requestAnimationFrame(quadro); } }
+document.getElementById('play').onclick = disparar;
+document.getElementById('reset').onclick = () => { rodando = false; t = 0; configSlider(); atualizarPainel(); desenhar(); };
+slider.oninput = () => { if (!rodando) t = 1; atualizarPainel(); desenhar(); };
+
+/* =====================================================================
+   CENÁRIOS
+   ===================================================================== */
+const CENARIOS = [
+  {sit:'A diretoria precisa do lucro de setembro que vai no balancete enviado ao BCB. Quem entrega esse número?', certa:'ctrl',
+   exp:'Controladoria. O número que vai ao BCB é contábil, apurado pelas regras do Cosif. O FP&A pode comentá-lo, mas não o produz.'},
+  {sit:'O CFO quer entender por que o lucro do trimestre veio 12% abaixo do orçado. Quem faz essa análise?', certa:'fpa',
+   exp:'FP&A. Ele parte do número da Controladoria e decompõe o desvio em volume, taxa, mix e PDD. Confundir os dois papéis é a armadilha mais comum.'},
+  {sit:'O gap de 12 meses ficou muito negativo e a diretoria quer reduzir a exposição à alta de juros. Quem decide como reduzir a exposição: reponderar a carteira ou vender DI1?', certa:'tes',
+   exp:'Tesouraria (ALM), dentro dos limites aprovados pelo ALCO. Tesouraria de banco não é só pagar e receber: a gestão do risco de juros do balanço é tarefa dela.'},
+  {sit:'Um gerente quer saber a taxa interna (FTP) para avaliar um crédito pré de 3 anos. Quem define essa curva?', certa:'tes',
+   exp:'Tesouraria/ALM define a curva de FTP. O FP&A usa essa curva para medir a rentabilidade por produto, mas não pode ajustá-la para fazer uma meta fechar.'},
+  {sit:'O orçamento do próximo ano prevê crescer 20% no crédito. Quem monta esse plano e o leva à diretoria?', certa:'fpa',
+   exp:'FP&A. Ele monta o plano, mas precisa da Tesouraria para validar se haverá funding e liquidez, e das áreas de risco para validar o capital.'},
+  {sit:'Um título prefixado da carteira de negociação perdeu valor com a alta de juros. Quem reconhece essa perda no resultado do mês?', certa:'ctrl',
+   exp:'Controladoria registra a perda a valor justo. Os preços usados vêm de uma área independente da mesa (risco ou middle office), para que a Tesouraria não marque a própria posição.'}
+];
+function montarCenarios(){
+  const box = document.getElementById('cenarios');
+  CENARIOS.forEach((c, i) => {
+    const d = document.createElement('div'); d.className = 'card cen';
+    d.innerHTML = `<div class="ordem">Cenário ${i+1}</div><div class="sit">${c.sit}</div>
+      <div class="escolha">${['ctrl','tes','fpa'].map(a => `<button data-a="${a}">${NOMES[a]}</button>`).join('')}</div>
+      <div class="resp"></div>`;
+    d.querySelectorAll('.escolha button').forEach(b => b.onclick = () => {
+      const ok = b.dataset.a === c.certa;
+      d.querySelectorAll('.escolha button').forEach(x => {
+        x.disabled = true;
+        if (x.dataset.a === c.certa) x.classList.add('certa');
+      });
+      if (!ok) b.classList.add('errada');
+      const r = d.querySelector('.resp');
+      r.className = 'resp ' + (ok ? 'ok' : 'no');
+      r.innerHTML = (ok ? '✓ <b>Isso.</b> ' : '✗ <b>Não.</b> ') + c.exp;
+    });
+    box.appendChild(d);
+  });
+}
+
+/* =====================================================================
+   TESTE
+   ===================================================================== */
+const QUESTOES = [
+  {q:'Qual é a pergunta central do FP&A?', alts:[
+    'O que aconteceu no mês e como isso entra no balancete?',
+    'Para onde vai o resultado e o que é preciso fazer para chegar à meta?',
+    'O banco tem liquidez para os saques de amanhã?',
+    'Os lançamentos estão conciliados com o Cosif?'], c:1,
+   fb:'O FP&A olha para o futuro: projeta, compara com o realizado e reprojeta. As alternativas A e D descrevem a Controladoria; a C, a Tesouraria.'},
+  {q:'Em um banco, a Tesouraria é responsável por:', alts:[
+    'Apenas pagar fornecedores e receber dos clientes',
+    'Elaborar o orçamento anual do banco',
+    'Liquidez, funding, ALM e as posições da mesa, dentro dos limites de risco',
+    'Contabilizar as operações e apurar o resultado'], c:2,
+   fb:'Tesouraria de banco vai muito além do caixa: capta, gere a liquidez regulatória, administra o risco de juros do balanço e opera a mesa. Orçamento é FP&A; contabilização é Controladoria.'},
+  {q:'Sobre a curva de FTP (preço interno do dinheiro), é correto afirmar:', alts:[
+    'A Controladoria define a curva, porque ela afeta o resultado contábil',
+    'A Tesouraria/ALM define a curva, e o FP&A a usa para medir a rentabilidade por produto',
+    'O FP&A ajusta a curva quando um produto não atinge a meta',
+    'A curva é publicada pelo Banco Central'], c:1,
+   fb:'A curva de FTP é da Tesouraria/ALM. Se o FP&A pudesse ajustá-la, a rentabilidade por produto passaria a refletir a meta, e não o custo real do dinheiro.'},
+  {q:'No Banco Horizonte, a inadimplência sobe 1 p.p. Quem constitui a provisão e quem revisa o ROE projetado?', alts:[
+    'Controladoria constitui a provisão; FP&A revisa o ROE',
+    'FP&A constitui a provisão; Controladoria revisa o ROE',
+    'Tesouraria constitui a provisão; FP&A revisa o ROE',
+    'Controladoria faz as duas coisas'], c:0,
+   fb:'A Controladoria registra os R$ 135 mi de PDD (passado e presente contábil); o FP&A leva o efeito para o futuro e mostra o ROE caindo de 18% para cerca de 16,5%.'},
+  {q:'O lucro gerencial por produto (FP&A) não bate, linha a linha, com o contábil (Controladoria). Isso indica que:', alts:[
+    'Um dos dois está errado e precisa ser corrigido',
+    'O gerencial distribui FTP, custos e capital por produto, mas o total precisa fechar com o contábil',
+    'O gerencial não precisa conciliar com o contábil',
+    'O contábil é sempre maior, porque inclui as provisões'], c:1,
+   fb:'As visões são diferentes por construção: o gerencial realoca receitas e custos entre produtos. O total, porém, tem de fechar com o contábil. Um gerencial que não concilia perde credibilidade.'}
+];
+let acertos = 0, respondidas = 0;
+function placar(){ document.getElementById('placar').textContent = `Acertos: ${acertos} de ${respondidas} respondidas (total de ${QUESTOES.length})`; }
+function montarTeste(){
+  const box = document.getElementById('questoes');
+  QUESTOES.forEach((q, i) => {
+    const d = document.createElement('div'); d.className = 'card q';
+    d.innerHTML = `<div class="enun">${i+1}. ${q.q}</div>` +
+      q.alts.map((a, j) => `<button class="alt" data-j="${j}">${'ABCD'[j]}) ${a}</button>`).join('') +
+      `<div class="fb"></div>`;
+    d.querySelectorAll('.alt').forEach(b => b.onclick = () => {
+      const j = +b.dataset.j, ok = j === q.c;
+      d.querySelectorAll('.alt').forEach(x => { x.disabled = true; if (+x.dataset.j === q.c) x.classList.add('certa'); });
+      if (!ok) b.classList.add('errada');
+      respondidas++; if (ok) acertos++; placar();
+      const fb = d.querySelector('.fb'); fb.style.display = 'block';
+      fb.innerHTML = (ok ? '✓ <b>Correto.</b> ' : '✗ <b>Incorreto.</b> ') + q.fb;
+    });
+    box.appendChild(d);
+  });
+  placar();
+}
+
+/* =====================================================================
+   ABAS E INICIALIZAÇÃO
+   ===================================================================== */
+document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); document.getElementById(b.dataset.p).classList.add('on');
+  if (b.dataset.p === 'sim'){ ajustarCanvas(); desenhar(); }
+});
+window.addEventListener('resize', () => { if (document.getElementById('sim').classList.contains('on')){ ajustarCanvas(); desenhar(); } });
+
+montarEventos(); configSlider(); atualizarPainel(); montarCenarios(); montarTeste();
+ajustarCanvas(); desenhar();
+document.fonts && document.fonts.ready.then(() => desenhar());
+</script>
+</body>
+</html>

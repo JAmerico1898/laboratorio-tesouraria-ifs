@@ -84,7 +84,7 @@ export const MODULES: ModuleMeta[] = [
       "Explorar o efeito de cada parâmetro mexendo diretamente nos controles da animação.",
       "Revisar os mecanismos centrais de cada módulo em sequência.",
     ],
-    totalSimulacoes: 12,
+    totalSimulacoes: 13,
     disponivel: true,
   },
   {

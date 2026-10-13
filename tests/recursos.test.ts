@@ -18,7 +18,7 @@ describe("animações pedagógicas", () => {
 
   it("distribuição por módulo segue a lista do professor", () => {
     const por = (n: number) => ANIMACOES.filter((a) => a.modulo === n).length;
-    expect([por(1), por(2), por(3), por(4)]).toEqual([2, 5, 3, 2]);
+    expect([por(1), por(2), por(3), por(4)]).toEqual([3, 5, 3, 2]);
   });
 
   it("o módulo declara o total de animações", () => {

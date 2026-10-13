@@ -24,6 +24,13 @@ export const MODULOS_RECURSOS: { numero: number; nome: string }[] = [
 
 export const ANIMACOES: Animacao[] = [
   {
+    slug: "controladoria_fpa_tesouraria",
+    modulo: 1,
+    titulo: "Controladoria, Tesouraria e FP&A: passado, presente e futuro",
+    descricao:
+      "As três áreas olham para os mesmos números do banco em tempos diferentes: a Controladoria registra, a Tesouraria cuida de hoje e o FP&A projeta.",
+  },
+  {
     slug: "arvore_taxas_transmissao_selic",
     modulo: 1,
     titulo: "A árvore das taxas e a transmissão da Selic",
