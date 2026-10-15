@@ -441,7 +441,8 @@ const xT = t => Math.sqrt(Math.min(t, 10) / 10);      // escala de prazo (raiz: 
 const TICKS = [[0,'0'],[0.25,'3m'],[0.5,'6m'],[1,'1a'],[2,'2a'],[3,'3a'],[5,'5a'],[7,'7a'],[10,'10a']];
 
 function prepCanvas(cv) {               // ajusta ao contêiner com devicePixelRatio
-  const dpr = window.devicePixelRatio || 1, w = cv.parentElement.clientWidth - 28, h = +cv.getAttribute('height');
+  if (!cv.dataset.h) cv.dataset.h = cv.getAttribute('height');   // cv.height abaixo reescreve o atributo
+  const dpr = window.devicePixelRatio || 1, w = cv.parentElement.clientWidth - 28, h = +cv.dataset.h;
   cv.width = w * dpr; cv.height = h * dpr; cv.style.height = h + 'px';
   const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0);
   return { c, w, h };

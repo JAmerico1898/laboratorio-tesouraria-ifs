@@ -371,7 +371,9 @@ function cor(nome){ return getComputedStyle(document.documentElement).getPropert
 function prepara(cv){
   var dpr = window.devicePixelRatio || 1;
   var w = cv.parentElement.clientWidth - 0;
-  var h = parseInt(cv.getAttribute('height'), 10);
+  // altura lógica guardada uma vez: cv.height abaixo reescreve o atributo
+  if (!cv.dataset.h) cv.dataset.h = cv.getAttribute('height');
+  var h = parseInt(cv.dataset.h, 10);
   cv.style.height = h + 'px';
   cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
   var ctx = cv.getContext('2d');

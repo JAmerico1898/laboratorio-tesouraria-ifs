@@ -66,11 +66,11 @@ export const ANIMACOES: Animacao[] = [
       "A taxa de um ano daqui a um ano, comparada ao CDI esperado pelos economistas, vira régua de prêmio.",
   },
   {
-    slug: "movimentos_curva_juros",
+    slug: "regimes_curva_juros",
     modulo: 2,
-    titulo: "Os movimentos da curva de juros",
+    titulo: "Os quatro regimes da curva de juros",
     descricao:
-      "Nível, inclinação e curvatura: qual ponta se mexeu e para onde diz se a posição ganhou ou perdeu.",
+      "Compare a curva de antes e a de depois: a ponta que mais se moveu, e a direção dela, definem o regime.",
   },
   {
     slug: "cupom_cambial_ddi_frc",
