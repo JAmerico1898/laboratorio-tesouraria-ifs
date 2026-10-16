@@ -113,7 +113,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .sch .sl{font-size:11.5px;color:var(--text-dim);margin-top:4px}
 
 /* Treino */
-.ops{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+.ops{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
 .ob{font-family:'Hanken Grotesk',sans-serif;font-size:14px;font-weight:600;padding:12px 10px;border-radius:10px;border:1.5px solid var(--c);background:var(--bg-card);color:var(--c);cursor:pointer;transition:all .2s}
 .ob:hover:not(:disabled){background:var(--c);color:#fff}
 .ob:disabled{cursor:default;opacity:.45}
@@ -375,10 +375,10 @@ function classifica(dc, dl) {
   return { regime: lado + '_' + forma, torcao };
 }
 
-// Sorteio do Treino: um dos 4 regimes, sem casos ambíguos (|Δinclinação| >= 40 bp)
-function sorteiaChoque(rng) {
+// Sorteio do Treino: um dos 4 regimes (ou o regime pedido), sem casos ambíguos (|Δinclinação| >= 40 bp)
+function sorteiaChoque(rng, forcado) {
   const regs = ['bull_steepening', 'bear_steepening', 'bull_flattening', 'bear_flattening'];
-  const regime = regs[Math.floor(rng() * 4)];
+  const regime = forcado || regs[Math.floor(rng() * 4)];
   const M = 5 * (20 + Math.floor(rng() * 25));                  // ponta dominante: 100 a 220 bp
   const m = 5 * Math.floor(rng() * (Math.floor(0.6 * M / 5) + 1)); // outra ponta: 0 a 60% de M
   const tor = rng() < 0.25 && m > 0;                              // 1 em 4: torção
@@ -407,7 +407,10 @@ const REG = {
   paralelo_queda: { nome: 'Deslocamento paralelo de queda', cor: 'antes', pt: 'o nível cai, a inclinação quase não muda' },
   parada:         { nome: 'Curva parada', cor: 'antes', pt: 'nenhuma ponta se moveu' },
   torcao_steep:   { nome: 'Torção pura (steepening)', cor: 'accent', pt: 'pontas iguais em sentidos opostos' },
-  torcao_flat:    { nome: 'Torção pura (flattening)', cor: 'accent', pt: 'pontas iguais em sentidos opostos' }
+  torcao_flat:    { nome: 'Torção pura (flattening)', cor: 'accent', pt: 'pontas iguais em sentidos opostos' },
+  // respostas extras do Treino (agrupam alta/queda e steep/flat)
+  paralelo:       { nome: 'Deslocamento paralelo', cor: 'accent', pt: 'o nível muda, a inclinação não' },
+  torcao:         { nome: 'Torção pura', cor: 'amber', pt: 'pontas iguais em sentidos opostos' }
 };
 const QUATRO = ['bull_steepening', 'bull_flattening', 'bear_steepening', 'bear_flattening'];
 
@@ -726,12 +729,26 @@ function ligaSliders() {
 // ---------- ③ Treino ----------
 const treino = { dc: 0, dl: 0, regime: null, respondido: false };
 const placar = { a: 0, t: 0 };
+// as 6 respostas da Simulação; saco embaralhado: cada uma sai uma vez a cada 6 choques, sem repetir em seguida
+const SEIS = [...QUATRO, 'paralelo', 'torcao'];
+let saco = [], ultimo = null;
+function sorteiaTreino(rng) {
+  if (!saco.length) {
+    saco = SEIS.slice();
+    for (let i = saco.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [saco[i], saco[j]] = [saco[j], saco[i]]; }
+    if (saco[saco.length - 1] === ultimo) [saco[0], saco[saco.length - 1]] = [saco[saco.length - 1], saco[0]];
+  }
+  const alvo = ultimo = saco.pop();
+  if (QUATRO.includes(alvo)) return sorteiaChoque(rng, alvo);
+  const M = 5 * (20 + Math.floor(rng() * 25)), sn = rng() < 0.5 ? -1 : 1;   // 100 a 220 bp, sentido aleatório
+  return alvo === 'paralelo' ? { dc: sn * M, dl: sn * M, regime: alvo } : { dc: sn * M, dl: -sn * M, regime: alvo };
+}
 function montaOps() {
-  $('ops').innerHTML = QUATRO.map(k =>
+  $('ops').innerHTML = SEIS.map(k =>
     `<button class="ob" data-r="${k}" style="--c:var(--${REG[k].cor})" onclick="responde('${k}')">${REG[k].nome}</button>`).join('');
 }
 function novoTreino() {
-  Object.assign(treino, sorteiaChoque(Math.random), { respondido: false });
+  Object.assign(treino, sorteiaTreino(Math.random), { respondido: false });
   document.querySelectorAll('.ob').forEach(b => { b.disabled = false; b.classList.remove('cert', 'err'); });
   $('tFb').className = 'fb'; $('tFb').innerHTML = '';
   $('lnTreino').style.background = 'var(--accent)';
@@ -754,10 +771,16 @@ function responde(k) {
   const { dc, dl } = treino, ds = dl - dc, curtaDom = Math.abs(dc) > Math.abs(dl), mov = curtaDom ? dc : dl;
   const { torcao } = classifica(dc, dl);
   $('tFb').className = 'fb sh ' + (certo ? 'g' : 'r');
-  $('tFb').innerHTML = `<strong>${certo ? '✓ Isso!' : '✗ Era ' + REG[treino.regime].nome + '.'}</strong><br>
-    <b>Pergunta 1:</b> Δinclinação = Δ10A − Δ3M = ${par(dl)} − ${par(dc)} = ${fmtBp(ds)} → ${ds > 0 ? 'steepening' : 'flattening'}.<br>
+  const p1 = `<b>Pergunta 1:</b> Δinclinação = Δ10A − Δ3M = ${par(dl)} − ${par(dc)} = ${fmtBp(ds)} → `;
+  let corpo;
+  if (treino.regime === 'paralelo') corpo = p1 + `a inclinação não mudou.<br>
+    <b>Pergunta 2:</b> as duas pontas ${dc > 0 ? 'subiram' : 'caíram'} os mesmos ${Math.abs(dc)} bp: é um choque de nível, um deslocamento paralelo. Nenhum dos quatro regimes se aplica.`;
+  else if (treino.regime === 'torcao') corpo = p1 + `${ds > 0 ? 'steepening' : 'flattening'}.<br>
+    <b>Pergunta 2:</b> as duas pontas andaram os mesmos ${Math.abs(dc)} bp, em sentidos opostos: nenhuma domina. É uma torção pura, e a regra do slide não dá nome bull ou bear.`;
+  else corpo = p1 + `${ds > 0 ? 'steepening' : 'flattening'}.<br>
     <b>Pergunta 2:</b> a ponta que mais andou foi a ${curtaDom ? 'curta' : 'longa'} (${Math.abs(mov)} bp contra ${Math.abs(curtaDom ? dl : dc)} bp), e ela ${mov < 0 ? 'caiu → bull' : 'subiu → bear'}.
     ${torcao ? '<br>⟲ Torção: a outra ponta foi na contramão; o nome segue a ponta dominante.' : ''}`;
+  $('tFb').innerHTML = `<strong>${certo ? '✓ Isso!' : '✗ Era ' + REG[treino.regime].nome + '.'}</strong><br>` + corpo;
   $('placar').textContent = `Acertos: ${placar.a} de ${placar.t}`;
   $('lnTreino').style.background = `var(--${REG[treino.regime].cor})`;
   desenhaTreino();
@@ -854,7 +877,7 @@ function go(i) {
 window.addEventListener('resize', () => desenhaAba(abaAtiva));
 
 montaMatriz(); montaPresets(); ligaSliders(); ligaMapa(); montaOps(); montaCenarios(); montaQuiz();
-Object.assign(treino, sorteiaChoque(Math.random));
+Object.assign(treino, sorteiaTreino(Math.random));
 desenhaAba(0);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => desenhaAba(abaAtiva));
 </script>

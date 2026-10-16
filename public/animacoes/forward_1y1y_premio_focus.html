@@ -15,19 +15,19 @@
   --text:#1b1d24;
   --text-dim:#51545f;
   --accent:#1d4e89;      /* identidade: cobalto = mercado / forward 1y1y */
-  --focus:#0d6b72;       /* petróleo = Focus / CDI esperado */
+  --focus:#b35c00;       /* laranja = Focus / CDI esperado (contrasta com o cobalto) */
   --spot:#5b5f6b;        /* cinza = taxa spot de 2 anos */
   --ok:#276b2b;
   --bad:#b83227;
   --warn:#8a5a00;
   --grid-dim:#e4e1da;
   --accent-bg:#e8eef7;
-  --focus-bg:#e3f1f2;
+  --focus-bg:#fbefe2;
   --ok-bg:#e8f3e8;
   --bad-bg:#fbeceb;
   --warn-bg:#fbf1df;
   --accent-brd:#c3d2e8;
-  --focus-brd:#b5d9dc;
+  --focus-brd:#efcfa8;
   --ok-brd:#b9dbba;
   --bad-brd:#efc2bd;
   --warn-brd:#ecd29f;
@@ -252,7 +252,7 @@ footer{margin-top:26px;padding-top:14px;border-top:1px solid var(--grid-dim);fon
     </div>
     <canvas id="cv2" height="270" aria-label="Diferença acumulada em reais entre estratégias de aplicação"></canvas>
     <div class="legend">
-      <span><i style="background:var(--spot)"></i>aplicar 2 anos a r₂ (referência)</span>
+      <span><i class="dash"></i>aplicar 2 anos a r₂ (referência)</span>
       <span><i style="background:var(--accent)"></i>1 ano a r₁ + rolar ao forward</span>
       <span><i style="background:var(--focus)"></i>1 ano a r₁ + rolar ao CDI do Focus</span>
     </div>
@@ -421,11 +421,12 @@ function draw2(S) {
   const pad = Math.max(500, (hi - lo) * 0.15); lo -= pad; hi += pad;
   const kfmt = v => (Math.abs(v) >= 1000 ? (v / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mil' : Math.round(v).toLocaleString('pt-BR'));
   const { X, Y } = grade(ctx, W, H, m, [0, 2], [lo, hi], kfmt, [[0, 'hoje'], [1, '1 ano'], [2, '2 anos']], small ? 'R$ vs aplicar 2 anos direto' : 'R$ à frente (+) ou atrás (−) de aplicar 2 anos direto');
-  linha(ctx, [[X(0), Y(0)], [X(2), Y(0)]], css('spot'), 1.6);
+  linha(ctx, [[X(0), Y(0)], [X(2), Y(0)]], css('spot'), 1.6, [6, 4]);
   const cut = pts => pts.filter(p => p[0] <= anim.t + 1e-9).map(p => [X(p[0]), Y(p[1])]);
   const a = cut(A), b = cut(B);
-  linha(ctx, b, css('focus'), 2.6);
-  linha(ctx, a, css('accent'), 2.6);
+  // no ano 1 os dois caminhos coincidem: o azul mais grosso por baixo vira contorno da linha laranja
+  linha(ctx, a, css('accent'), 5);
+  linha(ctx, b, css('focus'), 2.4);
   if (a.length) { const la = a[a.length - 1], lb = b[b.length - 1]; ponto(ctx, la[0], la[1], css('accent'), 4); ponto(ctx, lb[0], lb[1], css('focus'), 4); }
   if (anim.t >= 2 - 1e-9) {
     const eb = B[B.length - 1][1], ea = A[A.length - 1][1];
