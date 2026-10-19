@@ -16,6 +16,7 @@
   --bear-st:#be185d;         /* bear steepening — rosa (quente = taxas subindo) */
   --bear-fl:#c2410c;         /* bear flattening — laranja */
   --antes:#626975;           /* curva "Antes" */
+  --antes-claro:#8a909b;     /* curva "Antes" tracejada (Treino) */
   --ok:#136c35;
   --bad:#b91c1c;
   --amber:#92400e;
@@ -302,7 +303,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   </div>
   <div class="cv"><canvas id="cvTreino"></canvas></div>
   <div class="leg">
-    <span><span class="ln" style="background:var(--antes)"></span>Antes</span>
+    <span><span class="ln" style="background:repeating-linear-gradient(90deg,var(--antes-claro) 0 7px,transparent 7px 11px)"></span>Antes</span>
     <span><span class="ln" id="lnTreino" style="background:var(--accent)"></span>Depois</span>
   </div>
   <div class="ops" id="ops"></div>
@@ -456,14 +457,14 @@ function rotulo(c, txt, x, y, cor, alinh) {
 
 // ---------- Gráfico da curva (usado no Conceito, na Simulação e no Treino) ----------
 function desenhaCurva(cv, h, dc, dl, op) {
-  op = Object.assign({ yMin: 7, yMax: 15.5, passo: 1, cor: 'accent', setas: true, bp: true, pontas: false, mini: false, titulo: '' }, op);
+  op = Object.assign({ yMin: 7, yMax: 15.5, passo: 1, cor: 'accent', setas: true, bp: true, pontas: false, mini: false, titulo: '', antesTrac: false }, op);
   const { c, W, H } = prep(cv, h);
   const mg = op.mini ? { t: 12, r: 50, b: 24, l: 34 } : { t: 34, r: 20, b: 34, l: 46 };
   const pad = op.mini ? 6 : 22;
   const pW = W - mg.l - mg.r, pH = H - mg.t - mg.b, n = ANTES.length;
   const tx = i => mg.l + pad + i / (n - 1) * (pW - 2 * pad);
   const ty = v => mg.t + (1 - (v - op.yMin) / (op.yMax - op.yMin)) * pH;
-  const corD = css(op.cor), corA = css('antes'), dim = css('text-dim');
+  const corD = css(op.cor), corA = css(op.antesTrac ? 'antes-claro' : 'antes'), dim = css('text-dim');
   const dep = curvaDepois(dc, dl);
   c.clearRect(0, 0, W, H);
 
@@ -490,12 +491,13 @@ function desenhaCurva(cv, h, dc, dl, op) {
   c.closePath(); c.fillStyle = rgba(corD, .08); c.fill();
 
   // curvas: antes (cinza) e depois (cor do regime)
-  const linha = (vals, cor, larg, r) => {
-    c.strokeStyle = cor; c.lineWidth = larg; c.lineJoin = 'round';
+  const linha = (vals, cor, larg, r, dash) => {
+    c.strokeStyle = cor; c.lineWidth = larg; c.lineJoin = 'round'; c.setLineDash(dash || []);
     c.beginPath(); vals.forEach((v, i) => i ? c.lineTo(tx(i), ty(v)) : c.moveTo(tx(i), ty(v))); c.stroke();
+    c.setLineDash([]);
     c.fillStyle = cor; vals.forEach((v, i) => { c.beginPath(); c.arc(tx(i), ty(v), r, 0, 2 * Math.PI); c.fill(); });
   };
-  linha(ANTES, corA, op.mini ? 1.6 : 2, op.mini ? 2.2 : 3);
+  linha(ANTES, corA, op.mini ? 1.6 : 2, op.mini ? 2.2 : 3, op.antesTrac ? [7, 5] : null);
   linha(dep, corD, op.mini ? 2 : 2.8, op.mini ? 2.6 : 3.6);
 
   // setas nas pontas (grossa = ponta que mais se moveu)
@@ -758,7 +760,7 @@ function desenhaTreino() {
   const R = REG[treino.regime];
   desenhaCurva($('cvTreino'), 360, treino.dc, treino.dl, {
     cor: treino.respondido ? R.cor : 'accent', setas: treino.respondido, bp: treino.respondido, pontas: true,
-    titulo: 'Curva DI prefixada — % a.a.' });
+    titulo: 'Curva DI prefixada — % a.a.', antesTrac: true });
 }
 function responde(k) {
   if (treino.respondido) return;
