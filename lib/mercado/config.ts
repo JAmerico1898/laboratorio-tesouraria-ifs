@@ -39,7 +39,7 @@ export const NOCIONAL_PADRAO = 100_000_000;
 export const DATA_ANCORA_PAUTAS = "2026-08-21";
 
 /** Tempo além do qual o cliente desiste da API e cai no snapshot commitado. */
-export const TIMEOUT_API_MS = 15_000;
+export const TIMEOUT_API_MS = 40_000;
 
 /** Quantos dias corridos o backend recua procurando dado publicado. */
 export const MAX_RECUO_DIAS = 10;
@@ -50,28 +50,3 @@ export const FAMILIAS: { id: Familia; rotulo: string; icon: string }[] = [
   { id: "termo", rotulo: "A termo", icon: "linear_scale" },
   { id: "implicita", rotulo: "Inflação implícita", icon: "trending_up" },
 ];
-
-/** Prazos dos cartões de forward clássicos, em anos: (início, fim). */
-export const FORWARDS_CLASSICOS: { rotulo: string; de: number; ate: number }[] = [
-  { rotulo: "1a1a", de: 1, ate: 2 },
-  { rotulo: "2a1a", de: 2, ate: 3 },
-  { rotulo: "5a5a", de: 5, ate: 10 },
-];
-
-/** Juro real neutro de referência, em decimal. Atualize, com a fonte, quando o BCB revisar. */
-export const NEUTRO_REAL = 0.05;
-export const NEUTRO_FONTE =
-  "Copom, ata de dez/2024: taxa real neutra elevada de 4,75% para 5,00% a.a. É uma estimativa do BCB, não um cálculo do painel.";
-
-/** Abaixo deste módulo (bps), DI e Focus são lidos como alinhados. */
-export const LIMIAR_FOCUS_BPS = 10;
-
-/** Prazo máximo (DU) da tabela DI × Focus — além disso o prêmio domina. */
-export const PRAZO_MAX_DI_FOCUS_DU = 600;
-
-/** Prazos (DU) das leituras de juro real, break-even e ponta longa: 2 e 10 anos. */
-export const PRAZO_CURTO_DU = 2 * DU_ANO;
-export const PRAZO_LONGO_DU = 10 * DU_ANO;
-
-/** Reuniões com Selic implícita extraída da curva. */
-export const N_REUNIOES_IMPLICITAS = 2;

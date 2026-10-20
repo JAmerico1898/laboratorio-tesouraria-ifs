@@ -6,11 +6,8 @@ import { carregarAncora, carregarSnapshot, hojeIso, paraCsv } from "@/lib/mercad
 import { recortarCurva } from "@/lib/mercado/metricas";
 import { dataBr } from "@/lib/mercado/template";
 import type { Curva, Familia, JanelaDu, MercadoSnapshot } from "@/lib/mercado/types";
-import { CardAncoras } from "./CardAncoras";
-import { CartoesForward } from "./CartoesForward";
 import { Glossario } from "./Glossario";
 import { GraficoCurva } from "./GraficoCurva";
-import { Indicadores } from "./Indicadores";
 import { LeituraRapida } from "./LeituraRapida";
 import { SeletorCurva } from "./SeletorCurva";
 import { TabelaVertices } from "./TabelaVertices";
@@ -275,22 +272,7 @@ export function PainelMercado({
 
       {!compacto && (
         <>
-          <div className="mt-5 space-y-4 rounded-xl border border-border-soft bg-surface-container-lowest p-4">
-            <h3 className="flex items-center gap-1.5 text-[15px] font-extrabold tracking-tight text-ink">
-              <Icon name="query_stats" size={18} /> Referências do dia
-              <span className="text-[12px] font-normal italic text-muted">
-                Forwards da curva selecionada e indicadores da data
-              </span>
-            </h3>
-            <CartoesForward curva={curva} />
-            <Indicadores s={snap} />
-          </div>
-          {!snapshotFixo && (
-            <div className="mt-5">
-              <CardAncoras s={snap} />
-            </div>
-          )}
-          <div className="mt-4">
+          <div className="mt-5">
             <TabelaVertices curva={curva} />
           </div>
         </>

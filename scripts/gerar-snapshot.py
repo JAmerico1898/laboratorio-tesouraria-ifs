@@ -17,7 +17,11 @@ sys.path.insert(0, str(RAIZ / "api"))
 
 import pyield as yd  # noqa: E402
 from copom_calendario import DECISOES  # noqa: E402
+import mercado  # noqa: E402
 from mercado import resolver  # noqa: E402
+
+# O snapshot commitado leva indicadores e âncoras, que a API ao vivo não busca.
+mercado.SO_CURVAS = False
 
 # Data de ancoragem das 6 pautas. As árvores de decisão afirmam fatos
 # qualitativos sobre a curva ("desenha um U", "acima da banda") que só valem

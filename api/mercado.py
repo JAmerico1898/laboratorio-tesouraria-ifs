@@ -13,6 +13,7 @@ resposta ao vivo nunca divirjam de formato.
 from __future__ import annotations
 
 import datetime as dt
+import functools
 import json
 import math
 import os
@@ -34,8 +35,22 @@ MAX_REUNIOES = 18
 
 OLINDA = "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/"
 # A Olinda responde em ~0,2 s. O teto é curto de propósito: o cliente desiste
-# da API em 15 s, e um Focus lento não pode custar o painel inteiro.
+# da API em 40 s, e um Focus lento não pode custar o painel inteiro.
 TIMEOUT_FOCUS_S = 4
+
+# O painel ao vivo só exibe curvas. Indicadores e âncoras dependem de fontes
+# lentas e instáveis (planilha de VNAs do Tesouro: 15-25 s por instância fria;
+# PTAX do BCB: até 12 s) que estouravam o limite do cliente e jogavam o painel
+# na contingência. Só `scripts/gerar-snapshot.py` desliga este atalho, porque
+# as pautas leem indicadores e âncoras do snapshot commitado.
+SO_CURVAS = True
+
+# Os blocos pedem as mesmas séries várias vezes (NTN-B 4×, DI1 3×, PRE 2×).
+# O cache vale só durante um `construir_snapshot`, que o limpa ao começar:
+# um dia ainda não publicado não pode ficar preso vazio na instância.
+_ntnb_dados = functools.lru_cache(maxsize=None)(yd.ntnb.dados)
+_curva_pre = functools.lru_cache(maxsize=None)(yd.tpf.curva_pre)
+_futuro = functools.lru_cache(maxsize=None)(yd.futuro.historico)
 
 
 # ── utilitários ────────────────────────────────────────────────────────────
@@ -140,7 +155,7 @@ def _bloco_taxas(data: dt.date) -> list[dict[str, Any]]:
     d = _br(data)
     curvas: list[dict[str, Any]] = []
 
-    pre = yd.tpf.curva_pre(d).to_dicts()
+    pre = _curva_pre(d).to_dicts()
     curvas.append(
         _curva(
             "pre-zero",
@@ -156,7 +171,7 @@ def _bloco_taxas(data: dt.date) -> list[dict[str, Any]]:
         )
     )
 
-    di1 = yd.futuro.historico(d, "DI1").to_dicts()
+    di1 = _futuro(d, "DI1").to_dicts()
     curvas.append(
         _curva(
             "di1",
@@ -174,7 +189,7 @@ def _bloco_taxas(data: dt.date) -> list[dict[str, Any]]:
         )
     )
 
-    ntnb = yd.ntnb.dados(d).to_dicts()
+    ntnb = _ntnb_dados(d).to_dicts()
     curvas.append(
         _curva(
             "ntnb-zero",
@@ -260,7 +275,7 @@ def _bloco_precos(data: dt.date) -> list[dict[str, Any]]:
     for id_, nome, fn in (
         ("ltn-pu", "PU LTN", yd.ltn.dados),
         ("ntnf-pu", "PU NTN-F", yd.ntnf.dados),
-        ("ntnb-pu", "PU NTN-B", yd.ntnb.dados),
+        ("ntnb-pu", "PU NTN-B", _ntnb_dados),
         ("lft-pu", "PU LFT", yd.lft.dados),
     ):
         rows = fn(d).to_dicts()
@@ -304,7 +319,7 @@ def _bloco_termo(data: dt.date) -> list[dict[str, Any]]:
         )
     )
 
-    di1 = yd.futuro.historico(d, "DI1").to_dicts()
+    di1 = _futuro(d, "DI1").to_dicts()
     curvas.append(
         _curva(
             "fwd-di",
@@ -320,7 +335,7 @@ def _bloco_termo(data: dt.date) -> list[dict[str, Any]]:
         )
     )
 
-    ntnb = yd.ntnb.dados(d).to_dicts()
+    ntnb = _ntnb_dados(d).to_dicts()
     curvas.append(
         _curva(
             "fwd-real",
@@ -366,12 +381,12 @@ def _bloco_implicita(data: dt.date) -> list[dict[str, Any]]:
     d = _br(data)
     curvas: list[dict[str, Any]] = []
 
-    ntnb = yd.ntnb.dados(d).to_dicts()
+    ntnb = _ntnb_dados(d).to_dicts()
     venc_b = [r["data_vencimento"] for r in ntnb]
     tir_b = [r["taxa_indicativa"] for r in ntnb]
 
-    pre = yd.tpf.curva_pre(d).to_dicts()
-    di1 = yd.futuro.historico(d, "DI1").to_dicts()
+    pre = _curva_pre(d).to_dicts()
+    di1 = _futuro(d, "DI1").to_dicts()
 
     for id_, nome, venc_n, taxa_n in (
         ("be-ntnb-pre", "Break-even NTN-B × PRE",
@@ -640,6 +655,8 @@ def construir_snapshot(
     data: dt.date, bloco: str = "all", pedida: dt.date | None = None
 ) -> dict[str, Any]:
     """Monta o payload de uma data que sabidamente tem dado."""
+    for cache in (_ntnb_dados, _curva_pre, _futuro):
+        cache.cache_clear()
     escolhidos = BLOCOS.keys() if bloco == "all" else [bloco]
     curvas: list[dict[str, Any]] = []
     for nome in escolhidos:
@@ -650,9 +667,9 @@ def construir_snapshot(
         "dataSolicitada": data.strftime("%Y-%m-%d"),
         "dataEfetiva": data.strftime("%Y-%m-%d"),
         "contingencia": False,
-        "indicadores": _indicadores(data),
+        "indicadores": {} if SO_CURVAS else _indicadores(data),
         "curvas": curvas,
-        "ancoras": _ancoras(data, pedida),
+        "ancoras": None if SO_CURVAS else _ancoras(data, pedida),
     }
 
 

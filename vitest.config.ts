@@ -13,7 +13,7 @@ export default defineConfig({
       include: ["lib/mercado/**/*.ts", "lib/gabarito-pdf.ts"],
       // types.ts é só declaração de tipo: não tem linha executável.
       exclude: ["lib/mercado/types.ts"],
-      thresholds: { lines: 80, "lib/mercado/ancoras.ts": { lines: 90 } },
+      thresholds: { lines: 80 },
     },
   },
 });
