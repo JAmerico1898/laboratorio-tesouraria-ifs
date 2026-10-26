@@ -178,7 +178,7 @@ footer{margin-top:30px;padding-top:14px;border-top:1px solid var(--line-brd);fon
 <section class="panel" id="t2">
   <div class="card">
     <h2>Mexa no dólar futuro e veja a arbitragem aparecer</h2>
-    <p class="fixos">Fixos: S = 5,00 · DI = 13,60% a.a. (252 du) · prazo 365 dc · cupom de mercado (captação/aplicação em US$) = 5,11% · nocional US$ 1.000.000</p>
+    <p class="fixos">Fixos: S = 5,00 · DI futuro (DI1) = 13,60% a.a. (252 du) · prazo 365 dc · cupom no DDI = 5,11% · nocional US$ 1.000.000 (R$ 5.000.000)</p>
     <div class="controls">
       <div class="ctrl">
         <label for="sF">Dólar futuro de 1 ano (F) <span id="lF">5,4000</span></label>
@@ -424,38 +424,41 @@ function desenha2(){
   // passo a passo
   var fCup = fatorCupom(P.cMkt, P.dc), fDI = fatorDI(P.di, P.du);
   var devUSD = P.N * fCup, reais = P.S * P.N, reaisFim = reais * fDI;
+  var varCamb = F / P.S, usdFim = reaisFim / F;
   var li = [];
   if (naParidade){
-    document.getElementById('tit2').textContent = 'Passo a passo — na paridade';
-    li = ['Capta ' + usd(P.N) + ' a 5,11% → deve <span class="valor">' + usd(devUSD) + '</span>',
-          'Vende o dólar no spot a 5,00 <span class="valor">' + brl(reais) + '</span>',
-          'Aplica no CDI a 13,60% <span class="valor">' + brl(reaisFim) + '</span>',
-          'Recompra ' + usd(devUSD) + ' no futuro a ' + num(F, 4) + ' <span class="valor">' + brl(F * devUSD) + '</span>'];
+    document.getElementById('tit2').textContent = 'Passo a passo — na paridade: cupom = DI ÷ variação cambial';
+    li = ['Aplica ' + brl(reais) + ' no DI futuro a 13,60% → <span class="valor">' + brl(reaisFim) + '</span>',
+          'Variação cambial contratada: F/S = ' + num(F, 4) + '/' + num(P.S, 2) + ' → <span class="valor">' + pct(varCamb - 1) + '</span>',
+          'DI descontado da variação: ' + num(fDI, 4) + ' ÷ ' + num(varCamb, 4) + ' − 1 → <span class="valor">' + pct(fDI / varCamb - 1, 3) + ' no período</span>',
+          'Linear em dc/360: × 360/' + P.dc + ' → cupom <span class="valor">' + pct(cImp) + ' a.a.</span>'];
   } else if (L > 0){
-    document.getElementById('tit2').textContent = 'Passo a passo — futuro barato: capta dólar';
-    li = ['Capta ' + usd(P.N) + ' a 5,11% → deve <span class="valor">' + usd(devUSD) + '</span>',
-          'Vende o dólar no spot a 5,00 <span class="valor">' + brl(reais) + '</span>',
-          'Aplica no CDI a 13,60% → recebe <span class="valor">' + brl(reaisFim) + '</span>',
-          'Recompra ' + usd(devUSD) + ' no futuro a ' + num(F, 4) + ' → paga <span class="valor">' + brl(F * devUSD) + '</span>'];
+    document.getElementById('tit2').textContent = 'Passo a passo — futuro barato: cupom sintético > DDI';
+    li = ['Aplica ' + brl(reais) + ' no DI futuro a 13,60% → recebe <span class="valor">' + brl(reaisFim) + '</span>',
+          'Compra dólar futuro a ' + num(F, 4) + ' → os reais viram <span class="valor">' + usd(usdFim) + '</span>',
+          'Cupom sintético: DI ÷ variação cambial (F/S) <span class="valor">' + pct(cImp) + '</span>',
+          'DDI comprado em taxa (vendido em PU) → paga 5,11%: deve <span class="valor">' + usd(devUSD) + '</span>',
+          'Lucro travado no vencimento <span class="valor">' + brl(L) + '</span>'];
   } else {
-    document.getElementById('tit2').textContent = 'Passo a passo — futuro caro: operação inversa';
-    li = ['Capta ' + brl(reais) + ' no CDI → deve <span class="valor">' + brl(reaisFim) + '</span>',
-          'Compra ' + usd(P.N) + ' no spot a 5,00 <span class="valor">' + usd(P.N) + '</span>',
-          'Aplica o dólar a 5,11% → recebe <span class="valor">' + usd(devUSD) + '</span>',
-          'Vende ' + usd(devUSD) + ' no futuro a ' + num(F, 4) + ' → recebe <span class="valor">' + brl(F * devUSD) + '</span>'];
+    document.getElementById('tit2').textContent = 'Passo a passo — futuro caro: cupom sintético < DDI';
+    li = ['Toma ' + brl(reais) + ' no DI futuro a 13,60% → deve <span class="valor">' + brl(reaisFim) + '</span>',
+          'Vende dólar futuro a ' + num(F, 4) + ' → a dívida equivale a <span class="valor">' + usd(usdFim) + '</span>',
+          'Custo sintético em dólar: DI ÷ variação cambial (F/S) <span class="valor">' + pct(cImp) + '</span>',
+          'DDI vendido em taxa (comprado em PU) → recebe 5,11%: <span class="valor">' + usd(devUSD) + '</span>',
+          'Lucro travado no vencimento <span class="valor">' + brl(-L) + '</span>'];
   }
   document.getElementById('passos2').innerHTML = li.map(function(s){ return '<li>' + s + '</li>'; }).join('');
 
   // texto condicionado
   var t;
   if (naParidade){
-    t = '<p>Com F = ' + num(F, 4) + ', o cupom implícito no futuro é igual ao cupom de mercado (' + pct(P.cMkt) + '). Os dois caminhos rendem o mesmo: <b>não há arbitragem</b>.</p>';
+    t = '<p>O cupom cambial é o DI futuro descontado da variação cambial contratada no dólar futuro. É o juro em dólar que se obtém <b>sem sair do Brasil</b>: aplica em reais no DI e trava a conversão para dólar no futuro.</p><p>Com F = ' + num(F, 4) + ', esse cupom sintético é igual ao cupom negociado no DDI (' + pct(P.cMkt) + '): <b>não há arbitragem</b>.</p>';
   } else if (L > 0){
-    t = '<p>O futuro está <b>abaixo</b> do justo (' + num(P.Fj, 4) + '). Comprar dólar a termo ficou barato, o que equivale a um cupom implícito de ' + pct(cImp) + ' — acima dos ' + pct(P.cMkt) + ' que custa captar em dólar.</p><p>Quem capta dólar, troca por reais e aplica no CDI trava <b>' + brl(L) + '</b> no vencimento, sem risco de câmbio: o dólar devido já está comprado no futuro.</p>';
+    t = '<p>O futuro está <b>abaixo</b> do justo (' + num(P.Fj, 4) + '). A variação cambial contratada é menor, então o DI descontado dela rende um cupom sintético de ' + pct(cImp) + ' — acima dos ' + pct(P.cMkt) + ' do DDI.</p><p>Quem aplica no DI, compra dólar futuro e paga o cupom no DDI trava <b>' + brl(L) + '</b> no vencimento, sem risco de câmbio. A pressão dessas operações empurra F de volta à paridade.</p>';
   } else {
-    t = '<p>O futuro está <b>acima</b> do justo (' + num(P.Fj, 4) + '). O cupom implícito caiu para ' + pct(cImp) + ', abaixo dos ' + pct(P.cMkt) + ' que se ganha aplicando em dólar.</p><p>A operação inversa — capta reais, compra dólar, aplica em dólar e vende no futuro — trava <b>' + brl(-L) + '</b>. A pressão dessas operações empurra F de volta à paridade.</p>';
+    t = '<p>O futuro está <b>acima</b> do justo (' + num(P.Fj, 4) + '). A variação cambial contratada é maior, então o cupom sintético cai para ' + pct(cImp) + ', abaixo dos ' + pct(P.cMkt) + ' do DDI.</p><p>A operação inversa — toma no DI, vende dólar futuro e recebe o cupom no DDI — trava <b>' + brl(-L) + '</b>. A pressão dessas operações empurra F de volta à paridade.</p>';
   }
-  t += '<p style="font-size:13px;color:var(--text-dim)">Simplificação: capta e aplica às mesmas taxas, sem custos nem limites de balanço.</p>';
+  t += '<p style="font-size:13px;color:var(--text-dim)">Simplificação: PTAX D−1 = spot, então o DDI negocia o cupom limpo (ver aba ③). Sem ajustes diários, custos nem limites de balanço.</p>';
   document.getElementById('txt2').innerHTML = t;
 
   // gráfico: cupom implícito em função de F
@@ -471,13 +474,13 @@ function desenha2(){
   ctx.setLineDash([]);
   var estreito = g.w < 520;
   ctx.fillStyle = cor('ref'); ctx.font = '11px JetBrains Mono, monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-  ctx.fillText(estreito ? 'mercado 5,11%' : 'cupom de mercado 5,11%', e.X(5.20) + 6, e.Y(P.cMkt) + 4);
+  ctx.fillText(estreito ? 'DDI 5,11%' : 'cupom no DDI 5,11%', e.X(5.20) + 6, e.Y(P.cMkt) + 4);
   ctx.textBaseline = 'bottom';
   ctx.textAlign = 'left'; ctx.fillText('F justo', e.X(P.Fj) + 4, e.Y(0.10) + 14);
   // rótulos das zonas
   ctx.fillStyle = cor('text-dim'); ctx.textAlign = 'right';
-  ctx.fillText(estreito ? 'capta US$' : 'capta US$ → aplica CDI', e.X(P.Fj) - 6, e.Y(0.005));
-  ctx.fillText(estreito ? 'capta R$' : 'capta R$ → aplica em US$', e.X(5.60) - 4, e.Y(0.085));
+  ctx.fillText(estreito ? 'paga DDI' : 'DI + compra F · paga DDI', e.X(P.Fj) - 6, e.Y(0.005));
+  ctx.fillText(estreito ? 'recebe DDI' : 'toma DI + vende F · recebe DDI', e.X(5.60) - 4, e.Y(0.085));
   // curva
   ctx.strokeStyle = cor('accent'); ctx.lineWidth = 2.5; ctx.beginPath();
   for (var x = 5.20; x <= 5.6001; x += 0.005){ var y = cupomImplicito(P.S, x, P.di, P.du, P.dc); if (x === 5.20) ctx.moveTo(e.X(x), e.Y(y)); else ctx.lineTo(e.X(x), e.Y(y)); }
